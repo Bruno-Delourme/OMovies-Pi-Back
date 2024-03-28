@@ -1,12 +1,12 @@
 const debug = require("debug")("app:db")
 const { Pool } = require("pg");
 
-const client = new Pool();
+const pool = new Pool();
 
 module.exports = {
-  originalClient: Pool,
+  originalClient: pool,
   async query(...params) {
     debug(...params);
-    return Pool.query(...params);
+    return pool.query(...params);
   },
 };

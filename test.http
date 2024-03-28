@@ -1,0 +1,11 @@
+@endpoint = http://localhost:{{$dotenv PORT}}
+
+POST {{endpoint}}/user
+content-type: application/json
+
+{
+  "pseudo": "Toto",
+  "email": "toto@toto.fr",
+  "date_of_birth": "1990/05/12",
+  "hashed_password": "bcrypt"
+}
