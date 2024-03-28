@@ -2,6 +2,6 @@
 
 BEGIN;
 
-DROP TABLE group, user, movie, vote;
+DROP TABLE "group", "user", "movie", "vote";
 
 COMMIT;

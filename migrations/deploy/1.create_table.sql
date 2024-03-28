@@ -18,7 +18,7 @@ CREATE TABLE "user" (
   "pseudo" TEXT UNIQUE NOT NULL,
   "email" email UNIQUE NOT NULL,
   "date_of_birth" DATE NOT NULL,
-  "password" TEXT NOT NULL,
+  "hashed_password" TEXT NOT NULL,
   "list" TEXT,
   "to_review" TEXT,
   "group_id" INT REFERENCES "group"(id),
