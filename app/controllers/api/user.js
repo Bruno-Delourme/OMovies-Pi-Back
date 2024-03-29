@@ -1,4 +1,5 @@
 const debug = require("debug")("app:controller");
+const jwt = require("jsonwebtoken");
 const bcrypt = require("bcrypt");
 const userDataMapper = require("../../models/user.js");
 
@@ -18,8 +19,33 @@ const userController = {
       debug('Erreur lors de la création de l\'utilisateur :', error);
       res.status(500).json({ status: 'error', message: 'Erreur lors de la création de l\'utilisateur.' });
     }
-    
-    
+  },
+
+  async login(req, res) {
+    debug('user login controller called');
+
+    const result = await userDataMapper.findUser(req.body);
+    console.log(result);
+
+    if (!result) {
+      debug('Aucun utilisateur trouvé avec le pseudo spécifié');
+      return res.status(401).json({ status: 'error', message: 'Nom d\'utilisateur ou mot de passe incorrect.' });
+  }
+
+    const isEqual = await bcrypt.compare(req.body.password, result.hashed_password);
+    debug(isEqual);
+
+    if(isEqual) {
+      delete result.hashed_password;
+
+      const token = jwt.sign( result, process.env.JWT_SECRET);
+
+      res.json({ status: 'success', data: result, token });
+
+    } else {
+      debug('Erreur lors de la connexion :', error);
+      res.status(500).json({ status: 'error', message: 'Erreur lors de la connexion.' });
+    };
   },
 };
 

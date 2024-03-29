@@ -14,7 +14,7 @@ module.exports = {
   },
 
   loginUser(req, res, next) {
-    const { error } = schemaCreateUser.validate(req.body);
+    const { error } = schemaLoginUser.validate(req.body);
 
     if (error) {
       throw new Error(error.details[0].message);

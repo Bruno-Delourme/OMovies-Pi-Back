@@ -31,6 +31,7 @@ CREATE TABLE "movie" (
   "name" TEXT,
   "picture" TEXT,
   "description" TEXT,
+  "genre" TEXT,
   "createdAt" TIMESTAMPTZ NOT NULL default(now()),
   "updatedAt" TIMESTAMPTZ
 );
