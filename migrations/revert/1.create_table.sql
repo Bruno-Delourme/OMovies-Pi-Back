@@ -4,4 +4,6 @@ BEGIN;
 
 DROP TABLE "group", "user", "movie", "vote";
 
+DROP DOMAIN  IF EXISTS public.email;
+
 COMMIT;

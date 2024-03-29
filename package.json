@@ -5,13 +5,15 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "set DEBUG=api:initialization,api:controller & node index.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "dev": "DEBUG=app:* nodemon index.js",
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "resetDB": "sqitch revert -y && sqitch deploy"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "debug": "^4.3.4",
     "dotenv": "^16.4.5",
