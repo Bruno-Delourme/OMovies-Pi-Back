@@ -1,7 +1,7 @@
-const debug = require("debug")("app:controller");
-const jwt = require("jsonwebtoken");
-const bcrypt = require("bcrypt");
-const userDataMapper = require("../../models/user.js");
+const debug = require('debug')('app:controller');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const userDataMapper = require('../models/user.js');
 
 const userController = {
 
@@ -25,7 +25,6 @@ const userController = {
     debug('user login controller called');
 
     const result = await userDataMapper.findUser(req.body);
-    console.log(result);
 
     if (!result) {
       debug('Aucun utilisateur trouvé avec le pseudo spécifié');
@@ -45,6 +44,21 @@ const userController = {
     } else {
       debug('Erreur lors de la connexion :', error);
       res.status(500).json({ status: 'error', message: 'Erreur lors de la connexion.' });
+    };
+  },
+
+  async delete(req, res) {
+    debug('user delete controller called');
+
+    const { id } = req.params;
+    
+    const isRemoved = await userDataMapper.delete(id);
+    
+    if (isRemoved) {
+      res.json({ status: 'success' });
+
+    } else {
+      res.json({ status: 'fail' });
     };
   },
 };

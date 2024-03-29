@@ -1,4 +1,4 @@
-const client = require("../data/client.js");
+const client = require('../data/client.js');
 
 const groupModel = {
   async insert(group) {

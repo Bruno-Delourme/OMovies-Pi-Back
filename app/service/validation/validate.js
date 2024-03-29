@@ -1,4 +1,4 @@
-const { schemaCreateUser, schemaLoginUser } = require("./schema.js");
+const { schemaCreateUser, schemaLoginUser } = require('./schema.js');
 
 module.exports = {
 

@@ -1,6 +1,6 @@
 @endpoint = http://localhost:{{$dotenv PORT}}
 
-# POST {{endpoint}}/user
+# POST {{endpoint}}/api/user
 # content-type: application/json
 
 # {
@@ -11,10 +11,12 @@
 # }
 
 
-POST {{endpoint}}/login
-content-type: application/json
+# POST {{endpoint}}/api/login
+# content-type: application/json
 
-{
-  "pseudo": "Toto",
-  "password": "toto"
-}
+# {
+#   "pseudo": "Toto",
+#   "password": "toto"
+# }
+
+DELETE {{endpoint}}/api/user/2

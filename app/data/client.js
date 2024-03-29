@@ -1,5 +1,5 @@
-const debug = require("debug")("app:db")
-const { Pool } = require("pg");
+const debug = require('debug')('app:db')
+const { Pool } = require('pg');
 
 const pool = new Pool();
 
