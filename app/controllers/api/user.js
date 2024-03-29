@@ -10,7 +10,7 @@ const userController = {
     const { pseudo, email, date_of_birth, password } = req.body;
 
     try {
-      const hashedPassword = await bcrypt.hash(password, 10);
+      const hashedPassword = await bcrypt.hash(password, parseInt(process.env.PASSWORD_SALT));
       const createdUser = await userDataMapper.insert({ pseudo, email, date_of_birth, hashed_password: hashedPassword });
       res.json({ status: 'success', data: createdUser });
 
