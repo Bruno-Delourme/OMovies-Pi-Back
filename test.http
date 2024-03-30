@@ -19,4 +19,4 @@
 #   "password": "toto"
 # }
 
-DELETE {{endpoint}}/api/user/2
+# DELETE {{endpoint}}/api/user/2
