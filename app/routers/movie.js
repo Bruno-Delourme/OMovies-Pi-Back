@@ -4,8 +4,6 @@ const { movieController } = require('../controllers');
 
 const router = express.Router();
 
-router.get("/movies", movieController.fetchMovies);
-
 router.get("/movies/:keyword", movieController.fetchMoviesByKeyword);
 
 router.get("/moviesByActor/:actor", movieController.fetchActorDetails);

@@ -3,24 +3,6 @@ require('dotenv').config();
 
 const movieController = {
 
-  async fetchMovies() {
-    
-    try {
-      const response = await fetch(`${process.env.API_TMDB_BASE_URL}search/movie?api_key=${process.env.API_TMDB_KEY}`);
-      
-      if (!response.ok) {
-        throw new Error('Erreur de réseau ou réponse non valide');
-      };
-      
-      const movies = await response.json();
-      res.json(movies)
-
-    } catch (error) {
-      console.error('Erreur lors de la récupération des films :', error);
-      throw new Error('Erreur lors de la récupération des films.');
-    };
-  },
-
   async fetchMovieByTitle(req, res) {
 
     const movieTitle = req.params.title;
