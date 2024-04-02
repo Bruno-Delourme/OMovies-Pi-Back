@@ -17,7 +17,7 @@ async fetchMovieById(req, res) {
     res.json(movie);
 
   } catch (error) {
-    console.error('Erreur lors de la récupération des films par id :', error);
+    debug('Erreur lors de la récupération des films par id :', error);
     res.status(500).json({ error: 'Erreur lors de la récupération des films par id.' });
   };
 },
@@ -36,7 +36,7 @@ async fetchMoviesByKeyword(req, res) {
     res.json(movies);
 
   } catch (error) {
-    console.error('Erreur lors de la récupération des films par mots clefs :', error);
+    debug('Erreur lors de la récupération des films par mots clefs :', error);
     res.status(500).json({ error: 'Erreur lors de la récupération des films par mots clefs.' });
   };
 },
@@ -57,7 +57,7 @@ async fetchMovieByTitle(req, res) {
       res.json(movie)
 
     } catch (error) {
-      console.error('Erreur lors de la récupération des films par titre :', error);
+      debug('Erreur lors de la récupération des films par titre :', error);
       throw new Error('Erreur lors de la récupération des films par titre.');
     };
 },
@@ -78,12 +78,12 @@ async fetchActorDetails(req, res) {
     res.json(actorDetails);
 
   } catch (error) {
-    console.error('Erreur lors de la récupération des films par acteur :', error);
+    debug('Erreur lors de la récupération des films par acteur :', error);
     res.status(500).json({ error: 'Erreur lors de la récupération des films par acteur.' });
   };
 },
 
-async fetchNewMovies(req, res) {
+async fetchNewMovies(_, res) {
 
   try {
     const response = await fetch(`${process.env.API_TMDB_BASE_URL}movie/now_playing?api_key=${process.env.API_TMDB_KEY}&language=fr-FR`);
@@ -96,9 +96,39 @@ async fetchNewMovies(req, res) {
     res.json(newMovies);
 
   } catch (error) {
-    console.error('Erreur lors de la récupération des nouveaux films :', error);
+    debug('Erreur lors de la récupération des nouveaux films :', error);
     res.status(500).json({ error: 'Erreur lors de la récupération des nouveaux films.' });
   };
+},
+
+async fetchBySearchBar(req, res) {
+
+  const searchTerm = req.query.query;
+  const encodedSearchTerm = encodeURIComponent(searchTerm);
+
+  try {
+    let moviesResults = [];
+
+    const searchByTitle = await fetch(`${process.env.API_TMDB_BASE_URL}search/movie?api_key=${process.env.API_TMDB_KEY}&query=${encodedSearchTerm}&language=fr-FR`);
+
+    if (searchByTitle.ok) {
+      const moviesByTitle = await searchByTitle.json();
+      moviesResults = moviesResults.concat(moviesByTitle.results);
+    }
+
+    const searchByKeyword = await fetch(`${process.env.API_TMDB_BASE_URL}search/movie?api_key=${process.env.API_TMDB_KEY}&query=${encodedSearchTerm}&language=fr-FR`);
+
+    if (searchByKeyword.ok) {
+      const moviesByKeyword = await searchByKeyword.json();
+      moviesResults = moviesResults.concat(moviesByKeyword.results);
+    }
+
+    res.json(moviesResults);
+
+  } catch (error) {
+    debug('Erreur lors de la recherche de films :', error);
+    res.status(500).json({ error: 'Erreur lors de la recherche de films.' });
+  }
 },
 
 };
