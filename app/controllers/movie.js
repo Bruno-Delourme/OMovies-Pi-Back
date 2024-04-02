@@ -26,7 +26,7 @@ async fetchMoviesByKeyword(req, res) {
 
   const keyword = req.params.keyword;
   try {
-    const response = await fetch(`${process.env.API_TMDB_BASE_URL}search/movie?api_key=${process.env.API_TMDB_KEY}&query=${keyword}&language=fr-FR`);
+    const response = await fetch(`${process.env.API_TMDB_BASE_URL}search/keyword?api_key=${process.env.API_TMDB_KEY}&query=${keyword}&language=fr-FR`);
 
     if (!response.ok) {
       throw new Error('Erreur réseau ou réponse non valide');
@@ -116,7 +116,7 @@ async fetchBySearchBar(req, res) {
       moviesResults = moviesResults.concat(moviesByTitle.results);
     }
 
-    const searchByKeyword = await fetch(`${process.env.API_TMDB_BASE_URL}search/movie?api_key=${process.env.API_TMDB_KEY}&query=${encodedSearchTerm}&language=fr-FR`);
+    const searchByKeyword = await fetch(`${process.env.API_TMDB_BASE_URL}search/keyword?api_key=${process.env.API_TMDB_KEY}&query=${encodedSearchTerm}&language=fr-FR`);
 
     if (searchByKeyword.ok) {
       const moviesByKeyword = await searchByKeyword.json();
