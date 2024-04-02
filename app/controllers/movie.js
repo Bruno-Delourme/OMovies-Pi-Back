@@ -3,27 +3,6 @@ require('dotenv').config();
 
 const movieController = {
 
-  async fetchMovieByTitle(req, res) {
-
-    const movieTitle = req.params.title;
-    try {
-      const encodedTitle = encodeURIComponent(movieTitle);
-      
-      const response = await fetch(`${process.env.API_TMDB_BASE_URL}search/movie?api_key=${process.env.API_TMDB_KEY}&query=${encodedTitle}`);
-      
-      if (!response.ok) {
-        throw new Error('Erreur de réseau ou réponse non valide');
-      };
-      
-      const movie = await response.json();
-      res.json(movie)
-
-    } catch (error) {
-      console.error('Erreur lors de la récupération des films par titre :', error);
-      throw new Error('Erreur lors de la récupération des films par titre.');
-    };
-},
-
 async fetchMovieById(req, res) {
 
   const movieId = req.params.id;
@@ -62,6 +41,27 @@ async fetchMoviesByKeyword(req, res) {
   };
 },
 
+async fetchMovieByTitle(req, res) {
+
+    const movieTitle = req.params.title;
+    try {
+      const encodedTitle = encodeURIComponent(movieTitle);
+      
+      const response = await fetch(`${process.env.API_TMDB_BASE_URL}search/movie?api_key=${process.env.API_TMDB_KEY}&query=${encodedTitle}&language=fr-FR`);
+      
+      if (!response.ok) {
+        throw new Error('Erreur de réseau ou réponse non valide');
+      };
+      
+      const movie = await response.json();
+      res.json(movie)
+
+    } catch (error) {
+      console.error('Erreur lors de la récupération des films par titre :', error);
+      throw new Error('Erreur lors de la récupération des films par titre.');
+    };
+},
+
 async fetchActorDetails(req, res) {
   
   const actor = req.params.actor;
@@ -80,6 +80,24 @@ async fetchActorDetails(req, res) {
   } catch (error) {
     console.error('Erreur lors de la récupération des films par acteur :', error);
     res.status(500).json({ error: 'Erreur lors de la récupération des films par acteur.' });
+  };
+},
+
+async fetchNewMovies(req, res) {
+
+  try {
+    const response = await fetch(`${process.env.API_TMDB_BASE_URL}movie/now_playing?api_key=${process.env.API_TMDB_KEY}&language=fr-FR`);
+
+    if (!response.ok) {
+      throw new Error('Erreur réseau ou réponse non valide');
+    };
+    const newMovies = await response.json();
+
+    res.json(newMovies);
+
+  } catch (error) {
+    console.error('Erreur lors de la récupération des nouveaux films :', error);
+    res.status(500).json({ error: 'Erreur lors de la récupération des nouveaux films.' });
   };
 },
 
