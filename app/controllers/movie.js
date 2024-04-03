@@ -103,7 +103,8 @@ async fetchNewMovies(_, res) {
 
 async fetchBySearchBar(req, res) {
 
-  const searchTerm = req.query.query;
+  const searchTerm = req.params.query;
+  
   const encodedSearchTerm = encodeURIComponent(searchTerm);
 
   try {
@@ -130,6 +131,15 @@ async fetchBySearchBar(req, res) {
     res.status(500).json({ error: 'Erreur lors de la recherche de films.' });
   }
 },
+
+// async fetchPopularMovie(_,res) {
+
+//   try {
+//     const response = await fetch(`${process.env.API_TMDB_BASE_URL}movie/popular?api_key=${process.env.API_TMDB_KEY}&language=fr-FR`);
+
+//     if
+//   }
+// }
 
 };
 

@@ -14,6 +14,8 @@ router.get("/moviesByActor/:actor", movieController.fetchActorDetails);
 
 router.get("/newMovies", movieController.fetchNewMovies);
 
-router.get("/searchBar", movieController.fetchBySearchBar);
+router.get("/searchBar/:query", movieController.fetchBySearchBar);
+
+// router.get("/popular", movieController)
 
 module.exports = router;
