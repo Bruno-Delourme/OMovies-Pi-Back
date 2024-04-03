@@ -103,43 +103,61 @@ async fetchNewMovies(_, res) {
 
 async fetchBySearchBar(req, res) {
 
-  const searchTerm = req.params.query;
-  
-  const encodedSearchTerm = encodeURIComponent(searchTerm);
+  const searchTerm = req.query.query; 
 
   try {
-    let moviesResults = [];
+    const encodedSearchTerm = encodeURIComponent(searchTerm);
 
-    const searchByTitle = await fetch(`${process.env.API_TMDB_BASE_URL}search/movie?api_key=${process.env.API_TMDB_KEY}&query=${encodedSearchTerm}&language=fr-FR`);
+    const response = await fetch(`${process.env.API_TMDB_BASE_URL}search/movie?api_key=${process.env.API_TMDB_KEY}&query=${encodedSearchTerm}&language=fr-FR`);
 
-    if (searchByTitle.ok) {
-      const moviesByTitle = await searchByTitle.json();
-      moviesResults = moviesResults.concat(moviesByTitle.results);
+    if (!response.ok) {
+      throw new Error('Erreur de réseau ou réponse non valide');
     }
 
-    const searchByKeyword = await fetch(`${process.env.API_TMDB_BASE_URL}search/keyword?api_key=${process.env.API_TMDB_KEY}&query=${encodedSearchTerm}&language=fr-FR`);
-
-    if (searchByKeyword.ok) {
-      const moviesByKeyword = await searchByKeyword.json();
-      moviesResults = moviesResults.concat(moviesByKeyword.results);
-    }
-
-    res.json(moviesResults);
-
+    const movies = await response.json();
+    res.json(movies);
   } catch (error) {
-    debug('Erreur lors de la recherche de films :', error);
-    res.status(500).json({ error: 'Erreur lors de la recherche de films.' });
+    console.error('Erreur lors de la récupération des films par titre :', error);
+    res.status(500).json({ error: 'Erreur lors de la récupération des films par titre.' });
   }
 },
 
-// async fetchPopularMovie(_,res) {
+async fetchPopularMovie(_, res) {
 
-//   try {
-//     const response = await fetch(`${process.env.API_TMDB_BASE_URL}movie/popular?api_key=${process.env.API_TMDB_KEY}&language=fr-FR`);
+  try {
+    const response = await fetch(`${process.env.API_TMDB_BASE_URL}movie/popular?api_key=${process.env.API_TMDB_KEY}&language=fr-FR`);
 
-//     if
-//   }
-// }
+    if (!response.ok) {
+      throw new Error('Erreur réseau ou réponse non valide');
+    };
+    const popularMovies = await response.json();
+
+    res.json(popularMovies);
+
+  } catch (error) {
+    debug('Erreur lors de la récupération des films populaires :', error);
+    res.status(500).json({ error: 'Erreur lors de la récupération des films populaires.' })
+  };
+},
+
+async fetchRecommendation(req, res) {
+
+  const movieId = req.params.id;
+  try {
+    const response = await fetch(`${process.env.API_TMDB_BASE_URL}movie/${movieId}/recommendations?api_key=${process.env.API_TMDB_KEY}&language=fr-FR`);
+
+    if (!response.ok) {
+      throw new Error('Erreur réseau ou réponse non valide');
+    };
+    const recommendation = await response.json();
+
+    res.json(recommendation);
+
+  } catch (error) {
+    debug('Erreur lors de la récupération de la recommendation :', error);
+    res.status(500).json({ error: 'Erreur lors de la récupération de la recommendation.' })
+  }
+},
 
 };
 
