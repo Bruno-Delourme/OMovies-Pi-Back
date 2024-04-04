@@ -9,8 +9,8 @@ CHECK(VALUE ~ '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
 CREATE TABLE "group" (
   "id" INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   "name" TEXT NOT NULL,
-  "createdAt" TIMESTAMPTZ NOT NULL default(now()),
-  "updatedAt" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+  "created_at" TIMESTAMPTZ NOT NULL default(now()),
+  "updated_at" TIMESTAMPTZ
 );
 
 CREATE TABLE "user" (
@@ -22,8 +22,8 @@ CREATE TABLE "user" (
   "list" TEXT,
   "to_review" TEXT,
   "group_id" INT REFERENCES "group"(id),
-  "createdAt" TIMESTAMPTZ NOT NULL default(now()),
-  "updatedAt" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+  "created_at" TIMESTAMPTZ NOT NULL default(now()),
+  "updated_at" TIMESTAMPTZ
 );
 
 CREATE TABLE "movie" (
@@ -32,15 +32,15 @@ CREATE TABLE "movie" (
   "picture" TEXT,
   "description" TEXT,
   "genre" TEXT,
-  "createdAt" TIMESTAMPTZ NOT NULL default(now()),
-  "updatedAt" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+  "created_at" TIMESTAMPTZ NOT NULL default(now()),
+  "updated_at" TIMESTAMPTZ
 );
 
 CREATE TABLE "vote" (
   "movie_id" INT REFERENCES "movie"(id),
   "user_id" INT REFERENCES "user"(id),
-  "createdAt" TIMESTAMPTZ NOT NULL default(now()),
-  "updatedAt" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+  "created_at" TIMESTAMPTZ NOT NULL default(now()),
+  "updated_at" TIMESTAMPTZ
 );
 
 COMMIT;

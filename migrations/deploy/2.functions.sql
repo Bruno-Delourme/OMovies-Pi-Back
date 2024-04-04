@@ -27,7 +27,8 @@ $$
       pseudo = ($1->>'pseudo')::TEXT,
       email = ($1->>'email')::email,
       date_of_birth = ($1->>'date_of_birth')::DATE,
-      hashed_password = ($1->>'hashed_password')::TEXT
+      hashed_password = ($1->>'hashed_password')::TEXT,
+      updated_at = ($1->>'updated_at')::TIMESTAMPTZ
     WHERE id = ($1->>'id')::INT
     RETURNING *;
   $$ LANGUAGE SQL STRICT;

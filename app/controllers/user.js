@@ -69,6 +69,7 @@ const userController = {
 
     let userData = {};
     let hashedPassword;
+    const updated_at = new Date();
 
     try {
       if (pseudo !== undefined) {
@@ -84,14 +85,10 @@ const userController = {
       hashedPassword = await bcrypt.hash(password, parseInt(process.env.PASSWORD_SALT));
       userData.password = hashedPassword;
      }
-     console.log(id);
-     console.log(pseudo);
-     console.log(email);
-     console.log(date_of_birth);
-     console.log(hashedPassword);
+     
+      userData.updated_at = updated_at; 
       
-      const updatedUser = await userDataMapper.update({id, pseudo, email, date_of_birth, hashed_password: hashedPassword });
-      console.log(updatedUser);
+      const updatedUser = await userDataMapper.update({id, pseudo, email, date_of_birth, hashed_password: hashedPassword, updated_at });
       res.json({ status: 'success', data: updatedUser });
 
   } catch (error) {
