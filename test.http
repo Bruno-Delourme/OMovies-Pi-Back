@@ -26,13 +26,23 @@
 # DELETE {{endpoint}}/api/user/2
 
 
-PATCH {{endpoint}}/api/user
+# PATCH {{endpoint}}/api/user
+# content-type: application/json
+
+# {
+#   "id": 1,
+#   "pseudo": "toutou",
+#   "email": "blanc@vert.fr",
+#   "date_of_birth": "2020/04/04",
+#   "password": "orange"
+# }
+
+POST {{endpoint}}/api/addList
 content-type: application/json
 
 {
-  "id": 1,
-  "pseudo": "toutou",
-  "email": "blanc@vert.fr",
-  "date_of_birth": "2020/04/04",
-  "password": "orange"
+  "title": "Star Wars",
+  "poster_path": "Chemin des étoiles",
+  "overview": "Il était une fois, une étoile...",
+  "genres": ["action", "fantaisy"]
 }
