@@ -26,6 +26,7 @@
 # DELETE {{endpoint}}/api/user/2
 
 
+
 # PATCH {{endpoint}}/api/user
 # content-type: application/json
 
@@ -37,12 +38,18 @@
 #   "password": "orange"
 # }
 
-POST {{endpoint}}/api/addList
-content-type: application/json
 
-{
-  "title": "Star Wars",
-  "poster_path": "Chemin des étoiles",
-  "overview": "Il était une fois, une étoile...",
-  "genres": ["action", "fantaisy"]
-}
+
+# POST {{endpoint}}/api/addList
+# content-type: application/json
+
+# {
+#   "title": "Star Wars",
+#   "poster_path": "Chemin des étoiles",
+#   "overview": "Il était une fois, une étoile...",
+#   "genres": ["action", "fantaisy"]
+# }
+
+
+
+ DELETE {{endpoint}}/api/removeFromList/1

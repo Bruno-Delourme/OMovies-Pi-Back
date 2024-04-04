@@ -23,6 +23,21 @@ const listController = {
       res.status(500).json({ status: 'error', message: 'Erreur lors de l\'insertion dans la liste.' });
   };
 },
+
+  async delete(req, res) {
+    debug('list delete controller called');
+
+    const { id } = req.params;
+
+    const isRemoved = await listDataMapper.delete(id);
+
+    if (isRemoved) {
+      res.json({ status: 'success' });
+
+    } else {
+      res.json({ status: 'fail' });
+    };
+  },
 };
 
 module.exports = listController;

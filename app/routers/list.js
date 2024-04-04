@@ -4,6 +4,8 @@ const { listController } = require('../controllers');
 
 const router = express.Router();
 
-router.post("/addList", listController.insert);
+router.post("/addToList", listController.insert);
+
+router.delete("/removeFromList/:id", listController.delete);
 
 module.exports = router;
