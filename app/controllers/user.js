@@ -61,6 +61,23 @@ const userController = {
       res.json({ status: 'fail' });
     };
   },
+
+  async update(req, res) {
+
+    debug('user update controller called');
+    const { id } = req.params;
+
+    const { pseudo, email, date_of_birth, password } = req.body;
+
+    const update = await userDataMapper.update(id, pseudo, email, date_of_birth, password);
+
+    if (update) {
+      res.json({ status: 'success' });
+
+    } else {
+      res.json({ status: 'fail' });
+    };
+  },
 };
 
 module.exports = userController;

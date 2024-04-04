@@ -29,6 +29,31 @@ const userModel = {
     
     return !!results.rowCount;
   },
+
+  async update(id, pseudo, email, date_of_birth, password) {
+
+    if (!pseudo && !email && !date_of_birth && !password) {
+      return "Aucune information à mettre à jour.";
+    };
+
+    const query = {
+      text: `UPDATE "user" SET
+              "pseudo" = $2,
+              "email" = $3,
+              "date_of_birth" = $4,
+              "hashed_password" = $5
+            WHERE id = $1`,
+      values: [id, pseudo, email, date_of_birth, password],
+    };
+    const results = await client.query(query);
+
+    if (results.rowCount > 0) {
+      return true; 
+
+  } else {
+      return false;
+  };
+  },
 };
 
 module.exports = userModel;

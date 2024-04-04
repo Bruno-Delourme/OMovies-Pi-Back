@@ -108,17 +108,21 @@ async fetchBySearchBar(req, res) {
   try {
     const encodedSearchTerm = encodeURIComponent(searchTerm);
 
-    const response = await fetch(`${process.env.API_TMDB_BASE_URL}search/movie?api_key=${process.env.API_TMDB_KEY}&query=${encodedSearchTerm}&language=fr-FR`);
+    const responseByTitle = await fetch(`${process.env.API_TMDB_BASE_URL}search/movie?api_key=${process.env.API_TMDB_KEY}&query=${encodedSearchTerm}&language=fr-FR`);
 
-    if (!response.ok) {
+    if (!responseByTitle.ok) {
       throw new Error('Erreur de réseau ou réponse non valide');
     }
 
-    const movies = await response.json();
-    res.json(movies);
+    const moviesByTitle = await responseByTitle.json();
+
+    
+    
+    res.json(moviesByTitle);
+
   } catch (error) {
-    console.error('Erreur lors de la récupération des films par titre :', error);
-    res.status(500).json({ error: 'Erreur lors de la récupération des films par titre.' });
+    console.error('Erreur lors de la récupération des films par titre ou par acteur :', error);
+    res.status(500).json({ error: 'Erreur lors de la récupération des films par titre ou par acteur.' });
   }
 },
 

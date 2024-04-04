@@ -5,10 +5,10 @@
 # content-type: application/json
 
 # {
-#   "pseudo": "Tata",
-#   "email": "toto@tata.fr",
+#   "pseudo": "Toto",
+#   "email": "toto@toto.fr",
 #   "date_of_birth": "1990/05/12",
-#   "password": "tata"
+#   "password": "toto"
 # }
 
 
@@ -22,4 +22,17 @@
 # }
 
 
+
 # DELETE {{endpoint}}/api/user/2
+
+
+PATCH {{endpoint}}/api/user
+content-type: application/json
+
+{
+  "id": 1,
+  "pseudo": "Pollux",
+  "email": "pollux@chien.fr",
+  "date_of_birth": "1789/07/14",
+  "password": "pollux"
+}

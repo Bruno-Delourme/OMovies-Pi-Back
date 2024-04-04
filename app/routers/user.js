@@ -9,6 +9,8 @@ router.post("/user", validation.createUser, userController.create);
 
 router.post("/login", validation.loginUser, userController.login);
 
+router.patch("/user", validation.updateUser, userController.update)
+
 router.delete("/user/:id", userController.delete);
 
 debug('API user router initialized');
