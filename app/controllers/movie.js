@@ -109,20 +109,44 @@ async fetchBySearchBar(req, res) {
     const encodedSearchTerm = encodeURIComponent(searchTerm);
 
     const responseByTitle = await fetch(`${process.env.API_TMDB_BASE_URL}search/movie?api_key=${process.env.API_TMDB_KEY}&query=${encodedSearchTerm}&language=fr-FR`);
+    const responseByKeyword = await fetch(`${process.env.API_TMDB_BASE_URL}search/keyword?api_key=${process.env.API_TMDB_KEY}&query=${encodedSearchTerm}&language=fr-FR`);
+    const responseByActor = await fetch(`${process.env.API_TMDB_BASE_URL}search/person?api_key=${process.env.API_TMDB_KEY}&query=${encodedSearchTerm}&language=fr-FR`);
 
-    if (!responseByTitle.ok) {
+    if (!responseByTitle.ok || !responseByKeyword.ok || !responseByActor.ok) {
       throw new Error('Erreur de réseau ou réponse non valide');
     }
 
     const moviesByTitle = await responseByTitle.json();
+    const moviesByKeyword = await responseByKeyword.json();
+    const actors = await responseByActor.json();
+    
 
+    const moviesByTitleNames = moviesByTitle.results.map(movie => ({ title: movie.title, poster_path: movie.poster_path }));
     
+    const moviesNamesByKeyword = moviesByKeyword.results.map(keyword => keyword.name);
+
+    const moviesByActorPromises = actors.results.map(async actor => {
+      const response = await fetch(`${process.env.API_TMDB_BASE_URL}person/${actor.id}/movie_credits?api_key=${process.env.API_TMDB_KEY}&language=fr-FR`);
+      if (response.ok) {
+        const credits = await response.json();
+        return credits.cast.map(movie => ({ title: movie.title, poster_path: movie.poster_path }));
+      } else {
+        return [];
+      }
+    });
+    const moviesByActor = await Promise.all(moviesByActorPromises);
+
+    const combinedResults = {
+      moviesByTitle: moviesByTitleNames,
+      moviesByKeyword: moviesNamesByKeyword,
+      moviesByActor: moviesByActor
+    };
     
-    res.json(moviesByTitle);
+    res.json(combinedResults);
 
   } catch (error) {
-    console.error('Erreur lors de la récupération des films par titre ou par acteur :', error);
-    res.status(500).json({ error: 'Erreur lors de la récupération des films par titre ou par acteur.' });
+    console.error('Erreur lors de la récupération des films par titre, mot-clé ou acteur :', error);
+    res.status(500).json({ error: 'Erreur lors de la récupération des films par titre, mot-clé ou acteur.' });
   }
 },
 

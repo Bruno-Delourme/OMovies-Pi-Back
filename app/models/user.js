@@ -30,29 +30,13 @@ const userModel = {
     return !!results.rowCount;
   },
 
-  async update(id, pseudo, email, date_of_birth, password) {
-
-    if (!pseudo && !email && !date_of_birth && !password) {
-      return "Aucune information à mettre à jour.";
-    };
-
+  async update(user) {
     const query = {
-      text: `UPDATE "user" SET
-              "pseudo" = $2,
-              "email" = $3,
-              "date_of_birth" = $4,
-              "hashed_password" = $5
-            WHERE id = $1`,
-      values: [id, pseudo, email, date_of_birth, password],
+      text: 'SELECT * FROM update_user($1)',
+      values: [JSON.stringify(user)],
     };
     const results = await client.query(query);
-
-    if (results.rowCount > 0) {
-      return true; 
-
-  } else {
-      return false;
-  };
+    return results.rows[0];
   },
 };
 

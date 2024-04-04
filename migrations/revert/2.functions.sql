@@ -6,4 +6,6 @@ DROP FUNCTION add_user(json);
 
 DROP FUNCTION add_group(json);
 
+DROP FUNCTION update_user(json);
+
 COMMIT;

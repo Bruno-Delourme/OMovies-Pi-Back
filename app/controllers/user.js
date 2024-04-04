@@ -37,9 +37,9 @@ const userController = {
     if(isEqual) {
       delete result.hashed_password;
 
-      const token = jwt.sign( result, process.env.JWT_SECRET);
+      const token = jwt.sign({ user: result }, process.env.JWT_SECRET);
 
-      res.json({ status: 'success', data: result, token });
+      res.json({ status: 'success', data: { utilisateur: result, token } });
 
     } else {
       debug('Erreur lors de la connexion :', error);
@@ -63,20 +63,41 @@ const userController = {
   },
 
   async update(req, res) {
-
     debug('user update controller called');
-    const { id } = req.params;
+    
+    const {id, pseudo, email, date_of_birth, password } = req.body;
 
-    const { pseudo, email, date_of_birth, password } = req.body;
+    let userData = {};
+    let hashedPassword;
 
-    const update = await userDataMapper.update(id, pseudo, email, date_of_birth, password);
+    try {
+      if (pseudo !== undefined) {
+      userData.pseudo = pseudo;
+     }
+      if (email !== undefined) {
+      userData.email = email;
+     }
+      if (date_of_birth !== undefined) {
+      userData.date_of_birth = date_of_birth;
+     }
+      if (password !== undefined) {
+      hashedPassword = await bcrypt.hash(password, parseInt(process.env.PASSWORD_SALT));
+      userData.password = hashedPassword;
+     }
+     console.log(id);
+     console.log(pseudo);
+     console.log(email);
+     console.log(date_of_birth);
+     console.log(hashedPassword);
+      
+      const updatedUser = await userDataMapper.update({id, pseudo, email, date_of_birth, hashed_password: hashedPassword });
+      console.log(updatedUser);
+      res.json({ status: 'success', data: updatedUser });
 
-    if (update) {
-      res.json({ status: 'success' });
-
-    } else {
-      res.json({ status: 'fail' });
-    };
+  } catch (error) {
+    debug('Erreur lors de la modification de l\'utilisateur :', error);
+    res.status(500).json({ status: 'error', message: 'Erreur lors de la modification de l\'utilisateur.' });
+  };
   },
 };
 

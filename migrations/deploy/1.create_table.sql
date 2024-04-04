@@ -10,7 +10,7 @@ CREATE TABLE "group" (
   "id" INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   "name" TEXT NOT NULL,
   "createdAt" TIMESTAMPTZ NOT NULL default(now()),
-  "updatedAt" TIMESTAMPTZ
+  "updatedAt" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE "user" (
@@ -23,7 +23,7 @@ CREATE TABLE "user" (
   "to_review" TEXT,
   "group_id" INT REFERENCES "group"(id),
   "createdAt" TIMESTAMPTZ NOT NULL default(now()),
-  "updatedAt" TIMESTAMPTZ
+  "updatedAt" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE "movie" (
@@ -33,14 +33,14 @@ CREATE TABLE "movie" (
   "description" TEXT,
   "genre" TEXT,
   "createdAt" TIMESTAMPTZ NOT NULL default(now()),
-  "updatedAt" TIMESTAMPTZ
+  "updatedAt" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
 CREATE TABLE "vote" (
   "movie_id" INT REFERENCES "movie"(id),
   "user_id" INT REFERENCES "user"(id),
   "createdAt" TIMESTAMPTZ NOT NULL default(now()),
-  "updatedAt" TIMESTAMPTZ
+  "updatedAt" TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
 COMMIT;

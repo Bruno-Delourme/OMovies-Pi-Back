@@ -26,13 +26,14 @@
 # DELETE {{endpoint}}/api/user/2
 
 
-PATCH {{endpoint}}/api/user
-content-type: application/json
+# PATCH {{endpoint}}/api/user
+# content-type: application/json
 
-{
-  "id": 1,
-  "pseudo": "Pollux",
-  "email": "pollux@chien.fr",
-  "date_of_birth": "1789/07/14",
-  "password": "pollux"
-}
+# {
+#   "id": 1,
+#   "pseudo": "toutou",
+#   "email": "blanc@vert.fr",
+#   "date_of_birth": "2020/04/04",
+#   "password": "orange"
+  
+# }
