@@ -2,11 +2,16 @@ const client = require('../data/client.js');
 
 const listModel = {
   async insert(movie) {
-    const query = {
+    const queryMovie = {
       text: 'SELECT * FROM add_movie($1)',
       values: [JSON.stringify(movie)],
     };
-    const results = await client.query(query);
+    
+    const queryList = {
+      text: 'INSERT INTO "movie" (list) VALUES = $1',
+      values: [JSON.stringify(movie)],
+    }
+    const results = await client.query(queryMovie, queryList);
     return results.rows[0];
   },
 
