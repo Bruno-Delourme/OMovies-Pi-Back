@@ -20,4 +20,6 @@ router.get("/popularMovies", movieController.fetchPopularMovie);
 
 router.get("/recommendation/:id", movieController.fetchRecommendation);
 
+debug('API movie router initialized');
+
 module.exports = router;

@@ -40,13 +40,39 @@
 
 
 
-# POST {{endpoint}}/api/addToList
-# content-type: application/json
+# POST {{endpoint}}/api/login
+# Content-Type: application/json
 
 # {
-#   "title": "Star Wars",
-#   "poster_path": "Chemin des étoiles",
-#   "overview": "Il était une fois, une étoile...",
+#   "pseudo": "Toto",
+#   "password": "toto"
+# }
+
+
+
+# POST {{endpoint}}/api/addToList
+# content-type: application/json
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUb3RvIiwiZW1haWwiOiJ0b3RvQHRvdG8uZnIiLCJkYXRlX29mX2JpcnRoIjoiMTk5MC0wNS0xMVQyMjowMDowMC4wMDBaIiwibGlzdCI6bnVsbCwidG9fcmV2aWV3IjpudWxsLCJncm91cF9pZCI6bnVsbCwiY3JlYXRlZF9hdCI6IjIwMjQtMDQtMDVUMTI6MDQ6NTYuMzYxWiIsInVwZGF0ZWRfYXQiOm51bGx9LCJpYXQiOjE3MTIzMTg3MjV9.WfOjS-IBy_85OugiEXk9sKcXh_Z8tOL9oo_BQE-hqmM
+
+# {
+#   "id": 1,
+#   "title": "Hunter",
+#   "poster_path": "Chemin des chasseurs",
+#   "overview": "Il était une fois, un lapin...",
+#   "genres": ["humour"]
+# }
+
+
+
+# POST {{endpoint}}/api/addToToReview
+# content-type: application/json
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUb3RvIiwiZW1haWwiOiJ0b3RvQHRvdG8uZnIiLCJkYXRlX29mX2JpcnRoIjoiMTk5MC0wNS0xMVQyMjowMDowMC4wMDBaIiwibGlzdCI6bnVsbCwidG9fcmV2aWV3IjpudWxsLCJncm91cF9pZCI6bnVsbCwiY3JlYXRlZF9hdCI6IjIwMjQtMDQtMDVUMTI6MDQ6NTYuMzYxWiIsInVwZGF0ZWRfYXQiOm51bGx9LCJpYXQiOjE3MTIzMTg3MjV9.WfOjS-IBy_85OugiEXk9sKcXh_Z8tOL9oo_BQE-hqmM
+
+# {
+#   "id": 1,
+#   "title": "Inception",
+#   "poster_path": "Chemin de la toupie",
+#   "overview": "Il était une fois, une toupie...",
 #   "genres": ["action", "fantaisy"]
 # }
 

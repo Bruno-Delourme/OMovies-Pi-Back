@@ -1,7 +1,8 @@
 const debug = require('debug')('app:UserRouter');
 const express = require('express');
 const { userController } = require('../controllers');
-const validation = require('../service/validation/validate.js')
+const validation = require('../service/validation/validate.js');
+const authMiddleware = require('../middlewares/authentication.js');
 
 const router = express.Router();
 
@@ -9,9 +10,9 @@ router.post("/user", validation.createUser, userController.create);
 
 router.post("/login", validation.loginUser, userController.login);
 
-router.patch("/user", validation.updateUser, userController.update)
+router.patch("/user", authMiddleware.authMiddleware, validation.updateUser, userController.update);
 
-router.delete("/user/:id", userController.delete);
+router.delete("/user/:id", authMiddleware.authMiddleware,  userController.delete);
 
 debug('API user router initialized');
 

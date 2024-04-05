@@ -149,7 +149,7 @@ async fetchBySearchBar(req, res) {
       moviesByKeyword: moviesNamesByKeyword,
       moviesByActor: moviesByActor
     };
-    
+    console.log(combinedResults);
     res.json(combinedResults);
 
   } catch (error) {
