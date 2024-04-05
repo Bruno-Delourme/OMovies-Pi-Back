@@ -31,14 +31,22 @@ async fetchMoviesByKeyword(req, res) {
     if (!response.ok) {
       throw new Error('Erreur réseau ou réponse non valide');
     };
-    const movies = await response.json();
 
-    res.json(movies);
+    const moviesData = await response.json();
+    const movies = moviesData.results;
+
+    const moviesWithDetails = await Promise.all(movies.map(async (movie) => {
+      const detailsResponse = await fetch(`${process.env.API_TMDB_BASE_URL}movie/${movie.id}?api_key=${process.env.API_TMDB_KEY}&language=fr-FR`);
+      const details = await detailsResponse.json();
+      return details;
+    }));
+
+    res.json(moviesWithDetails);
 
   } catch (error) {
-    debug('Erreur lors de la récupération des films par mots clefs :', error);
-    res.status(500).json({ error: 'Erreur lors de la récupération des films par mots clefs.' });
-  };
+    debug('Erreur lors de la récupération des films par mots clés :', error);
+    res.status(500).json({ error: 'Erreur lors de la récupération des films par mots clés.' });
+  }
 },
 
 async fetchMovieByTitle(req, res) {

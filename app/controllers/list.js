@@ -15,8 +15,9 @@ const listController = {
     const picture = poster_path || 'Pas d\'affiche';
 
     try {
-      const insertToList = await listDataMapper.insert({ name: title, picture, description: overview, genre: genres });
-      res.json({ status: 'success', data: insertToList });
+      const insertIntoMovie = await listDataMapper.insertIntoMovie({ name: title, picture, description: overview, genre: genres });
+      const insertIntoList = await listDataMapper.insertIntoList({ name: title, picture });
+      res.json({ status: 'success', data: {insertIntoMovie, insertIntoList} });
 
   } catch {
       debug('Erreur lors de l\'insertion dans la liste :', error);
