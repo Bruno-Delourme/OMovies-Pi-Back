@@ -22,30 +22,38 @@ async fetchMovieById(req, res) {
   };
 },
 
-async fetchMoviesByKeyword(req, res) {
+async fetchMoviesByGenre(req, res) {
 
-  const keyword = req.params.keyword;
+  const genre = req.params.genre;
+  
   try {
-    const response = await fetch(`${process.env.API_TMDB_BASE_URL}search/keyword?api_key=${process.env.API_TMDB_KEY}&query=${keyword}&language=fr-FR`);
+    const genreResponse = await fetch(`${process.env.API_TMDB_BASE_URL}/genre/movie/list?api_key=${process.env.API_TMDB_KEY}&language=fr-FR`);
+
+    if (!genreResponse.ok) {
+      throw new Error('Erreur réseau ou réponse non valide lors de la récupération des genres');
+    };
+
+    const genreData = await genreResponse.json();
+    const genreId = genreData.genres.find(g => g.name.toLowerCase() === genre.toLowerCase())?.id;
+
+    if (!genreId) {
+      throw new Error('Genre non trouvé');
+    };
+
+    const response = await fetch(`${process.env.API_TMDB_BASE_URL}/discover/movie?api_key=${process.env.API_TMDB_KEY}&language=fr-FR&sort_by=popularity.desc&with_genres=${genreId}`);
 
     if (!response.ok) {
-      throw new Error('Erreur réseau ou réponse non valide');
+      throw new Error('Erreur réseau ou réponse non valide lors de la récupération des films');
     };
 
     const moviesData = await response.json();
     const movies = moviesData.results;
 
-    const moviesWithDetails = await Promise.all(movies.map(async (movie) => {
-      const detailsResponse = await fetch(`${process.env.API_TMDB_BASE_URL}movie/${movie.id}?api_key=${process.env.API_TMDB_KEY}&language=fr-FR`);
-      const details = await detailsResponse.json();
-      return details;
-    }));
-
-    res.json(moviesWithDetails);
+    res.json(movies);
 
   } catch (error) {
-    debug('Erreur lors de la récupération des films par mots clés :', error);
-    res.status(500).json({ error: 'Erreur lors de la récupération des films par mots clés.' });
+    console.error('Erreur lors de la récupération des films par genre :', error);
+    res.status(500).json({ error: 'Erreur lors de la récupération des films par genre.' });
   }
 },
 
