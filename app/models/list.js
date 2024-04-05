@@ -10,6 +10,11 @@ const listModel = {
     return results.rows[0];
   },
 
+  async show() {
+    const results = await client.query('SELECT * FROM "movie"');
+    return results.rows;
+  },
+
   async delete(id) {
     const query = {
       text: 'DELETE FROM "movie" WHERE id = $1',

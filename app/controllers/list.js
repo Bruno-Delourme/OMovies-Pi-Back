@@ -19,10 +19,23 @@ const listController = {
       res.json({ status: 'success', data: insertToList });
 
   } catch {
-    debug('Erreur lors de l\'insertion dans la liste :', error);
+      debug('Erreur lors de l\'insertion dans la liste :', error);
       res.status(500).json({ status: 'error', message: 'Erreur lors de l\'insertion dans la liste.' });
   };
 },
+
+  async show(req, res) {
+    debug('list show controller called');
+
+    try {
+      const list = await listDataMapper.show();
+          res.json({ status: 'success', data: list });
+    } catch {
+      debug('Erreur lors de l\'affichage de la liste :', error);
+      res.status(500).json({ status: 'error', message: 'Erreur lors de l\'affichage de la liste.' });
+    };
+    
+  },
 
   async delete(req, res) {
     debug('list delete controller called');
@@ -37,7 +50,7 @@ const listController = {
     } else {
       res.json({ status: 'fail' });
     };
-  },
+},
 };
 
 module.exports = listController;

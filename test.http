@@ -40,7 +40,7 @@
 
 
 
-# POST {{endpoint}}/api/addList
+# POST {{endpoint}}/api/addToList
 # content-type: application/json
 
 # {
@@ -52,4 +52,8 @@
 
 
 
- DELETE {{endpoint}}/api/removeFromList/1
+# GET {{endpoint}}/api/list
+
+
+
+#  DELETE {{endpoint}}/api/removeFromList/1
