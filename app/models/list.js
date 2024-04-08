@@ -9,7 +9,6 @@ const listModel = {
         values: [movie.name],
       };
       const checkResult = await client.query(checkQuery);
-      console.log(checkResult);
 
       if (checkResult.rows.length > 0) {
         return { message: 'Le film est déjà enregistré.' }
@@ -23,19 +22,17 @@ const listModel = {
       const results = await client.query(insertQuery);
       return results.rows[0];      
 
-    } catch {
+    } catch (error) {
       console.error('Erreur lors de l\'insertion du film :', error); // Gestion des erreurs
         throw error;
     };
-    
-    
   },
 
-  async insertIntoList(movie) {
+  async insertIntoList(user, movie) {
     try {
       const userQuery = {
           text: 'SELECT list FROM "user" WHERE id = $1',
-          values: [movie.id],
+          values: [user.id],
       };
 
       const userResult = await client.query(userQuery);
@@ -90,15 +87,32 @@ const listModel = {
     return results.rows;
   },
 
-  async delete(id) {
-    const query = {
-      text: 'DELETE FROM "movie" WHERE id = $1',
-      values: [id],
+  async deleteFromMovie(movie) {
+    try {
+      const query = {
+      text: 'DELETE FROM "movie" WHERE name = $1',
+      values: [movie.name],
     };
     const results = await client.query(query);
 
     return !!results.rowCount;
+
+    } catch (error) {
+      console.error('Erreur lors de la suppression du film :', error); // Gestion des erreurs
+        throw error;
+    };
   },
+
+  // async deleteFromList(user, movie) {
+  //   try {
+  //     const userQuery = {
+  //       text: 'SELECT list FROM "user" WHERE id = $1',
+  //       values: [user.id]
+  //     },
+
+  //     const userResult
+  //   }
+  // }
 };
 
 module.exports = listModel;

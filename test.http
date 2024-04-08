@@ -7,7 +7,7 @@
 # {
 #   "pseudo": "Toto",
 #   "email": "toto@toto.fr",
-#   "date_of_birth": "1990/05/12",
+#   "date_of_birth": "12/05/1990",
 #   "password": "toto"
 # }
 
@@ -34,25 +34,15 @@
 #   "id": 1,
 #   "pseudo": "toutou",
 #   "email": "blanc@vert.fr",
-#   "date_of_birth": "2020/04/04",
+#   "date_of_birth": "04/04/2020",
 #   "password": "orange"
-# }
-
-
-
-# POST {{endpoint}}/api/login
-# Content-Type: application/json
-
-# {
-#   "pseudo": "Toto",
-#   "password": "toto"
 # }
 
 
 
 # POST {{endpoint}}/api/addToList
 # content-type: application/json
-# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUb3RvIiwiZW1haWwiOiJ0b3RvQHRvdG8uZnIiLCJkYXRlX29mX2JpcnRoIjoiMTk5MC0wNS0xMVQyMjowMDowMC4wMDBaIiwibGlzdCI6bnVsbCwidG9fcmV2aWV3IjpudWxsLCJncm91cF9pZCI6bnVsbCwiY3JlYXRlZF9hdCI6IjIwMjQtMDQtMDVUMTI6MDQ6NTYuMzYxWiIsInVwZGF0ZWRfYXQiOm51bGx9LCJpYXQiOjE3MTIzMTg3MjV9.WfOjS-IBy_85OugiEXk9sKcXh_Z8tOL9oo_BQE-hqmM
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUb3RvIiwiZW1haWwiOiJ0b3RvQHRvdG8uZnIiLCJkYXRlX29mX2JpcnRoIjoiMTk5MC0wNS0xMVQyMjowMDowMC4wMDBaIiwibGlzdCI6bnVsbCwidG9fcmV2aWV3IjpudWxsLCJncm91cF9pZCI6bnVsbCwiY3JlYXRlZF9hdCI6IjIwMjQtMDQtMDhUMDk6NDg6MTYuNTY2WiIsInVwZGF0ZWRfYXQiOm51bGx9LCJpYXQiOjE3MTI1Njk3NjB9.8OchqP2NtNCN1MJLwn12pp2vmZ1s7643k1Dkt4RYDno
 
 # {
 #   "id": 1,
@@ -66,7 +56,7 @@
 
 # POST {{endpoint}}/api/addToToReview
 # content-type: application/json
-# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUb3RvIiwiZW1haWwiOiJ0b3RvQHRvdG8uZnIiLCJkYXRlX29mX2JpcnRoIjoiMTk5MC0wNS0xMVQyMjowMDowMC4wMDBaIiwibGlzdCI6bnVsbCwidG9fcmV2aWV3IjpudWxsLCJncm91cF9pZCI6bnVsbCwiY3JlYXRlZF9hdCI6IjIwMjQtMDQtMDVUMTI6MDQ6NTYuMzYxWiIsInVwZGF0ZWRfYXQiOm51bGx9LCJpYXQiOjE3MTIzMTg3MjV9.WfOjS-IBy_85OugiEXk9sKcXh_Z8tOL9oo_BQE-hqmM
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUb3RvIiwiZW1haWwiOiJ0b3RvQHRvdG8uZnIiLCJkYXRlX29mX2JpcnRoIjoiMTk5MC0wNS0xMVQyMjowMDowMC4wMDBaIiwibGlzdCI6bnVsbCwidG9fcmV2aWV3IjpudWxsLCJncm91cF9pZCI6bnVsbCwiY3JlYXRlZF9hdCI6IjIwMjQtMDQtMDhUMDk6NDg6MTYuNTY2WiIsInVwZGF0ZWRfYXQiOm51bGx9LCJpYXQiOjE3MTI1Njk3NjB9.8OchqP2NtNCN1MJLwn12pp2vmZ1s7643k1Dkt4RYDno
 
 # {
 #   "id": 1,

@@ -183,7 +183,7 @@ async fetchBySearchBar(req, res) {
       actors,
       moviesByActor
     };
-console.log(combinedResults);
+    console.log(combinedResults);
     res.json(combinedResults);
 
   } catch (error) {
