@@ -131,22 +131,31 @@ async fetchMoviesByActor(req, res) {
   }
 },
 
-async fetchNewMovies(_, res) {
+async fetchNewMovies(req, res) {
+
+  const language = 'fr-FR';
+  const page = req.query.page || 1;
 
   try {
-    const response = await fetch(`${process.env.API_TMDB_BASE_URL}movie/now_playing?api_key=${process.env.API_TMDB_KEY}&language=fr-FR`);
+    const response = await fetch(`${process.env.API_TMDB_BASE_URL}movie/now_playing?api_key=${process.env.API_TMDB_KEY}&language=${language}&page=${page}`);
 
     if (!response.ok) {
       throw new Error('Erreur réseau ou réponse non valide');
     };
-    const newMovies = await response.json();
 
-    res.json(newMovies);
+    const newMovies = await response.json();
+    const movies = newMovies.results;
+
+    res.json({
+      movies: movies,
+      currentPage: page,
+      totalPages: newMovies.total_pages
+    });
 
   } catch (error) {
-    debug('Erreur lors de la récupération des nouveaux films :', error);
+    console.error('Erreur lors de la récupération des nouveaux films :', error);
     res.status(500).json({ error: 'Erreur lors de la récupération des nouveaux films.' });
-  };
+  }
 },
 
 async fetchBySearchBar(req, res) {
