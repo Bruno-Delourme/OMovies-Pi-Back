@@ -67,22 +67,32 @@ async fetchMoviesByGenre(req, res) {
 async fetchMovieByTitle(req, res) {
 
     const movieTitle = req.params.title;
+    const language = 'fr-FR';
+    const pageSize = 20;
+    const page = req.query.page || 1; 
+
     try {
       const encodedTitle = encodeURIComponent(movieTitle);
       
-      const response = await fetch(`${process.env.API_TMDB_BASE_URL}search/movie?api_key=${process.env.API_TMDB_KEY}&query=${encodedTitle}&language=fr-FR`);
+      const response = await fetch(`${process.env.API_TMDB_BASE_URL}search/movie?api_key=${process.env.API_TMDB_KEY}&query=${encodedTitle}&language=${language}&page=${page}`);
       
       if (!response.ok) {
         throw new Error('Erreur de réseau ou réponse non valide');
       };
       
-      const movie = await response.json();
-      res.json(movie)
+      const movieData = await response.json();
+      const movies = movieData.results;
 
-    } catch (error) {
-      debug('Erreur lors de la récupération des films par titre :', error);
-      throw new Error('Erreur lors de la récupération des films par titre.');
-    };
+    res.json({
+      movies: movies,
+      currentPage: page,
+      totalPages: movieData.total_pages
+    });
+
+  } catch (error) {
+    console.error('Erreur lors de la récupération des films par titre :', error);
+    res.status(500).json({ error: 'Erreur lors de la récupération des films par titre.' });
+  }
 },
 
 async fetchActorDetails(req, res) {
