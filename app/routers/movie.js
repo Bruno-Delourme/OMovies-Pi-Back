@@ -10,7 +10,7 @@ router.get("/movies/:genre", movieController.fetchMoviesByGenre);
 
 router.get("/movieByTitle/:title", movieController.fetchMovieByTitle);
 
-router.get("/moviesByActor/:actor", movieController.fetchActorDetails);
+router.get("/moviesByActor/:actor", movieController.fetchMoviesByActor);
 
 router.get("/newMovies", movieController.fetchNewMovies);
 

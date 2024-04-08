@@ -26,7 +26,6 @@ async fetchMoviesByGenre(req, res) {
 
   const genre = req.params.genre;
   const language = 'fr-FR';
-  const pageSize = 20;
   const page = req.query.page || 1;
 
   try {
@@ -41,8 +40,6 @@ async fetchMoviesByGenre(req, res) {
     if (!genreId) {
       throw new Error('Genre non trouvé');
     };
-
-    const offset = (page - 1) * pageSize;
 
     const response = await fetch(`${process.env.API_TMDB_BASE_URL}/discover/movie?api_key=${process.env.API_TMDB_KEY}&language=${language}&sort_by=popularity.desc&with_genres=${genreId}&page=${page}`);
     if (!response.ok) {
@@ -68,7 +65,6 @@ async fetchMovieByTitle(req, res) {
 
     const movieTitle = req.params.title;
     const language = 'fr-FR';
-    const pageSize = 20;
     const page = req.query.page || 1; 
 
     try {
@@ -95,25 +91,44 @@ async fetchMovieByTitle(req, res) {
   }
 },
 
-async fetchActorDetails(req, res) {
+async fetchMoviesByActor(req, res) {
   
-  const actor = req.params.actor;
-  
+  const searchTerm = req.params.actor;
+  const language = 'fr-FR';
+  const page = req.query.page || 2;
+
   try {
-    const encodedActor = encodeURIComponent(actor);
-    const response = await fetch(`${process.env.API_TMDB_BASE_URL}search/person?api_key=${process.env.API_TMDB_KEY}&query=${encodedActor}&language=fr-FR`);
+    const encodedSearchTerm = encodeURIComponent(searchTerm);
+    const responseByActor = await fetch(`${process.env.API_TMDB_BASE_URL}search/person?api_key=${process.env.API_TMDB_KEY}&query=${encodedSearchTerm}&language=${language}`);
 
-    if (!response.ok) {
-      throw new Error('Erreur réseau ou réponse non valide');
+    if (!responseByActor.ok) {
+      throw new Error('Erreur de réseau ou réponse non valide');
     };
-    const actorDetails = await response.json();
 
-    res.json(actorDetails);
+    const actorsData = await responseByActor.json();
+
+    const moviesByActorPromises = actorsData.results.map(async actor => {
+      const response = await fetch(`${process.env.API_TMDB_BASE_URL}person/${actor.id}/movie_credits?api_key=${process.env.API_TMDB_KEY}&language=${language}&page=${page}`);
+      if (response.ok) {
+        
+        const credits = await response.json();
+        return credits.cast.map(movie => ({ title: movie.title, poster_path: movie.poster_path }));
+
+      } else {
+        return [];
+      }
+    });
+
+    const moviesByActor = await Promise.all(moviesByActorPromises);
+
+    const allMovies = moviesByActor.reduce((acc, movies) => acc.concat(movies), []);
+
+    res.json(allMovies);
 
   } catch (error) {
-    debug('Erreur lors de la récupération des films par acteur :', error);
+    console.error('Erreur lors de la récupération des films par acteur :', error);
     res.status(500).json({ error: 'Erreur lors de la récupération des films par acteur.' });
-  };
+  }
 },
 
 async fetchNewMovies(_, res) {
