@@ -224,22 +224,31 @@ async fetchBySearchBar(req, res) {
   }
 },
 
-async fetchPopularMovie(_, res) {
+async fetchPopularMovie(req, res) {
+
+  const language = 'fr-FR';
+  const page = req.query.page || 1;
 
   try {
-    const response = await fetch(`${process.env.API_TMDB_BASE_URL}movie/popular?api_key=${process.env.API_TMDB_KEY}&language=fr-FR`);
+    const response = await fetch(`${process.env.API_TMDB_BASE_URL}movie/popular?api_key=${process.env.API_TMDB_KEY}&language=${language}&page=${page}`);
 
     if (!response.ok) {
       throw new Error('Erreur réseau ou réponse non valide');
     };
-    const popularMovies = await response.json();
 
-    res.json(popularMovies);
+    const popularMovies = await response.json();
+    const movies = popularMovies.results;
+
+    res.json({
+      movies: movies,
+      currentPage: page,
+      totalPages: popularMovies.total_pages
+    });
 
   } catch (error) {
-    debug('Erreur lors de la récupération des films populaires :', error);
-    res.status(500).json({ error: 'Erreur lors de la récupération des films populaires.' })
-  };
+    console.error('Erreur lors de la récupération des films populaires :', error);
+    res.status(500).json({ error: 'Erreur lors de la récupération des films populaires.' });
+  }
 },
 
 async fetchRecommendation(req, res) {
