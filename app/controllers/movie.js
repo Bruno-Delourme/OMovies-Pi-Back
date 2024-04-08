@@ -119,29 +119,54 @@ async fetchNewMovies(_, res) {
 
 async fetchBySearchBar(req, res) {
 
-  const searchTerm = req.query.query; 
+  const searchTerm = req.query.query;
 
   try {
+    // Search by title
     const encodedSearchTerm = encodeURIComponent(searchTerm);
-
     const responseByTitle = await fetch(`${process.env.API_TMDB_BASE_URL}search/movie?api_key=${process.env.API_TMDB_KEY}&query=${encodedSearchTerm}&language=fr-FR`);
-    const responseByKeyword = await fetch(`${process.env.API_TMDB_BASE_URL}search/keyword?api_key=${process.env.API_TMDB_KEY}&query=${encodedSearchTerm}&language=fr-FR`);
+
+    // Search by genre
+    const genreResponse = await fetch(`${process.env.API_TMDB_BASE_URL}/genre/movie/list?api_key=${process.env.API_TMDB_KEY}&language=fr-FR`);
+    if (!genreResponse.ok) {
+      throw new Error('Erreur réseau ou réponse non valide lors de la récupération des genres');
+    }
+    const genreData = await genreResponse.json();
+    let genreId;
+    genreData.genres.forEach(genre => {
+      if (genre.name.toLowerCase() === searchTerm.toLowerCase()) {
+        genreId = genre.id;
+      }
+    });
+
+    // Search by actor
     const responseByActor = await fetch(`${process.env.API_TMDB_BASE_URL}search/person?api_key=${process.env.API_TMDB_KEY}&query=${encodedSearchTerm}&language=fr-FR`);
 
-    if (!responseByTitle.ok || !responseByKeyword.ok || !responseByActor.ok) {
+    // Checking answers
+    if (!responseByTitle.ok || !responseByActor.ok) {
       throw new Error('Erreur de réseau ou réponse non valide');
     }
 
-    const moviesByTitle = await responseByTitle.json();
-    const moviesByKeyword = await responseByKeyword.json();
-    const actors = await responseByActor.json();
+    // Retrieve the answers
+    const moviesByTitleData = await responseByTitle.json();
+    const moviesByActorData = await responseByActor.json();
     
+    // Filter results by gender
+    let moviesByGenre = [];
+    if (genreId) {
+      const responseByGenre = await fetch(`${process.env.API_TMDB_BASE_URL}/discover/movie?api_key=${process.env.API_TMDB_KEY}&language=fr-FR&sort_by=popularity.desc&with_genres=${genreId}`);
+      if (responseByGenre.ok) {
+        const moviesByGenreData = await responseByGenre.json();
+        moviesByGenre = moviesByGenreData.results;
+      }
+    }
 
-    const moviesByTitleNames = moviesByTitle.results.map(movie => ({ title: movie.title, poster_path: movie.poster_path }));
-    
-    const moviesNamesByKeyword = moviesByKeyword.results.map(keyword => keyword.name);
+    // Retrieve movies by title and actors
+    const moviesByTitle = moviesByTitleData.results.map(movie => ({ title: movie.title, poster_path: movie.poster_path }));
+    const actors = moviesByActorData.results.map(actor => actor.name);
 
-    const moviesByActorPromises = actors.results.map(async actor => {
+    // Retrieve the films in which the actors starred
+    const moviesByActorPromises = moviesByActorData.results.map(async actor => {
       const response = await fetch(`${process.env.API_TMDB_BASE_URL}person/${actor.id}/movie_credits?api_key=${process.env.API_TMDB_KEY}&language=fr-FR`);
       if (response.ok) {
         const credits = await response.json();
@@ -153,16 +178,17 @@ async fetchBySearchBar(req, res) {
     const moviesByActor = await Promise.all(moviesByActorPromises);
 
     const combinedResults = {
-      moviesByTitle: moviesByTitleNames,
-      moviesByKeyword: moviesNamesByKeyword,
-      moviesByActor: moviesByActor
+      moviesByTitle,
+      moviesByGenre,
+      actors,
+      moviesByActor
     };
-    console.log(combinedResults);
+console.log(combinedResults);
     res.json(combinedResults);
 
   } catch (error) {
-    console.error('Erreur lors de la récupération des films par titre, mot-clé ou acteur :', error);
-    res.status(500).json({ error: 'Erreur lors de la récupération des films par titre, mot-clé ou acteur.' });
+    console.error('Erreur lors de la récupération des films par titre, genre ou acteur :', error);
+    res.status(500).json({ error: 'Erreur lors de la récupération des films par titre, genre ou acteur.' });
   }
 },
 
