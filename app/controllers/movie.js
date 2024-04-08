@@ -25,23 +25,26 @@ async fetchMovieById(req, res) {
 async fetchMoviesByGenre(req, res) {
 
   const genre = req.params.genre;
-  
-  try {
-    const genreResponse = await fetch(`${process.env.API_TMDB_BASE_URL}/genre/movie/list?api_key=${process.env.API_TMDB_KEY}&language=fr-FR`);
+  const language = 'fr-FR';
+  const pageSize = 20;
+  const page = req.query.page || 1;
 
+  try {
+    const genreResponse = await fetch(`${process.env.API_TMDB_BASE_URL}/genre/movie/list?api_key=${process.env.API_TMDB_KEY}&language=${language}`);
+    
     if (!genreResponse.ok) {
       throw new Error('Erreur réseau ou réponse non valide lors de la récupération des genres');
     };
 
     const genreData = await genreResponse.json();
     const genreId = genreData.genres.find(g => g.name.toLowerCase() === genre.toLowerCase())?.id;
-
     if (!genreId) {
       throw new Error('Genre non trouvé');
     };
 
-    const response = await fetch(`${process.env.API_TMDB_BASE_URL}/discover/movie?api_key=${process.env.API_TMDB_KEY}&language=fr-FR&sort_by=popularity.desc&with_genres=${genreId}`);
+    const offset = (page - 1) * pageSize;
 
+    const response = await fetch(`${process.env.API_TMDB_BASE_URL}/discover/movie?api_key=${process.env.API_TMDB_KEY}&language=${language}&sort_by=popularity.desc&with_genres=${genreId}&page=${page}`);
     if (!response.ok) {
       throw new Error('Erreur réseau ou réponse non valide lors de la récupération des films');
     };
@@ -49,7 +52,11 @@ async fetchMoviesByGenre(req, res) {
     const moviesData = await response.json();
     const movies = moviesData.results;
 
-    res.json(movies);
+    res.json({
+      movies: movies,
+      currentPage: page,
+      totalPages: moviesData.total_pages
+    });
 
   } catch (error) {
     console.error('Erreur lors de la récupération des films par genre :', error);

@@ -49,6 +49,7 @@ const listModel = {
 
       const results = await client.query(query);
       return results.rows[0];
+
   } catch (error) {
       console.error('Erreur lors de l\'insertion dans la liste :', error);
       throw error;
@@ -103,16 +104,35 @@ const listModel = {
     };
   },
 
-  // async deleteFromList(user, movie) {
-  //   try {
-  //     const userQuery = {
-  //       text: 'SELECT list FROM "user" WHERE id = $1',
-  //       values: [user.id]
-  //     },
+  async deleteFromList(user, movie) {
+    try {
+      const userQuery = {
+        text: 'SELECT list FROM "user" WHERE id = $1',
+        values: [user.id]
+      };
 
-  //     const userResult
-  //   }
-  // }
+      const userResult = await client.query(userQuery);
+      let toList = userResult.rows[0].list || '';
+
+      if (!toList.includes(movieName)) {
+        return { message: 'Le film n\' est pas dans la liste' };
+      };
+
+      toList = toList.replace(new RegExp(`, ${movie.name}(?={)`, 'g'), '');
+
+      const query = {
+        text: 'UPDATE "user" SET list = $1 WHERE id = $2',
+        values: [toList, user.id],
+      };
+
+      await client.query(query);
+      return { message: 'Le film a été supprimé de la liste.' };
+
+    } catch (error) {
+      console.error('Erreur lors de la suppression du film de la liste :', error);
+        throw error;
+    };
+  },
 };
 
 module.exports = listModel;

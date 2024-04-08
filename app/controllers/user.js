@@ -9,10 +9,6 @@ const userController = {
     debug('user create controller called');
 
     const { pseudo, email, date_of_birth, password } = req.body;
-    console.log(pseudo);
-    console.log(email);
-    console.log(date_of_birth);
-    console.log(password);
 
     try {
       const hashedPassword = await bcrypt.hash(password, parseInt(process.env.PASSWORD_SALT));
