@@ -263,19 +263,28 @@ async fetchPopularMovie(req, res) {
 async fetchRecommendation(req, res) {
 
   const movieId = req.params.id;
+  const language = 'fr-FR';
+  const page = req.query.page || 1;
+
   try {
-    const response = await fetch(`${process.env.API_TMDB_BASE_URL}movie/${movieId}/recommendations?api_key=${process.env.API_TMDB_KEY}&language=fr-FR`);
+    const response = await fetch(`${process.env.API_TMDB_BASE_URL}movie/${movieId}/recommendations?api_key=${process.env.API_TMDB_KEY}&language=${language}&page=${page}`);
 
     if (!response.ok) {
       throw new Error('Erreur réseau ou réponse non valide');
     };
-    const recommendation = await response.json();
 
-    res.json(recommendation);
+    const recommendation = await response.json();
+    const recommendationResults = recommendation.results;
+
+    res.json({
+      recommendations: recommendationResults,
+      currentPage: page,
+      totalPages: recommendation.total_pages
+    });
 
   } catch (error) {
-    debug('Erreur lors de la récupération de la recommendation :', error);
-    res.status(500).json({ error: 'Erreur lors de la récupération de la recommendation.' })
+    console.error('Erreur lors de la récupération des recommandations :', error);
+    res.status(500).json({ error: 'Erreur lors de la récupération des recommandations.' });
   }
 },
 
