@@ -1,25 +1,39 @@
 const debug = require('debug')('app:controller');
 require('dotenv').config();
-
+const NodeCache = require('node-cache');
+const cache = new NodeCache({ stdTTL: 604800 });
+// --url 'https://api.themoviedb.org/3/movie/11/credits?language=en-US' \
 const movieController = {
 
 async fetchMovieById(req, res) {
 
   const movieId = req.params.id;
-  try {
-    const response = await fetch(`${process.env.API_TMDB_BASE_URL}movie/${movieId}?api_key=${process.env.API_TMDB_KEY}&language=fr-FR`);
 
-    if (!response.ok) {
+  try {
+    const movieResponse = await fetch(`${process.env.API_TMDB_BASE_URL}movie/${movieId}?api_key=${process.env.API_TMDB_KEY}&language=fr-FR`);
+
+    if (!movieResponse.ok) {
       throw new Error('Erreur de réseau ou réponse non valide');
     };
-    const movie = await response.json();
-    
+
+    const movie = await movieResponse.json();
+
+    const creditsResponse = await fetch(`${process.env.API_TMDB_BASE_URL}movie/${movieId}/credits?api_key=${process.env.API_TMDB_KEY}`);
+
+    if (!creditsResponse.ok) {
+      throw new Error('Erreur de réseau ou réponse non valide lors de la récupération des crédits');
+    };
+
+    const credits = await creditsResponse.json();
+
+    movie.credits = credits;
+
     res.json(movie);
 
   } catch (error) {
     debug('Erreur lors de la récupération des films par id :', error);
     res.status(500).json({ error: 'Erreur lors de la récupération des films par id.' });
-  };
+  }
 },
 
 async fetchMoviesByGenre(req, res) {
@@ -27,14 +41,24 @@ async fetchMoviesByGenre(req, res) {
   const genre = req.params.genre;
   const language = 'fr-FR';
   const page = req.query.page || 1;
+  const cacheKey = `${genre}_${page}`;
 
   try {
+    const cachedMovies = cache.get(cacheKey);
+    if (cachedMovies) {
+      console.log(`Données récupérées du cache: ${genre}`);
+
+      return res.json({
+        movies: cachedMovies,
+        currentPage: page,
+        totalPages: cachedMovies.total_pages
+      });
+    };
+
     const genreResponse = await fetch(`${process.env.API_TMDB_BASE_URL}/genre/movie/list?api_key=${process.env.API_TMDB_KEY}&language=${language}`);
-    
     if (!genreResponse.ok) {
       throw new Error('Erreur réseau ou réponse non valide lors de la récupération des genres');
     };
-
     const genreData = await genreResponse.json();
     const genreId = genreData.genres.find(g => g.name.toLowerCase() === genre.toLowerCase())?.id;
     if (!genreId) {
@@ -48,6 +72,8 @@ async fetchMoviesByGenre(req, res) {
 
     const moviesData = await response.json();
     const movies = moviesData.results;
+
+    cache.set(cacheKey, movies);
 
     res.json({
       movies: movies,
