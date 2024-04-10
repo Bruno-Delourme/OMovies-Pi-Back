@@ -60,18 +60,32 @@ const listController = {
     };
 },
 
-  async show(req, res) {
+  async showList(req, res) {
     debug('list show controller called');
 
     try {
       const id = req.user.id
-      const list = await listDataMapper.show(id);
+      const list = await listDataMapper.showList(id);
       res.json({ status: 'success', data: list });
 
     } catch (error) {
-      debug('Erreur lors de l\'affichage de la liste :', error);
-      res.status(500).json({ status: 'error', message: 'Erreur lors de l\'affichage de la liste.' });
+      debug('Erreur lors de l\'affichage de la liste des films favoris:', error);
+      res.status(500).json({ status: 'error', message: 'Erreur lors de l\'affichage de la liste des films favoris.' });
     };
+},
+
+async showToReview(req, res) {
+  debug('toReview show controller called');
+
+  try {
+    const id = req.user.id
+    const toReview = await listDataMapper.showToReview(id);
+    res.json({ status: 'success', data: toReview });
+
+  } catch (error) {
+    debug('Erreur lors de l\'affichage de la liste des films à revoir :', error);
+    res.status(500).json({ status: 'error', message: 'Erreur lors de l\'affichage de la liste des films à revoir.' });
+  };
 },
 
   async deleteFromList(req, res) {

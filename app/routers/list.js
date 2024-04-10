@@ -8,7 +8,9 @@ router.post("/addToList", listController.insertIntoList);
 
 router.post("/addToToReview", listController.insertIntoToReview);
 
-router.get("/list", listController.show);
+router.get("/list", listController.showList);
+
+router.get("/toReview", listController.showToReview)
 
 router.delete("/deleteFromList", listController.deleteFromList);
 

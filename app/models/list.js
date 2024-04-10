@@ -61,7 +61,7 @@ const listModel = {
       console.error('Erreur lors de l\'insertion dans la liste des favoris :', error);
       throw error;
   }
-},
+  },
 
   async insertIntoToReview(user, movie) {
     try {
@@ -96,10 +96,15 @@ const listModel = {
       console.error('Erreur lors de l\'insertion dans la liste des films à revoir :', error);
       throw error;
   };
-},
+  },
 
-  async show() {
-    const results = await client.query('SELECT * FROM "movie"');
+  async showList() {
+    const results = await client.query('SELECT list FROM "user"');
+    return results.rows;
+  },
+
+  async showToReview() {
+    const results = await client.query('SELECT to_review FROM "user"');
     return results.rows;
   },
 
@@ -134,7 +139,7 @@ const listModel = {
       console.error('Erreur lors de la suppression du film de la liste des favoris :', error);
       throw error;
   };
-},
+  },
 
   async deleteFromToReview(user, movie) {
     try {
@@ -151,7 +156,7 @@ const listModel = {
       console.error('Erreur lors de la suppression du film de la liste des films à revoir :', error);
       throw error;
   };
-},
+  },
 };
 
 module.exports = listModel;
