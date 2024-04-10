@@ -66,7 +66,8 @@ const listController = {
     try {
       const id = req.user.id
       const list = await listDataMapper.show(id);
-          res.json({ status: 'success', data: list });
+      res.json({ status: 'success', data: list });
+
     } catch (error) {
       debug('Erreur lors de l\'affichage de la liste :', error);
       res.status(500).json({ status: 'error', message: 'Erreur lors de l\'affichage de la liste.' });

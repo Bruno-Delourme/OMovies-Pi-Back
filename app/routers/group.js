@@ -1,9 +1,11 @@
-// const debug = require('debug')('app:GroupRouter');
-// const express = require('express');
-// const { groupController } = require('../controllers');
+const debug = require('debug')('app:GroupRouter');
+const express = require('express');
+const { groupController } = require('../controllers');
 
-// const router = express.Router();
+const router = express.Router();
 
-// router.post("/addGroup", groupController.create);
+router.post("/addGroup", groupController.create);
 
-// module.exports = router;
+router.get("/group", groupController.show);
+
+module.exports = router;
