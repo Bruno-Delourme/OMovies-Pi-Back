@@ -1,7 +1,6 @@
 const debug = require('debug')('app:controller');
 require('dotenv').config();
 const listDataMapper = require('../models/list.js');
-const jwt = require('jsonwebtoken');
 
 const listController = {
 
@@ -11,46 +10,54 @@ const listController = {
     const { title, poster_path, overview, genres } = req.body;
 
     if (!title || !overview || !genres) {
-      return res.status(400).json({ message: 'Données incomplètes' });
-    };
+        return res.status(400).json({ message: 'Données incomplètes' });
+    }
 
     const picture = poster_path || 'Pas d\'affiche';
 
     try {
-      const userId = req.user.id;
+        const userId = req.user.id;
 
-      const insertIntoMovie = await listDataMapper.insertIntoMovie({ name: title, picture, description: overview, genre: genres });
-      const insertIntoList = await listDataMapper.insertIntoList({name: title, picture, id: userId });
-      res.json({ status: 'success', data: {insertIntoMovie, insertIntoList} });
+        // Insérer le film dans la base de données et récupérer l'ID du film inséré
+        const insertIntoMovie = await listDataMapper.insertIntoMovie({ name: title, picture, description: overview, genre: genres });
+        const movieId = insertIntoMovie.id;
 
-  } catch (error) {
-      debug('Erreur lors de l\'insertion dans la liste :', error);
-      res.status(500).json({ status: 'error', message: 'Erreur lors de l\'insertion dans la liste.' });
-  };
+        // Insérer le film dans la liste des favoris de l'utilisateur
+        const insertIntoList = await listDataMapper.insertIntoList({ id: userId }, { id: movieId, name: title, picture });
+        
+        res.json({ status: 'success', data: { insertIntoMovie, insertIntoList } });
+
+    } catch (error) {
+        debug('Erreur lors de l\'insertion dans la liste des favoris:', error);
+        res.status(500).json({ status: 'error', message: 'Erreur lors de l\'insertion dans la liste des favoris.' });
+    }
 },
 
-async insertIntoToReview(req, res) {
-  debug('list insertIntoToReview controller called');
+  async insertIntoToReview(req, res) {
+    debug('list insertIntoToReview controller called');
 
-  const { title, poster_path, overview, genres } = req.body;
+    const { title, poster_path, overview, genres } = req.body;
 
-  if (!title || !overview || !genres) {
-    return res.status(400).json({ message: 'Données incomplètes' });
-  };
+    if (!title || !overview || !genres) {
+        return res.status(400).json({ message: 'Données incomplètes' });
+    }
 
-  const picture = poster_path || 'Pas d\'affiche';
+    const picture = poster_path || 'Pas d\'affiche';
 
-  try {
-    const userId = req.user.id;
+    try {
+        const userId = req.user.id;
 
-    const insertIntoMovie = await listDataMapper.insertIntoMovie({ name: title, picture, description: overview, genre: genres });
-    const insertIntoToReview = await listDataMapper.insertIntoToReview({name: title, picture, id: userId });
-    res.json({ status: 'success', data: {insertIntoMovie, insertIntoToReview} });
+        const insertIntoMovie = await listDataMapper.insertIntoMovie({ name: title, picture, description: overview, genre: genres });
+        const movieId = insertIntoMovie.id;
 
-} catch (error) {
-    debug('Erreur lors de l\'insertion dans la liste à revoir:', error);
-    res.status(500).json({ status: 'error', message: 'Erreur lors de l\'insertion dans la liste à revoir.' });
-};
+        const insertIntoToReview = await listDataMapper.insertIntoToReview({ id: userId }, { id: movieId, name: title, picture });
+        
+        res.json({ status: 'success', data: { insertIntoMovie, insertIntoToReview } });
+
+    } catch (error) {
+        debug('Erreur lors de l\'insertion dans la liste à revoir :', error);
+        res.status(500).json({ status: 'error', message: 'Erreur lors de l\'insertion dans la liste à revoir.' });
+    };
 },
 
   async show(req, res) {
@@ -64,21 +71,42 @@ async insertIntoToReview(req, res) {
       debug('Erreur lors de l\'affichage de la liste :', error);
       res.status(500).json({ status: 'error', message: 'Erreur lors de l\'affichage de la liste.' });
     };
-  },
+},
 
-  async delete(req, res) {
+  async deleteFromList(req, res) {
     debug('list delete controller called');
 
-    const id = req.user.id;
+    
+  try {
+    const userId = req.user.id;
+    const { title, poster_path } = req.body;
 
-    const isRemoved = await listDataMapper.delete(id);
+    const deleteFromList = await listDataMapper.deleteFromList({id: userId}, {name: title, picture: poster_path});
+    const deleteFromMovie = await listDataMapper.deleteFromMovie({ name: title});
+    res.json({ status: 'success' });
 
-    if (isRemoved) {
-      res.json({ status: 'success' });
-
-    } else {
-      res.json({ status: 'fail' });
+    } catch (error) {
+      debug('Erreur lors de la suppression du film dans la liste des favoris:', error);
+      res.status(500).json({ status: 'error', message: 'Erreur lors de la suppression du film dans la liste des favoris.' });
     };
+},
+
+  async deleteFromToReview(req, res) {
+    debug('list delete controller called');
+
+  
+  try {
+    const userId = req.user.id;
+    const { title, poster_path } = req.body;
+
+    const deleteFromToReview = await listDataMapper.deleteFromToReview({id: userId}, {name: title, picture: poster_path});
+    const deleteFromMovie = await listDataMapper.deleteFromMovie({ name: title });
+    res.json({ status: 'success' });
+
+  } catch (error) {
+    debug('Erreur lors de la suppression du film dans la liste des films à revoir:', error);
+    res.status(500).json({ status: 'error', message: 'Erreur lors de la suppression du film dans la liste des films à revoir.' });
+  };
 },
 };
 

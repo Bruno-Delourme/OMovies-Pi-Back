@@ -95,7 +95,7 @@ async fetchMoviesByActor(req, res) {
   
   const searchTerm = req.params.actor;
   const language = 'fr-FR';
-  const page = req.query.page || 2;
+  const page = req.query.page || 1;
 
   try {
     const encodedSearchTerm = encodeURIComponent(searchTerm);

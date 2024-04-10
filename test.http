@@ -42,28 +42,28 @@
 
 # POST {{endpoint}}/api/addToList
 # content-type: application/json
-# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUb3RvIiwiZW1haWwiOiJ0b3RvQHRvdG8uZnIiLCJkYXRlX29mX2JpcnRoIjoiMTk5MC0wNS0xMVQyMjowMDowMC4wMDBaIiwibGlzdCI6bnVsbCwidG9fcmV2aWV3IjpudWxsLCJncm91cF9pZCI6bnVsbCwiY3JlYXRlZF9hdCI6IjIwMjQtMDQtMDhUMDk6NDg6MTYuNTY2WiIsInVwZGF0ZWRfYXQiOm51bGx9LCJpYXQiOjE3MTI1Njk3NjB9.8OchqP2NtNCN1MJLwn12pp2vmZ1s7643k1Dkt4RYDno
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUb3RvIiwiZW1haWwiOiJ0b3RvQHRvdG8uZnIiLCJkYXRlX29mX2JpcnRoIjoiMTk5MC0wNS0xMVQyMjowMDowMC4wMDBaIiwibGlzdCI6bnVsbCwidG9fcmV2aWV3IjpudWxsLCJncm91cF9pZCI6bnVsbCwiY3JlYXRlZF9hdCI6IjIwMjQtMDQtMTBUMDg6MDQ6MzQuMjg0WiIsInVwZGF0ZWRfYXQiOm51bGx9LCJpYXQiOjE3MTI3MzYyOTJ9.fsG1FCfnxN4Ap_aAIv0g5syWhH-_k4kpxnABnzLHqHk
 
 # {
 #   "id": 1,
-#   "title": "Hunter",
-#   "poster_path": "Chemin des chasseurs",
-#   "overview": "Il était une fois, un lapin...",
-#   "genres": ["humour"]
+#   "title": "Star Wars",
+#   "poster_path": "Chemin des étoiles",
+#   "overview": "Il était une fois, une étoile...",
+#   "genres": ["Action, Science_fiction"]
 # }
 
 
 
 # POST {{endpoint}}/api/addToToReview
 # content-type: application/json
-# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUb3RvIiwiZW1haWwiOiJ0b3RvQHRvdG8uZnIiLCJkYXRlX29mX2JpcnRoIjoiMTk5MC0wNS0xMVQyMjowMDowMC4wMDBaIiwibGlzdCI6bnVsbCwidG9fcmV2aWV3IjpudWxsLCJncm91cF9pZCI6bnVsbCwiY3JlYXRlZF9hdCI6IjIwMjQtMDQtMDhUMDk6NDg6MTYuNTY2WiIsInVwZGF0ZWRfYXQiOm51bGx9LCJpYXQiOjE3MTI1Njk3NjB9.8OchqP2NtNCN1MJLwn12pp2vmZ1s7643k1Dkt4RYDno
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUb3RvIiwiZW1haWwiOiJ0b3RvQHRvdG8uZnIiLCJkYXRlX29mX2JpcnRoIjoiMTk5MC0wNS0xMVQyMjowMDowMC4wMDBaIiwibGlzdCI6bnVsbCwidG9fcmV2aWV3IjpudWxsLCJncm91cF9pZCI6bnVsbCwiY3JlYXRlZF9hdCI6IjIwMjQtMDQtMTBUMDg6MDQ6MzQuMjg0WiIsInVwZGF0ZWRfYXQiOm51bGx9LCJpYXQiOjE3MTI3MzYyOTJ9.fsG1FCfnxN4Ap_aAIv0g5syWhH-_k4kpxnABnzLHqHk
 
 # {
 #   "id": 1,
-#   "title": "Inception",
-#   "poster_path": "Chemin de la toupie",
-#   "overview": "Il était une fois, une toupie...",
-#   "genres": ["action", "fantaisy"]
+#   "title": "Spirit",
+#   "poster_path": "Chemin de l'écurie",
+#   "overview": "Il était une fois, un dada...",
+#   "genres": ["Familial, Comédie"]
 # }
 
 
@@ -72,4 +72,11 @@
 
 
 
-#  DELETE {{endpoint}}/api/removeFromList/1
+ DELETE {{endpoint}}/api/deleteFromToReview
+Content-Type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUb3RvIiwiZW1haWwiOiJ0b3RvQHRvdG8uZnIiLCJkYXRlX29mX2JpcnRoIjoiMTk5MC0wNS0xMVQyMjowMDowMC4wMDBaIiwibGlzdCI6bnVsbCwidG9fcmV2aWV3IjpudWxsLCJncm91cF9pZCI6bnVsbCwiY3JlYXRlZF9hdCI6IjIwMjQtMDQtMTBUMDg6MDQ6MzQuMjg0WiIsInVwZGF0ZWRfYXQiOm51bGx9LCJpYXQiOjE3MTI3MzYyOTJ9.fsG1FCfnxN4Ap_aAIv0g5syWhH-_k4kpxnABnzLHqHk
+
+{
+  "title": "Spirit",
+  "poster_path": "Chemin de l'écurie"
+}

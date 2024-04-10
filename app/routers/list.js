@@ -10,7 +10,9 @@ router.post("/addToToReview", listController.insertIntoToReview);
 
 router.get("/list", listController.show);
 
-router.delete("/removeFromList/:id", listController.delete);
+router.delete("/deleteFromList", listController.deleteFromList);
+
+router.delete("/deleteFromToReview", listController.deleteFromToReview);
 
 debug('API list router initialized');
 

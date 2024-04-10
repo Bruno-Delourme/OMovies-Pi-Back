@@ -36,49 +36,64 @@ const listModel = {
       };
 
       const userResult = await client.query(userQuery);
-      const toList = userResult.rows[0].list || '';
+      let toList = [];
 
-      if (toList.includes(movie.name)) {
-          return { message: 'Le film est déjà dans la liste.' };
+      if (userResult.rows[0] && userResult.rows[0].list) {
+          toList = userResult.rows[0].list;
       };
 
+      const existingMovie = toList.find(item => item.name === movie.name);
+      if (existingMovie) {
+          return { message: 'Le film est déjà dans la liste des favoris.' };
+      };
+
+      toList.push({ name: movie.name, picture: movie.picture });
+
       const query = {
-          text: 'UPDATE "user" SET list = CONCAT(list, $1::TEXT) WHERE id = $2',
-          values: [`, ${JSON.stringify({ name: movie.name, picture: movie.picture })}`, movie.id],
+          text: 'UPDATE "user" SET list = $1 WHERE id = $2',
+          values: [JSON.stringify(toList), user.id],
       };
 
       const results = await client.query(query);
       return results.rows[0];
 
   } catch (error) {
-      console.error('Erreur lors de l\'insertion dans la liste :', error);
+      console.error('Erreur lors de l\'insertion dans la liste des favoris :', error);
       throw error;
-  };
+  }
 },
 
-  async insertIntoToReview(movie) {
+  async insertIntoToReview(user, movie) {
     try {
       const userQuery = {
           text: 'SELECT to_review FROM "user" WHERE id = $1',
-          values: [movie.id],
+          values: [user.id],
       };
 
       const userResult = await client.query(userQuery);
-      const toReviewList = userResult.rows[0].to_review || '';
+      let toToReview = [];
 
-      if (toReviewList.includes(movie.name)) {
-          return { message: 'Le film est déjà dans la liste à revoir.' };
+      if (userResult.rows[0] && userResult.rows[0].to_review) {
+          toToReview = userResult.rows[0].to_review;
       };
 
+      const existingMovie = toToReview.find(item => item.name === movie.name);
+      if (existingMovie) {
+          return { message: 'Le film est déjà dans la liste des films à revoir.' };
+      };
+
+      toToReview.push({ name: movie.name, picture: movie.picture });
+
       const query = {
-          text: 'UPDATE "user" SET to_review = CONCAT(to_review, $1::TEXT) WHERE id = $2',
-          values: [`, ${JSON.stringify({ name: movie.name, picture: movie.picture })}`, movie.id],
+          text: 'UPDATE "user" SET to_review = $1 WHERE id = $2',
+          values: [JSON.stringify(toToReview), user.id],
       };
 
       const results = await client.query(query);
       return results.rows[0];
+
   } catch (error) {
-      console.error('Erreur lors de l\'insertion dans la liste à revoir :', error);
+      console.error('Erreur lors de l\'insertion dans la liste des films à revoir :', error);
       throw error;
   };
 },
@@ -99,40 +114,44 @@ const listModel = {
     return !!results.rowCount;
 
     } catch (error) {
-      console.error('Erreur lors de la suppression du film :', error); // Gestion des erreurs
+      console.error('Erreur lors de la suppression du film :', error);
         throw error;
     };
   },
 
   async deleteFromList(user, movie) {
     try {
-      const userQuery = {
-        text: 'SELECT list FROM "user" WHERE id = $1',
-        values: [user.id]
-      };
-
-      const userResult = await client.query(userQuery);
-      let toList = userResult.rows[0].list || '';
-
-      if (!toList.includes(movieName)) {
-        return { message: 'Le film n\' est pas dans la liste' };
-      };
-
-      toList = toList.replace(new RegExp(`, ${movie.name}(?={)`, 'g'), '');
-
       const query = {
-        text: 'UPDATE "user" SET list = $1 WHERE id = $2',
-        values: [toList, user.id],
+        text: 'SELECT delete_movie_from_list($1, $2, $3)',
+        values: [user.id, movie.name, movie.picture]
       };
 
       await client.query(query);
-      return { message: 'Le film a été supprimé de la liste.' };
+        
+      return { message: 'Le film a été supprimé de la liste des favoris.' };
+      
+  } catch (error) {
+      console.error('Erreur lors de la suppression du film de la liste des favoris :', error);
+      throw error;
+  };
+},
 
-    } catch (error) {
-      console.error('Erreur lors de la suppression du film de la liste :', error);
-        throw error;
-    };
-  },
+  async deleteFromToReview(user, movie) {
+    try {
+      const query = {
+        text: 'SELECT delete_movie_from_to_review($1, $2, $3)',
+        values: [user.id, movie.name, movie.picture]
+      };
+
+      await client.query(query);
+        
+      return { message: 'Le film a été supprimé de la liste des films à revoir.' };
+      
+  } catch (error) {
+      console.error('Erreur lors de la suppression du film de la liste des films à revoir :', error);
+      throw error;
+  };
+},
 };
 
 module.exports = listModel;

@@ -6,6 +6,9 @@ DROP FUNCTION IF EXISTS add_group(json) CASCADE;
 
 DROP FUNCTION IF EXISTS update_user(json) CASCADE;
 
+DROP FUNCTION IF EXISTS delete_movie_from_list(json) CASCADE;
+
+DROP FUNCTION IF EXISTS delete_movie_from_to_review(json) CASCADE;
 
 DROP TABLE IF EXISTS "group", "user", "movie", "vote" CASCADE;
 
@@ -27,8 +30,8 @@ CREATE TABLE "user" (
   "email" email UNIQUE NOT NULL,
   "date_of_birth" DATE NOT NULL,
   "hashed_password" TEXT NOT NULL,
-  "list" TEXT,
-  "to_review" TEXT,
+  "list" JSONB,
+  "to_review" JSONB,
   "group_id" INT REFERENCES "group"(id),
   "created_at" TIMESTAMPTZ NOT NULL default(now()),
   "updated_at" TIMESTAMPTZ
@@ -101,5 +104,45 @@ $$
     WHERE id = ($1->>'id')::INT
     RETURNING *;
 $$ LANGUAGE SQL STRICT;
+
+CREATE OR REPLACE FUNCTION delete_movie_from_list(user_id INT, movie_name TEXT, movie_picture TEXT)
+  RETURNS VOID
+  LANGUAGE plpgsql
+AS $$
+BEGIN
+  UPDATE "user"
+  SET list = (
+    SELECT COALESCE(
+      (SELECT jsonb_agg(movie)
+       FROM jsonb_array_elements("list") AS movie
+       WHERE (movie->>'name' <> movie_name OR movie->>'picture' <> movie_picture)),
+      '[]'::jsonb
+    )
+    FROM "user"
+    WHERE id = user_id
+  )
+  WHERE id = user_id;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION delete_movie_from_to_review(user_id INT, movie_name TEXT, movie_picture TEXT)
+  RETURNS VOID
+  LANGUAGE plpgsql
+AS $$
+BEGIN
+  UPDATE "user"
+  SET to_review = (
+    SELECT COALESCE(
+      (SELECT jsonb_agg(movie)
+       FROM jsonb_array_elements("to_review") AS movie
+       WHERE (movie->>'name' <> movie_name OR movie->>'picture' <> movie_picture)),
+      '[]'::jsonb
+    )
+    FROM "user"
+    WHERE id = user_id
+  )
+  WHERE id = user_id;
+END;
+$$;
 
 COMMIT;

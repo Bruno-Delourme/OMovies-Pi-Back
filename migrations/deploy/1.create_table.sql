@@ -19,8 +19,8 @@ CREATE TABLE "user" (
   "email" email UNIQUE NOT NULL,
   "date_of_birth" DATE NOT NULL,
   "hashed_password" TEXT NOT NULL,
-  "list" TEXT,
-  "to_review" TEXT,
+  "list" JSONB,
+  "to_review" JSONB,
   "group_id" INT REFERENCES "group"(id),
   "created_at" TIMESTAMPTZ NOT NULL default(now()),
   "updated_at" TIMESTAMPTZ

@@ -38,6 +38,7 @@ const userController = {
       delete result.hashed_password;
 
       const token = jwt.sign({ user: result }, process.env.JWT_SECRET);
+      console.log(token);
 
       res.json({ status: 'success', data: { utilisateur: result, token } });
 
