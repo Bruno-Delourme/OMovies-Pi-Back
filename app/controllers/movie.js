@@ -113,7 +113,7 @@ async fetchMovieByTitle(req, res) {
 
         if (cachedMovies) {
             console.log('Films récupérés du cache');
-            
+
             return res.json({
               movies: cachedMovies,
               currentPage: page,
@@ -150,42 +150,52 @@ async fetchMovieByTitle(req, res) {
 
 async fetchMoviesByActor(req, res) {
   
-  const searchTerm = req.params.actor;
-  const language = 'fr-FR';
-  const page = req.query.page || 1;
+    const searchTerm = req.params.actor;
+    const language = 'fr-FR';
+    const page = req.query.page || 1;
+    const cacheKey = `actor_${encodeURIComponent(searchTerm)}_${page}`;
 
-  try {
-    const encodedSearchTerm = encodeURIComponent(searchTerm);
-    const responseByActor = await fetch(`${process.env.API_TMDB_BASE_URL}search/person?api_key=${process.env.API_TMDB_KEY}&query=${encodedSearchTerm}&language=${language}`);
+    try {
+        const cachedMovies = cache.get(cacheKey);
 
-    if (!responseByActor.ok) {
-      throw new Error('Erreur de réseau ou réponse non valide');
-    };
+        if (cachedMovies) {
+            console.log('Films récupérés du cache');
+            return res.json(cachedMovies);
+        };
 
-    const actorsData = await responseByActor.json();
-
-    const moviesByActorPromises = actorsData.results.map(async actor => {
-      const response = await fetch(`${process.env.API_TMDB_BASE_URL}person/${actor.id}/movie_credits?api_key=${process.env.API_TMDB_KEY}&language=${language}&page=${page}`);
-      if (response.ok) {
+        const encodedSearchTerm = encodeURIComponent(searchTerm);
+        const responseByActor = await fetch(`${process.env.API_TMDB_BASE_URL}search/person?api_key=${process.env.API_TMDB_KEY}&query=${encodedSearchTerm}&language=${language}`);
         
-        const credits = await response.json();
-        return credits.cast.map(movie => ({ title: movie.title, poster_path: movie.poster_path }));
+        if (!responseByActor.ok) {
+            throw new Error('Erreur de réseau ou réponse non valide');
+        };
 
-      } else {
-        return [];
-      }
-    });
+        const actorsData = await responseByActor.json();
 
-    const moviesByActor = await Promise.all(moviesByActorPromises);
+        const moviesByActorPromises = actorsData.results.map(async actor => {
+            const response = await fetch(`${process.env.API_TMDB_BASE_URL}person/${actor.id}/movie_credits?api_key=${process.env.API_TMDB_KEY}&language=${language}&page=${page}`);
+            
+            if (response.ok) {
+                const credits = await response.json();
+                return credits.cast.map(movie => ({ title: movie.title, poster_path: movie.poster_path }));
 
-    const allMovies = moviesByActor.reduce((acc, movies) => acc.concat(movies), []);
+            } else {
+                return [];
+            }
+        });
 
-    res.json(allMovies);
+        const moviesByActor = await Promise.all(moviesByActorPromises);
 
-  } catch (error) {
-    console.error('Erreur lors de la récupération des films par acteur :', error);
-    res.status(500).json({ error: 'Erreur lors de la récupération des films par acteur.' });
-  }
+        const allMovies = moviesByActor.reduce((acc, movies) => acc.concat(movies), []);
+
+        cache.set(cacheKey, allMovies);
+
+        res.json(allMovies);
+
+    } catch (error) {
+        console.error('Erreur lors de la récupération des films par acteur :', error);
+        res.status(500).json({ error: 'Erreur lors de la récupération des films par acteur.' });
+    };
 },
 
 async fetchNewMovies(req, res) {
