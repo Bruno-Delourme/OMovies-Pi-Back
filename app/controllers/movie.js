@@ -303,28 +303,47 @@ async fetchBySearchBar(req, res) {
 async fetchPopularMovie(req, res) {
 
   const language = 'fr-FR';
-  const page = req.query.page || 1;
+    const page = req.query.page || 1;
+    const cacheKey = `popular_movies_${page}`;
 
-  try {
-    const response = await fetch(`${process.env.API_TMDB_BASE_URL}movie/popular?api_key=${process.env.API_TMDB_KEY}&language=${language}&page=${page}`);
+    try {
+        const cachedMovies = cache.get(cacheKey);
 
-    if (!response.ok) {
-      throw new Error('Erreur réseau ou réponse non valide');
+        if (cachedMovies) {
+            console.log('Films populaires récupérés du cache');
+
+            return res.json({
+              movies: cachedMovies,
+              currentPage: page,
+              totalPages: cachedMovies.total_pages
+          });
+        };
+
+        const response = await fetch(`${process.env.API_TMDB_BASE_URL}movie/popular?api_key=${process.env.API_TMDB_KEY}&language=${language}&page=${page}`);
+        
+        if (!response.ok) {
+            throw new Error('Erreur réseau ou réponse non valide');
+        };
+
+        const popularMovies = await response.json();
+        const movies = popularMovies.results;
+
+        cache.set(cacheKey, {
+            movies: movies,
+            currentPage: page,
+            totalPages: popularMovies.total_pages
+        });
+
+        res.json({
+            movies: movies,
+            currentPage: page,
+            totalPages: popularMovies.total_pages
+        });
+
+    } catch (error) {
+        console.error('Erreur lors de la récupération des films populaires :', error);
+        res.status(500).json({ error: 'Erreur lors de la récupération des films populaires.' });
     };
-
-    const popularMovies = await response.json();
-    const movies = popularMovies.results;
-
-    res.json({
-      movies: movies,
-      currentPage: page,
-      totalPages: popularMovies.total_pages
-    });
-
-  } catch (error) {
-    console.error('Erreur lors de la récupération des films populaires :', error);
-    res.status(500).json({ error: 'Erreur lors de la récupération des films populaires.' });
-  }
 },
 
 async fetchRecommendation(req, res) {
