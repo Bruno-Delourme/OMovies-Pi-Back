@@ -32,10 +32,10 @@ const groupModel = {
   };
 },
 
-  async findGroup(user) {
+  async findGroup(id) {
     const query = {
-      text: 'SELECT * FROM "group" JOIN "user" ON user.group_id = group.id WHERE user.id = $1',
-      values: [user.id],
+      text: 'SELECT name FROM "group" JOIN "user" ON "user".group_id = "group".id WHERE "user".id = $1',
+      values: [id],
     };
     const results = await client.query(query);
     return results.rows[0];

@@ -25,7 +25,7 @@ const groupController = {
 
     try {
       const id = req.user.id
-      const group = await groupDataMapper.show(id);
+      const group = await groupDataMapper.findGroup(id);
       res.json({ status: 'success', data: group });
 
     } catch (error) {
