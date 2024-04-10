@@ -32,7 +32,7 @@ async fetchMovieById(req, res) {
     if (!creditsResponse.ok) {
       throw new Error('Erreur de réseau ou réponse non valide lors de la récupération des crédits');
     };
-    
+
     const credits = await creditsResponse.json();
     movie.credits = credits;
 
@@ -105,30 +105,47 @@ async fetchMovieByTitle(req, res) {
 
     const movieTitle = req.params.title;
     const language = 'fr-FR';
-    const page = req.query.page || 1; 
+    const page = req.query.page || 1;
+    const cacheKey = `movie_${encodeURIComponent(movieTitle)}_${page}`;
 
     try {
-      const encodedTitle = encodeURIComponent(movieTitle);
-      
-      const response = await fetch(`${process.env.API_TMDB_BASE_URL}search/movie?api_key=${process.env.API_TMDB_KEY}&query=${encodedTitle}&language=${language}&page=${page}`);
-      
-      if (!response.ok) {
-        throw new Error('Erreur de réseau ou réponse non valide');
-      };
-      
-      const movieData = await response.json();
-      const movies = movieData.results;
+        const cachedMovies = cache.get(cacheKey);
 
-    res.json({
-      movies: movies,
-      currentPage: page,
-      totalPages: movieData.total_pages
-    });
+        if (cachedMovies) {
+            console.log('Films récupérés du cache');
+            
+            return res.json({
+              movies: cachedMovies,
+              currentPage: page,
+              totalPages: cachedMovies.total_pages
+          });
+        };
 
-  } catch (error) {
-    console.error('Erreur lors de la récupération des films par titre :', error);
-    res.status(500).json({ error: 'Erreur lors de la récupération des films par titre.' });
-  }
+        const response = await fetch(`${process.env.API_TMDB_BASE_URL}search/movie?api_key=${process.env.API_TMDB_KEY}&query=${encodeURIComponent(movieTitle)}&language=${language}&page=${page}`);
+        
+        if (!response.ok) {
+            throw new Error('Erreur de réseau ou réponse non valide');
+        };
+
+        const movieData = await response.json();
+        const movies = movieData.results;
+
+        cache.set(cacheKey, {
+            movies: movies,
+            currentPage: page,
+            totalPages: movieData.total_pages
+        });
+
+        res.json({
+            movies: movies,
+            currentPage: page,
+            totalPages: movieData.total_pages
+        });
+
+    } catch (error) {
+        console.error('Erreur lors de la récupération des films par titre :', error);
+        res.status(500).json({ error: 'Erreur lors de la récupération des films par titre.' });
+    }
 },
 
 async fetchMoviesByActor(req, res) {
