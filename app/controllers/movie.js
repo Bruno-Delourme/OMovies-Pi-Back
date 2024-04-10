@@ -291,7 +291,7 @@ async fetchBySearchBar(req, res) {
       actors,
       moviesByActor
     };
-    console.log(combinedResults);
+  
     res.json(combinedResults);
 
   } catch (error) {
@@ -308,19 +308,12 @@ async fetchPopularMovie(req, res) {
 
     try {
         const cachedMovies = cache.get(cacheKey);
-
         if (cachedMovies) {
             console.log('Films populaires récupérés du cache');
-
-            return res.json({
-              movies: cachedMovies,
-              currentPage: page,
-              totalPages: cachedMovies.total_pages
-          });
-        };
+            return res.json(cachedMovies);
+        }
 
         const response = await fetch(`${process.env.API_TMDB_BASE_URL}movie/popular?api_key=${process.env.API_TMDB_KEY}&language=${language}&page=${page}`);
-        
         if (!response.ok) {
             throw new Error('Erreur réseau ou réponse non valide');
         };
@@ -339,11 +332,10 @@ async fetchPopularMovie(req, res) {
             currentPage: page,
             totalPages: popularMovies.total_pages
         });
-
     } catch (error) {
         console.error('Erreur lors de la récupération des films populaires :', error);
         res.status(500).json({ error: 'Erreur lors de la récupération des films populaires.' });
-    };
+    }
 },
 
 async fetchRecommendation(req, res) {
