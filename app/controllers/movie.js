@@ -349,29 +349,48 @@ async fetchPopularMovie(req, res) {
 async fetchRecommendation(req, res) {
 
   const movieId = req.params.id;
-  const language = 'fr-FR';
-  const page = req.query.page || 1;
+    const language = 'fr-FR';
+    const page = req.query.page || 1;
+    const cacheKey = `recommendations_${movieId}_${page}`;
 
-  try {
-    const response = await fetch(`${process.env.API_TMDB_BASE_URL}movie/${movieId}/recommendations?api_key=${process.env.API_TMDB_KEY}&language=${language}&page=${page}`);
+    try {
+        const cachedRecommendations = cache.get(cacheKey);
 
-    if (!response.ok) {
-      throw new Error('Erreur réseau ou réponse non valide');
+        if (cachedRecommendations) {
+            console.log('Recommandations récupérées du cache');
+
+            return res.json({
+            recommendations: cachedRecommendations,
+            currentPage: page,
+            totalPages: cachedRecommendations.total_pages
+        });
+        };
+
+        const response = await fetch(`${process.env.API_TMDB_BASE_URL}movie/${movieId}/recommendations?api_key=${process.env.API_TMDB_KEY}&language=${language}&page=${page}`);
+        
+        if (!response.ok) {
+            throw new Error('Erreur réseau ou réponse non valide');
+        };
+
+        const recommendation = await response.json();
+        const recommendationResults = recommendation.results;
+
+        cache.set(cacheKey, {
+            recommendations: recommendationResults,
+            currentPage: page,
+            totalPages: recommendation.total_pages
+        });
+
+        res.json({
+            recommendations: recommendationResults,
+            currentPage: page,
+            totalPages: recommendation.total_pages
+        });
+
+    } catch (error) {
+        console.error('Erreur lors de la récupération des recommandations :', error);
+        res.status(500).json({ error: 'Erreur lors de la récupération des recommandations.' });
     };
-
-    const recommendation = await response.json();
-    const recommendationResults = recommendation.results;
-
-    res.json({
-      recommendations: recommendationResults,
-      currentPage: page,
-      totalPages: recommendation.total_pages
-    });
-
-  } catch (error) {
-    console.error('Erreur lors de la récupération des recommandations :', error);
-    res.status(500).json({ error: 'Erreur lors de la récupération des recommandations.' });
-  }
 },
 
 };
