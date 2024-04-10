@@ -2,14 +2,23 @@ const debug = require('debug')('app:controller');
 require('dotenv').config();
 const NodeCache = require('node-cache');
 const cache = new NodeCache({ stdTTL: 604800 });
-// --url 'https://api.themoviedb.org/3/movie/11/credits?language=en-US' \
+
 const movieController = {
 
 async fetchMovieById(req, res) {
 
   const movieId = req.params.id;
+  const cacheKey = `movie_${movieId}`;
 
   try {
+    const cachedMovie = cache.get(cacheKey);
+
+    if (cachedMovie) {
+      console.log('Film récupéré du cache');
+
+      return res.json(cachedMovie);
+    };
+
     const movieResponse = await fetch(`${process.env.API_TMDB_BASE_URL}movie/${movieId}?api_key=${process.env.API_TMDB_KEY}&language=fr-FR`);
 
     if (!movieResponse.ok) {
@@ -23,16 +32,17 @@ async fetchMovieById(req, res) {
     if (!creditsResponse.ok) {
       throw new Error('Erreur de réseau ou réponse non valide lors de la récupération des crédits');
     };
-
+    
     const credits = await creditsResponse.json();
-
     movie.credits = credits;
+
+    cache.set(cacheKey, movie);
 
     res.json(movie);
 
   } catch (error) {
-    debug('Erreur lors de la récupération des films par id :', error);
-    res.status(500).json({ error: 'Erreur lors de la récupération des films par id.' });
+    console.error('Erreur lors de la récupération du film par id :', error);
+    res.status(500).json({ error: 'Erreur lors de la récupération du film par id.' });
   }
 },
 
@@ -45,6 +55,7 @@ async fetchMoviesByGenre(req, res) {
 
   try {
     const cachedMovies = cache.get(cacheKey);
+
     if (cachedMovies) {
       console.log(`Données récupérées du cache: ${genre}`);
 
@@ -56,11 +67,14 @@ async fetchMoviesByGenre(req, res) {
     };
 
     const genreResponse = await fetch(`${process.env.API_TMDB_BASE_URL}/genre/movie/list?api_key=${process.env.API_TMDB_KEY}&language=${language}`);
+
     if (!genreResponse.ok) {
       throw new Error('Erreur réseau ou réponse non valide lors de la récupération des genres');
     };
+
     const genreData = await genreResponse.json();
     const genreId = genreData.genres.find(g => g.name.toLowerCase() === genre.toLowerCase())?.id;
+
     if (!genreId) {
       throw new Error('Genre non trouvé');
     };
