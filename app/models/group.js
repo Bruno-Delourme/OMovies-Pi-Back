@@ -41,10 +41,10 @@ const groupModel = {
     return results.rows[0];
   },
 
-  async findGroupUsers(groupId) {
+  async findGroupUsers(id) {
     const query = {
       text: 'SELECT pseudo FROM "user" JOIN "group" ON "user".group_id = "group".id WHERE "group".id = $1',
-      values: [groupId]
+      values: [id]
     };
     const results = await client.query(query);
     return results.rows;
@@ -64,6 +64,22 @@ const groupModel = {
       console.error('Error adding user to group:', error);
       return { status: 'error', message: 'Error adding user to group.' };
   };
+  },
+
+  async removeToGroup(user) {
+    try {
+      const query = {
+        text: 'UPDATE "user" SET group_id = NULL WHERE pseudo = $1',
+        values: [user.pseudo]
+      };
+      await client.query(query);
+
+      return { status: 'success', message: 'User removed from group successfully.' };
+
+    } catch (error) {
+      console.error('Error removing user from group:', error);
+      return { status: 'error', message: 'Error removing user from group.' };
+    };
   },
 };
 

@@ -44,10 +44,10 @@ const groupController = {
     debug('group findGroupUsers controller called');
 
     try {
-      const{ groupId } = req.body
-      console.log(groupId);
+      const{ id } = req.params
+      console.log(id);
 
-      const users = await groupDataMapper.findGroupUsers(groupId);
+      const users = await groupDataMapper.findGroupUsers(id);
       res.json({ status: 'success', data: users });
 
     } catch (error) {
@@ -57,7 +57,8 @@ const groupController = {
   },
 
   async addToGroup(req, res) {
-    debug('group update controller called');
+    debug('group addToGroup controller called');
+
     try {
       const { pseudo, groupId } = req.body;
 
@@ -71,9 +72,29 @@ const groupController = {
       };
 
   } catch (error) {
-      console.error('Error adding user to group:', error);
+      console.error('Erreur lors de l\'ajout de l\'utilisateur au groupe:', error);
       return res.status(500).json({ status: 'error', message: 'Erreur lors de l\'ajout de l\'utilisateur au groupe.' });
   };
+  },
+
+  async removeToGroup(req, res) {
+    debug('group removeToGroup controller called');
+
+    try {
+      const { pseudo } = req.body;
+
+      const result = await groupDataMapper.removeToGroup({ pseudo });
+
+      if (result.status === 'success') {
+        return res.json({ status: 'success', message: 'Utilisateur retiré du groupe avec succès.' });
+
+    } else {
+        return res.status(500).json({ status: 'error', message: 'Erreur lors de la suppression de l\'utilisateur du groupe.' });
+    };
+    } catch {
+      console.error('Erreur lors de la suppression de l\'utilisateur du groupe:', error);
+      return res.status(500).json({ status: 'error', message: 'Erreur lors de la suppression de l\'utilisateur du groupe.' });
+    };
   },
 };
 
