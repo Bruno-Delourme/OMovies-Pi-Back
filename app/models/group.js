@@ -82,7 +82,9 @@ const groupModel = {
     };
   },
 
-  
+  async deleteGroup(group, user) {
+    
+  }
 };
 
 module.exports = groupModel;

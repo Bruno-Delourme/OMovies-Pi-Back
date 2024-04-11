@@ -207,7 +207,12 @@ const movieController = {
         // If movies data is found in the cache, return it
         if (cachedMovies) {
             console.log('Movies retrieved from cache');
-            return res.json(cachedMovies);
+
+            return res.json({
+              movies: cachedMovies,
+              currentPage: page,
+              totalPages: cachedMovies.total_pages
+          });
         };
 
         // If movies data is not found in the cache, fetch data from the TMDB API based on the actor search term
@@ -235,10 +240,10 @@ const movieController = {
               // Paginating the credits data
               const paginatedCredits = credits.cast.slice(startIndex, endIndex);
               // Return the paginated credits as is
-              return paginatedCredits;
+              return { credits: paginatedCredits, totalPages: credits.total_pages };
 
           } else {
-              return [];
+            return { credits: [], totalPages: 0 };
           }
         });
 
@@ -249,10 +254,18 @@ const movieController = {
         const allMovies = moviesByActor.flat();
 
         // Cache the combined movies data for future use
-        cache.set(cacheKey, allMovies);
+        cache.set(cacheKey, {
+          movies: allMovies,
+          currentPage: page,
+          totalPages: moviesByActor.total_pages
+      });
 
         // Send the combined movies data in the response
-        res.json(allMovies);
+        res.json({
+          movies: allMovies,
+          currentPage: page,
+          totalPages: moviesByActor.total_pages
+      });
 
     } catch (error) {
         // If any error occurs during the process, log it and send an error response

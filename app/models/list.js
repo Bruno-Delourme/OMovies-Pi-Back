@@ -98,14 +98,32 @@ const listModel = {
   };
   },
 
-  async showList() {
-    const results = await client.query('SELECT list FROM "user"');
-    return results.rows;
+  async showList(id) {
+    try {
+      const query = {
+        text: 'SELECT list FROM "user" WHERE id = $1',
+        values: [id]
+      };
+      const results = await client.query(query);
+      return results.rows;
+    } catch (error) {
+      console.error('Erreur lors de la récupération de la liste des favoris:', error);
+        throw error;
+    };
   },
 
-  async showToReview() {
-    const results = await client.query('SELECT to_review FROM "user"');
-    return results.rows;
+  async showToReview(id) {
+    try {
+      const query = {
+        text: 'SELECT to_review FROM "user" WHERE id = $1',
+        values: [id]
+      };
+      const results = await client.query(query);
+      return results.rows;
+    } catch (error) {
+      console.error('Erreur lors de la récupération de la liste à revoir:', error);
+        throw error;
+    };
   },
 
   async deleteFromMovie(movie) {
