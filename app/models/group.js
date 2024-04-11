@@ -81,6 +81,8 @@ const groupModel = {
       return { status: 'error', message: 'Error removing user from group.' };
     };
   },
+
+  
 };
 
 module.exports = groupModel;

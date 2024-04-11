@@ -224,29 +224,29 @@ const movieController = {
 
         // Extract movies data for each actor asynchronously
         const moviesByActorPromises = actorsData.results.map(async actor => {
-            const response = await fetch(`${process.env.API_TMDB_BASE_URL}person/${actor.id}/movie_credits?api_key=${process.env.API_TMDB_KEY}&language=${language}&page=${page}`);
-            
-            if (response.ok) {
-                const credits = await response.json();
-                // Calculating the start and end index for pagination
-                const startIndex = (page - 1) * pageSize;
-                const endIndex = startIndex + pageSize;
+        const response = await fetch(`${process.env.API_TMDB_BASE_URL}person/${actor.id}/movie_credits?api_key=${process.env.API_TMDB_KEY}&language=${language}&page=${page}`);
+          
+          if (response.ok) {
+              const credits = await response.json();
+              // Calculating the start and end index for pagination
+              const startIndex = (page - 1) * pageSize;
+              const endIndex = startIndex + pageSize;
 
-                // Paginating the credits data
-                const paginatedCredits = credits.cast.slice(startIndex, endIndex);
-                // Mapping the paginated credits to required format
-                return paginatedCredits.map(movie => ({ title: movie.title, poster_path: movie.poster_path }));
+              // Paginating the credits data
+              const paginatedCredits = credits.cast.slice(startIndex, endIndex);
+              // Return the paginated credits as is
+              return paginatedCredits;
 
-            } else {
-                return [];
-            }
+          } else {
+              return [];
+          }
         });
 
         // Await for all movies data by actors to be fetched
         const moviesByActor = await Promise.all(moviesByActorPromises);
 
-        // Combine all movies into a single array
-        const allMovies = moviesByActor.reduce((acc, movies) => acc.concat(movies), []);
+        // Flatten the array of arrays into a single array
+        const allMovies = moviesByActor.flat();
 
         // Cache the combined movies data for future use
         cache.set(cacheKey, allMovies);
