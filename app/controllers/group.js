@@ -44,8 +44,7 @@ const groupController = {
     debug('group findGroupUsers controller called');
 
     try {
-      const{ id } = req.params
-      console.log(id);
+      const { id } = req.params
 
       const users = await groupDataMapper.findGroupUsers(id);
       res.json({ status: 'success', data: users });
@@ -94,6 +93,27 @@ const groupController = {
     } catch {
       console.error('Erreur lors de la suppression de l\'utilisateur du groupe:', error);
       return res.status(500).json({ status: 'error', message: 'Erreur lors de la suppression de l\'utilisateur du groupe.' });
+    };
+  },
+
+  async delete(req, res) {
+    debug('group delete controller called');
+
+    try {
+      const { id } = req.params;
+
+      const result = await groupDataMapper.delete({ id });
+
+      if (result.status === 'success') {
+        return res.json({ status: 'success', message: 'Groupe supprimé avec succès.' });
+
+      } else {
+        return res.status(500).json({ status: 'error', message: 'Erreur lors de la suppression du groupe.' });
+      };
+
+    } catch {
+      console.error('Erreur lors de la suppression du groupe:', error);
+      return res.status(500).json({ status: 'error', message: 'Erreur lors de la suppression du groupe.' });
     };
   },
 };

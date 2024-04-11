@@ -82,9 +82,27 @@ const groupModel = {
     };
   },
 
-  async deleteGroup(group, user) {
-    
+  async delete(group) {
+    try {
+      const updateUserGroupQuery = {
+                text: 'UPDATE "user" SET group_id = NULL WHERE group_id = $1',
+                values: [group.id]
+            };
+            await client.query(updateUserGroupQuery);
+
+      const deleteGroupQuery = {
+          text: 'DELETE FROM "group" WHERE id = $1',
+          values: [group.id]
+      };
+      await client.query(deleteGroupQuery);
+
+      return { status: 'success', message: 'Group deleted successfully.' };
+
+  } catch (error) {
+      console.error('Error deleting group:', error);
+      return { status: 'error', message: 'Error deleting group.' };
   }
+},
 };
 
 module.exports = groupModel;

@@ -6,11 +6,13 @@ const router = express.Router();
 
 router.post("/addGroup", groupController.create);
 
+router.get("/group", groupController.show);
+
 router.patch("/addToGroup", groupController.addToGroup);
 
 router.patch("/removeToGroup", groupController.removeToGroup);
 
-router.get("/group", groupController.show);
+router.delete("/deleteGroup/:id", groupController.delete);
 
 router.get("/groupUsers/:id", groupController.findGroupUsers);
 
