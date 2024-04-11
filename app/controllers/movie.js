@@ -5,6 +5,7 @@ const cache = new NodeCache({ stdTTL: 604800 });
 
 const movieController = {
 
+  // Function that searches for a movie by id
   async fetchMovieById(req, res) {
 
     // Extracting the movie id from the request parameters
@@ -60,6 +61,7 @@ const movieController = {
     }
   },
 
+  // Function that searches for a film by genre
   async fetchMoviesByGenre(req, res) {
     
     // Extracting the genre from the request parameters
@@ -131,41 +133,50 @@ const movieController = {
     }
   },
 
-async fetchMovieByTitle(req, res) {
-
+  // Function that searches for a movie by title
+  async fetchMovieByTitle(req, res) {
+    
+    // Extracting the movie title from the request parameters
     const movieTitle = req.params.title;
-    const language = 'fr-FR';
-    const page = req.query.page || 1;
-    const cacheKey = `movie_${encodeURIComponent(movieTitle)}_${page}`;
+    const language = 'fr-FR'; // Setting the language for the API request
+    const page = req.query.page || 1; // Extracting the page number from the query parameters, defaulting to 1 if not provided
+    const cacheKey = `movie_${encodeURIComponent(movieTitle)}_${page}`; // Generating a cache key based on the movie title and page number
 
     try {
+        // Attempting to retrieve movies data from the cache
         const cachedMovies = cache.get(cacheKey);
 
+        // If movies data is found in the cache, return it
         if (cachedMovies) {
-            console.log('Films récupérés du cache');
+            console.log('Movies retrieved from cache');
 
             return res.json({
-              movies: cachedMovies,
-              currentPage: page,
-              totalPages: cachedMovies.total_pages
-          });
+                movies: cachedMovies,
+                currentPage: page,
+                totalPages: cachedMovies.total_pages
+            });
         };
 
+        // If movies data is not found in the cache, fetch movie data from the TMDB API
         const response = await fetch(`${process.env.API_TMDB_BASE_URL}search/movie?api_key=${process.env.API_TMDB_KEY}&query=${encodeURIComponent(movieTitle)}&language=${language}&page=${page}`);
         
+        // If there's an issue with the network or the response is not valid, throw an error
         if (!response.ok) {
-            throw new Error('Erreur de réseau ou réponse non valide');
+            throw new Error('Network error or invalid response');
         };
 
+        // Parse the movie data response into JSON format
         const movieData = await response.json();
         const movies = movieData.results;
 
+        // Cache the movies data for future use
         cache.set(cacheKey, {
             movies: movies,
             currentPage: page,
             totalPages: movieData.total_pages
         });
 
+        // Send the movies data in the response along with current page and total pages
         res.json({
             movies: movies,
             currentPage: page,
@@ -173,35 +184,44 @@ async fetchMovieByTitle(req, res) {
         });
 
     } catch (error) {
-        console.error('Erreur lors de la récupération des films par titre :', error);
-        res.status(500).json({ error: 'Erreur lors de la récupération des films par titre.' });
+        // If any error occurs during the process, log it and send an error response
+        console.error('Error fetching movies by title:', error);
+        res.status(500).json({ error: 'Error fetching movies by title.' });
     }
-},
+  },
 
-async fetchMoviesByActor(req, res) {
-  
+  // Function that searches for a movie by actor
+  async fetchMoviesByActor(req, res) {
+
+    // Extracting the actor search term from the request parameters
     const searchTerm = req.params.actor;
-    const language = 'fr-FR';
-    const page = req.query.page || 1;
-    const cacheKey = `actor_${encodeURIComponent(searchTerm)}_${page}`;
+    const language = 'fr-FR'; // Setting the language for the API request
+    const page = req.query.page || 1; // Extracting the page number from the query parameters, defaulting to 1 if not provided
+    const cacheKey = `actor_${encodeURIComponent(searchTerm)}_${page}`; // Generating a cache key based on the actor search term and page number
 
     try {
+        // Attempting to retrieve movies data from the cache
         const cachedMovies = cache.get(cacheKey);
 
+        // If movies data is found in the cache, return it
         if (cachedMovies) {
-            console.log('Films récupérés du cache');
+            console.log('Movies retrieved from cache');
             return res.json(cachedMovies);
         };
 
+        // If movies data is not found in the cache, fetch data from the TMDB API based on the actor search term
         const encodedSearchTerm = encodeURIComponent(searchTerm);
         const responseByActor = await fetch(`${process.env.API_TMDB_BASE_URL}search/person?api_key=${process.env.API_TMDB_KEY}&query=${encodedSearchTerm}&language=${language}`);
         
+        // If there's an issue with the network or the response is not valid, throw an error
         if (!responseByActor.ok) {
-            throw new Error('Erreur de réseau ou réponse non valide');
+            throw new Error('Network error or invalid response');
         };
 
+        // Parse the actor data response into JSON format
         const actorsData = await responseByActor.json();
 
+        // Extract movies data for each actor asynchronously
         const moviesByActorPromises = actorsData.results.map(async actor => {
             const response = await fetch(`${process.env.API_TMDB_BASE_URL}person/${actor.id}/movie_credits?api_key=${process.env.API_TMDB_KEY}&language=${language}&page=${page}`);
             
@@ -214,207 +234,236 @@ async fetchMoviesByActor(req, res) {
             }
         });
 
+        // Await for all movies data by actors to be fetched
         const moviesByActor = await Promise.all(moviesByActorPromises);
 
+        // Combine all movies into a single array
         const allMovies = moviesByActor.reduce((acc, movies) => acc.concat(movies), []);
 
+        // Cache the combined movies data for future use
         cache.set(cacheKey, allMovies);
 
+        // Send the combined movies data in the response
         res.json(allMovies);
 
     } catch (error) {
-        console.error('Erreur lors de la récupération des films par acteur :', error);
-        res.status(500).json({ error: 'Erreur lors de la récupération des films par acteur.' });
+        // If any error occurs during the process, log it and send an error response
+        console.error('Error fetching movies by actor:', error);
+        res.status(500).json({ error: 'Error fetching movies by actor.' });
     };
-},
+  },
 
-async fetchNewMovies(req, res) {
+  // Function that searches for new movies
+  async fetchNewMovies(req, res) {
 
-  const language = 'fr-FR';
-  const page = req.query.page || 1;
-
-  try {
-    const response = await fetch(`${process.env.API_TMDB_BASE_URL}movie/now_playing?api_key=${process.env.API_TMDB_KEY}&language=${language}&page=${page}`);
-
-    if (!response.ok) {
-      throw new Error('Erreur réseau ou réponse non valide');
-    };
-
-    const newMovies = await response.json();
-    const movies = newMovies.results;
-
-    res.json({
-      movies: movies,
-      currentPage: page,
-      totalPages: newMovies.total_pages
-    });
-
-  } catch (error) {
-    console.error('Erreur lors de la récupération des nouveaux films :', error);
-    res.status(500).json({ error: 'Erreur lors de la récupération des nouveaux films.' });
-  }
-},
-
-async fetchBySearchBar(req, res) {
-
-  const searchTerm = req.query.query;
-
-  try {
-    // Search by title
-    const encodedSearchTerm = encodeURIComponent(searchTerm);
-    const responseByTitle = await fetch(`${process.env.API_TMDB_BASE_URL}search/movie?api_key=${process.env.API_TMDB_KEY}&query=${encodedSearchTerm}&language=fr-FR`);
-
-    // Search by genre
-    const genreResponse = await fetch(`${process.env.API_TMDB_BASE_URL}/genre/movie/list?api_key=${process.env.API_TMDB_KEY}&language=fr-FR`);
-    if (!genreResponse.ok) {
-      throw new Error('Erreur réseau ou réponse non valide lors de la récupération des genres');
-    }
-    const genreData = await genreResponse.json();
-    let genreId;
-    genreData.genres.forEach(genre => {
-      if (genre.name.toLowerCase() === searchTerm.toLowerCase()) {
-        genreId = genre.id;
-      }
-    });
-
-    // Search by actor
-    const responseByActor = await fetch(`${process.env.API_TMDB_BASE_URL}search/person?api_key=${process.env.API_TMDB_KEY}&query=${encodedSearchTerm}&language=fr-FR`);
-
-    // Checking answers
-    if (!responseByTitle.ok || !responseByActor.ok) {
-      throw new Error('Erreur de réseau ou réponse non valide');
-    }
-
-    // Retrieve the answers
-    const moviesByTitleData = await responseByTitle.json();
-    const moviesByActorData = await responseByActor.json();
-    
-    // Filter results by gender
-    let moviesByGenre = [];
-    if (genreId) {
-      const responseByGenre = await fetch(`${process.env.API_TMDB_BASE_URL}/discover/movie?api_key=${process.env.API_TMDB_KEY}&language=fr-FR&sort_by=popularity.desc&with_genres=${genreId}`);
-      if (responseByGenre.ok) {
-        const moviesByGenreData = await responseByGenre.json();
-        moviesByGenre = moviesByGenreData.results;
-      }
-    }
-
-    // Retrieve movies by title and actors
-    const moviesByTitle = moviesByTitleData.results.map(movie => ({ title: movie.title, poster_path: movie.poster_path }));
-    const actors = moviesByActorData.results.map(actor => actor.name);
-
-    // Retrieve the films in which the actors starred
-    const moviesByActorPromises = moviesByActorData.results.map(async actor => {
-      const response = await fetch(`${process.env.API_TMDB_BASE_URL}person/${actor.id}/movie_credits?api_key=${process.env.API_TMDB_KEY}&language=fr-FR`);
-      if (response.ok) {
-        const credits = await response.json();
-        return credits.cast.map(movie => ({ title: movie.title, poster_path: movie.poster_path }));
-      } else {
-        return [];
-      }
-    });
-    const moviesByActor = await Promise.all(moviesByActorPromises);
-
-    const combinedResults = {
-      moviesByTitle,
-      moviesByGenre,
-      actors,
-      moviesByActor
-    };
+    const language = 'fr-FR'; // Setting the language for the API request
+    const page = req.query.page || 1; // Extracting the page number from the query parameters, defaulting to 1 if not provided
   
-    res.json(combinedResults);
-
-  } catch (error) {
-    console.error('Erreur lors de la récupération des films par titre, genre ou acteur :', error);
-    res.status(500).json({ error: 'Erreur lors de la récupération des films par titre, genre ou acteur.' });
-  }
-},
-
-async fetchPopularMovie(req, res) {
-
-  const language = 'fr-FR';
-    const page = req.query.page || 1;
-    const cacheKey = `popular_movies_${page}`;
-
     try {
-        const cachedMovies = cache.get(cacheKey);
-        if (cachedMovies) {
-            console.log('Films populaires récupérés du cache');
-            return res.json(cachedMovies);
-        }
-
-        const response = await fetch(`${process.env.API_TMDB_BASE_URL}movie/popular?api_key=${process.env.API_TMDB_KEY}&language=${language}&page=${page}`);
-        if (!response.ok) {
-            throw new Error('Erreur réseau ou réponse non valide');
-        };
-
-        const popularMovies = await response.json();
-        const movies = popularMovies.results;
-
-        cache.set(cacheKey, {
-            movies: movies,
-            currentPage: page,
-            totalPages: popularMovies.total_pages
-        });
-
-        res.json({
-            movies: movies,
-            currentPage: page,
-            totalPages: popularMovies.total_pages
-        });
+      // Fetching data for new movies from the TMDB API
+      const response = await fetch(`${process.env.API_TMDB_BASE_URL}movie/now_playing?api_key=${process.env.API_TMDB_KEY}&language=${language}&page=${page}`);
+  
+      // If there's an issue with the network or the response is not valid, throw an error
+      if (!response.ok) {
+        throw new Error('Network error or invalid response');
+      };
+  
+      // Parse the response data into JSON format
+      const newMovies = await response.json();
+      const movies = newMovies.results;
+  
+      // Send the movies data in the response along with current page and total pages
+      res.json({
+        movies: movies,
+        currentPage: page,
+        totalPages: newMovies.total_pages
+      });
+  
     } catch (error) {
-        console.error('Erreur lors de la récupération des films populaires :', error);
-        res.status(500).json({ error: 'Erreur lors de la récupération des films populaires.' });
+      // If any error occurs during the process, log it and send an error response
+      console.error('Error fetching new movies:', error);
+      res.status(500).json({ error: 'Error fetching new movies.' });
     }
-},
+  },
 
-async fetchRecommendation(req, res) {
+  // Function that searches for movies in a search bar
+  async fetchBySearchBar(req, res) {
 
-  const movieId = req.params.id;
-    const language = 'fr-FR';
-    const page = req.query.page || 1;
-    const cacheKey = `recommendations_${movieId}_${page}`;
+    const searchTerm = req.query.query;
 
     try {
-        const cachedRecommendations = cache.get(cacheKey);
+      // Search by title
+      const encodedSearchTerm = encodeURIComponent(searchTerm);
+      const responseByTitle = await fetch(`${process.env.API_TMDB_BASE_URL}search/movie?api_key=${process.env.API_TMDB_KEY}&query=${encodedSearchTerm}&language=fr-FR`);
 
-        if (cachedRecommendations) {
-            console.log('Recommandations récupérées du cache');
+      // Search by genre
+      const genreResponse = await fetch(`${process.env.API_TMDB_BASE_URL}/genre/movie/list?api_key=${process.env.API_TMDB_KEY}&language=fr-FR`);
+      if (!genreResponse.ok) {
+        throw new Error('Erreur réseau ou réponse non valide lors de la récupération des genres');
+      }
+      const genreData = await genreResponse.json();
+      let genreId;
+      genreData.genres.forEach(genre => {
+        if (genre.name.toLowerCase() === searchTerm.toLowerCase()) {
+          genreId = genre.id;
+        }
+      });
 
-            return res.json({
-            recommendations: cachedRecommendations,
-            currentPage: page,
-            totalPages: cachedRecommendations.total_pages
-        });
-        };
+      // Search by actor
+      const responseByActor = await fetch(`${process.env.API_TMDB_BASE_URL}search/person?api_key=${process.env.API_TMDB_KEY}&query=${encodedSearchTerm}&language=fr-FR`);
 
-        const response = await fetch(`${process.env.API_TMDB_BASE_URL}movie/${movieId}/recommendations?api_key=${process.env.API_TMDB_KEY}&language=${language}&page=${page}`);
-        
-        if (!response.ok) {
-            throw new Error('Erreur réseau ou réponse non valide');
-        };
+      // Checking answers
+      if (!responseByTitle.ok || !responseByActor.ok) {
+        throw new Error('Erreur de réseau ou réponse non valide');
+      }
 
-        const recommendation = await response.json();
-        const recommendationResults = recommendation.results;
+      // Retrieve the answers
+      const moviesByTitleData = await responseByTitle.json();
+      const moviesByActorData = await responseByActor.json();
+      
+      // Filter results by gender
+      let moviesByGenre = [];
+      if (genreId) {
+        const responseByGenre = await fetch(`${process.env.API_TMDB_BASE_URL}/discover/movie?api_key=${process.env.API_TMDB_KEY}&language=fr-FR&sort_by=popularity.desc&with_genres=${genreId}`);
+        if (responseByGenre.ok) {
+          const moviesByGenreData = await responseByGenre.json();
+          moviesByGenre = moviesByGenreData.results;
+        }
+      }
 
-        cache.set(cacheKey, {
-            recommendations: recommendationResults,
-            currentPage: page,
-            totalPages: recommendation.total_pages
-        });
+      // Retrieve movies by title and actors
+      const moviesByTitle = moviesByTitleData.results.map(movie => ({ title: movie.title, poster_path: movie.poster_path }));
+      const actors = moviesByActorData.results.map(actor => actor.name);
 
-        res.json({
-            recommendations: recommendationResults,
-            currentPage: page,
-            totalPages: recommendation.total_pages
-        });
+      // Retrieve the films in which the actors starred
+      const moviesByActorPromises = moviesByActorData.results.map(async actor => {
+        const response = await fetch(`${process.env.API_TMDB_BASE_URL}person/${actor.id}/movie_credits?api_key=${process.env.API_TMDB_KEY}&language=fr-FR`);
+        if (response.ok) {
+          const credits = await response.json();
+          return credits.cast.map(movie => ({ title: movie.title, poster_path: movie.poster_path }));
+        } else {
+          return [];
+        }
+      });
+      const moviesByActor = await Promise.all(moviesByActorPromises);
+
+      const combinedResults = {
+        moviesByTitle,
+        moviesByGenre,
+        actors,
+        moviesByActor
+      };
+    
+      res.json(combinedResults);
 
     } catch (error) {
-        console.error('Erreur lors de la récupération des recommandations :', error);
-        res.status(500).json({ error: 'Erreur lors de la récupération des recommandations.' });
-    };
-},
+      console.error('Erreur lors de la récupération des films par titre, genre ou acteur :', error);
+      res.status(500).json({ error: 'Erreur lors de la récupération des films par titre, genre ou acteur.' });
+    }
+  },
 
+  // Function that searches for popular movies
+  async fetchPopularMovie(req, res) {
+    const language = 'fr-FR'; // Setting the language for the API request
+    const page = req.query.page || 1; // Extracting the page number from the query parameters, defaulting to 1 if not provided
+    const cacheKey = `popular_movies_${page}`; // Generating a cache key based on the page number for popular movies
+  
+    try {
+      // Attempting to retrieve popular movies data from the cache
+      const cachedMovies = cache.get(cacheKey);
+  
+      // If popular movies data is found in the cache, return it
+      if (cachedMovies) {
+        console.log('Popular movies retrieved from cache');
+        return res.json(cachedMovies);
+      }
+  
+      // If popular movies data is not found in the cache, fetch it from the TMDB API
+      const response = await fetch(`${process.env.API_TMDB_BASE_URL}movie/popular?api_key=${process.env.API_TMDB_KEY}&language=${language}&page=${page}`);
+  
+      // If there's an issue with the network or the response is not valid, throw an error
+      if (!response.ok) {
+        throw new Error('Network error or invalid response');
+      };
+  
+      // Parse the response data into JSON format
+      const popularMovies = await response.json();
+      const movies = popularMovies.results;
+  
+      // Cache the popular movies data for future use
+      cache.set(cacheKey, {
+        movies: movies,
+        currentPage: page,
+        totalPages: popularMovies.total_pages
+      });
+  
+      // Send the popular movies data in the response along with current page and total pages
+      res.json({
+        movies: movies,
+        currentPage: page,
+        totalPages: popularMovies.total_pages
+      });
+    } catch (error) {
+      // If any error occurs during the process, log it and send an error response
+      console.error('Error fetching popular movies:', error);
+      res.status(500).json({ error: 'Error fetching popular movies.' });
+    }
+  },
+
+  // Function that gives movie recommendations based on a movie's ID
+  async fetchRecommendation(req, res) {
+    const movieId = req.params.id; // Extracting the movie ID from the request parameters
+    const language = 'fr-FR'; // Setting the language for the API request
+    const page = req.query.page || 1; // Extracting the page number from the query parameters, defaulting to 1 if not provided
+    const cacheKey = `recommendations_${movieId}_${page}`; // Generating a cache key based on the movie ID and page number for recommendations
+  
+    try {
+      // Attempting to retrieve recommendations data from the cache
+      const cachedRecommendations = cache.get(cacheKey);
+  
+      // If recommendations data is found in the cache, return it
+      if (cachedRecommendations) {
+        console.log('Recommendations retrieved from cache');
+  
+        return res.json({
+          recommendations: cachedRecommendations,
+          currentPage: page,
+          totalPages: cachedRecommendations.total_pages
+        });
+      }
+  
+      // If recommendations data is not found in the cache, fetch it from the TMDB API
+      const response = await fetch(`${process.env.API_TMDB_BASE_URL}movie/${movieId}/recommendations?api_key=${process.env.API_TMDB_KEY}&language=${language}&page=${page}`);
+      
+      // If there's an issue with the network or the response is not valid, throw an error
+      if (!response.ok) {
+        throw new Error('Network error or invalid response');
+      };
+  
+      // Parse the response data into JSON format
+      const recommendation = await response.json();
+      const recommendationResults = recommendation.results;
+  
+      // Cache the recommendations data for future use
+      cache.set(cacheKey, {
+        recommendations: recommendationResults,
+        currentPage: page,
+        totalPages: recommendation.total_pages
+      });
+  
+      // Send the recommendations data in the response along with current page and total pages
+      res.json({
+        recommendations: recommendationResults,
+        currentPage: page,
+        totalPages: recommendation.total_pages
+      });
+  
+    } catch (error) {
+      // If any error occurs during the process, log it and send an error response
+      console.error('Error fetching recommendations:', error);
+      res.status(500).json({ error: 'Error fetching recommendations.' });
+    };
+  },
 };
 
 module.exports = movieController;
