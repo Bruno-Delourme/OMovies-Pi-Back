@@ -1,4 +1,4 @@
-const { schemaCreateUser, schemaLoginUser, schemaUpdateUser } = require('./schema.js');
+const { schemaCreateUser, schemaLoginUser, schemaUpdateUser, schemaFindUser } = require('./schema.js');
 
 module.exports = {
 
@@ -24,14 +24,25 @@ module.exports = {
     };
   },
 
-    updateUser(req,_, next) {
-      const { error } = schemaUpdateUser.validate(req.body);
+  updateUser(req,_, next) {
+    const { error } = schemaUpdateUser.validate(req.body);
 
-      if (error) {
-        throw new Error(error.details[0].message);
+    if (error) {
+      throw new Error(error.details[0].message);
 
-      } else {
-        next();
-      };
-    },
+    } else {
+      next();
+    };
+  },
+
+  findUser(req,_, next) {
+    const { error } = schemaFindUser.validate(req.body);
+
+    if (error) {
+      throw new Error(error.details[0].message);
+
+    } else {
+      next();
+    };
+  },
 };

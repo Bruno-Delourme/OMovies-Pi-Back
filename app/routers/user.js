@@ -10,6 +10,8 @@ router.post("/user", validation.createUser, userController.create);
 
 router.post("/login", validation.loginUser, userController.login);
 
+router.post("/findUser", authMiddleware.authMiddleware, validation.findUser, userController.show);
+
 router.patch("/user", authMiddleware.authMiddleware, validation.updateUser, userController.update);
 
 router.delete("/user/:id", authMiddleware.authMiddleware,  userController.delete);

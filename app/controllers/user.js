@@ -59,6 +59,25 @@ const userController = {
   };
   },
 
+  async show(req, res) {
+    debug('user show controller called');
+
+    const { pseudo } = req.body;
+
+    // Attempting to find the user based on the provided credentials
+    const result = await userDataMapper.findUser({pseudo});
+
+    // If no user is found, return an error
+    if (!result) {
+      debug('Aucun utilisateur trouvé avec le pseudo spécifié');
+      return res.status(401).json({ status: 'error', message: 'Aucun utilisateur trouvé avec le pseudo spécifié.' });
+
+  } else {
+     // Sending a success response with user data and the token
+    res.json({ status: 'success' });
+  };
+  },
+
   // Function that deletes a user
   async delete(req, res) {
     debug('user delete controller called');

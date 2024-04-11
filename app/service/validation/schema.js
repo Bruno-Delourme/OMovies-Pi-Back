@@ -20,6 +20,13 @@ const schemaUpdateUser = Joi.object({
   password: Joi.string(),
 }).min(1).required();
 
+const schemaFindUser = Joi.object({
+  pseudo: Joi.string().required()
+}).length(1).required();
+
 module.exports = {
-  schemaCreateUser, schemaLoginUser, schemaUpdateUser
+  schemaCreateUser, 
+  schemaLoginUser, 
+  schemaUpdateUser,
+  schemaFindUser
 };

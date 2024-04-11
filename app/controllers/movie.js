@@ -19,7 +19,7 @@ const movieController = {
   
       // If the movie is found in the cache, return it
       if (cachedMovie) {
-        console.log('Movie retrieved from cache');
+        console.log('Film récupéré du cache');
         return res.json(cachedMovie);
       }
   
@@ -28,7 +28,7 @@ const movieController = {
   
       // If there's an issue with the network or the response is not valid, throw an error
       if (!movieResponse.ok) {
-        throw new Error('Network error or invalid response');
+        throw new Error('Erreur réseau ou réponse invalide');
       }
   
       // Parse the movie response into JSON format
@@ -39,7 +39,7 @@ const movieController = {
   
       // If there's an issue with the network or the response is not valid, throw an error
       if (!creditsResponse.ok) {
-        throw new Error('Network error or invalid response while fetching credits');
+        throw new Error('Erreur réseau ou réponse invalide lors de la récupération des crédits');
       }
   
       // Parse the credits response into JSON format
@@ -56,8 +56,8 @@ const movieController = {
   
     } catch (error) {
       // If any error occurs during the process, log it and send an error response
-      console.error('Error fetching movie by id:', error);
-      res.status(500).json({ error: 'Error fetching movie by id.' });
+      console.error('Erreur lors de la récupération du film par identifiant:', error);
+      res.status(500).json({ error: 'Erreur lors de la récupération du film par identifiant.' });
     }
   },
 
@@ -76,7 +76,7 @@ const movieController = {
   
       // If movies data is found in the cache, return it
       if (cachedMovies) {
-        console.log(`Data retrieved from cache: ${genre}`);
+        console.log(`Données récupérées du cache: ${genre}`);
   
         return res.json({
           movies: cachedMovies,
@@ -90,7 +90,7 @@ const movieController = {
   
       // If there's an issue with the network or the response is not valid, throw an error
       if (!genreResponse.ok) {
-        throw new Error('Network error or invalid response while fetching genres');
+        throw new Error('Erreur réseau ou réponse invalide lors de la récupération des genres');
       }
   
       // Parse the genre response into JSON format
@@ -197,6 +197,7 @@ const movieController = {
     const searchTerm = req.params.actor;
     const language = 'fr-FR'; // Setting the language for the API request
     const page = req.query.page || 1; // Extracting the page number from the query parameters, defaulting to 1 if not provided
+    const pageSize = 20; // Number of results per page
     const cacheKey = `actor_${encodeURIComponent(searchTerm)}_${page}`; // Generating a cache key based on the actor search term and page number
 
     try {
@@ -227,7 +228,14 @@ const movieController = {
             
             if (response.ok) {
                 const credits = await response.json();
-                return credits.cast.map(movie => ({ title: movie.title, poster_path: movie.poster_path }));
+                // Calculating the start and end index for pagination
+                const startIndex = (page - 1) * pageSize;
+                const endIndex = startIndex + pageSize;
+
+                // Paginating the credits data
+                const paginatedCredits = credits.cast.slice(startIndex, endIndex);
+                // Mapping the paginated credits to required format
+                return paginatedCredits.map(movie => ({ title: movie.title, poster_path: movie.poster_path }));
 
             } else {
                 return [];
@@ -283,7 +291,7 @@ const movieController = {
       // If any error occurs during the process, log it and send an error response
       console.error('Error fetching new movies:', error);
       res.status(500).json({ error: 'Error fetching new movies.' });
-    }
+    };
   },
 
   // Function that searches for movies in a search bar
