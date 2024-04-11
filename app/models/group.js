@@ -30,7 +30,7 @@ const groupModel = {
   } finally {
       client.release();
   };
-},
+  },
 
   async findGroup(id) {
     const query = {
