@@ -48,6 +48,7 @@ const listModel = {
       };
 
       toList.push({ name: movie.name, picture: movie.picture });
+      // toList.push({ name: movie.name, picture: movie.picture, date_added: movie.date_added });
 
       const query = {
           text: 'UPDATE "user" SET list = $1 WHERE id = $2',
@@ -83,6 +84,7 @@ const listModel = {
       };
 
       toToReview.push({ name: movie.name, picture: movie.picture });
+      // toToReview.push({ name: movie.name, picture: movie.picture, date_added: movie.date_added });
 
       const query = {
           text: 'UPDATE "user" SET to_review = $1 WHERE id = $2',

@@ -53,6 +53,26 @@ $$
     RETURNING *;
 $$ LANGUAGE SQL STRICT;
 
+-- CREATE OR REPLACE FUNCTION delete_movie_from_list(user_id INT, movie_name TEXT, movie_picture TEXT, date_added TIMESTAMPTZ)
+--   RETURNS VOID
+--   LANGUAGE plpgsql
+-- AS $$
+-- BEGIN
+--   UPDATE "user"
+--   SET list = (
+--     SELECT COALESCE(
+--       (SELECT jsonb_agg(movie)
+--        FROM jsonb_array_elements("list") AS movie
+--        WHERE (movie->>'name' <> movie_name OR movie->>'picture' <> movie_picture OR movie->>'date_added' <> movie_date_added)),
+--       '[]'::jsonb
+--     )
+--     FROM "user"
+--     WHERE id = user_id
+--   )
+--   WHERE id = user_id;
+-- END;
+-- $$;
+
 CREATE OR REPLACE FUNCTION delete_movie_from_list(user_id INT, movie_name TEXT, movie_picture TEXT)
   RETURNS VOID
   LANGUAGE plpgsql
@@ -92,5 +112,25 @@ BEGIN
   WHERE id = user_id;
 END;
 $$;
+
+-- CREATE OR REPLACE FUNCTION delete_movie_from_to_review(user_id INT, movie_name TEXT, movie_picture TEXT, date_added TIMESTAMPTZ)
+--   RETURNS VOID
+--   LANGUAGE plpgsql
+-- AS $$
+-- BEGIN
+--   UPDATE "user"
+--   SET to_review = (
+--     SELECT COALESCE(
+--       (SELECT jsonb_agg(movie)
+--        FROM jsonb_array_elements("to_review") AS movie
+--        WHERE (movie->>'name' <> movie_name OR movie->>'picture' <> movie_picture OR movie->>'date_added' <> movie_date_added)),
+--       '[]'::jsonb
+--     )
+--     FROM "user"
+--     WHERE id = user_id
+--   )
+--   WHERE id = user_id;
+-- END;
+-- $$;
 
 COMMIT;

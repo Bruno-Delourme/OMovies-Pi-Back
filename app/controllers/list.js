@@ -15,9 +15,15 @@ const listController = {
     }
 
     const picture = poster_path || 'Pas d\'affiche';
-
+    
     try {
         const userId = req.user.id;
+
+        // const date = new Date();
+        // const utcOffsetMinutes = date.getTimezoneOffset(); // Obtient le décalage en minutes
+        // const utcOffsetHours = utcOffsetMinutes / 60; // Convertit le décalage en heures
+        // // Soustrait le décalage à l'heure actuelle pour obtenir l'heure dans le fuseau horaire de l'utilisateur
+        // date.setHours(date.getHours() - utcOffsetHours);
 
         // Insert the movie into the database and retrieve the ID of the inserted movie
         const insertIntoMovie = await listDataMapper.insertIntoMovie({ name: title, picture, description: overview, genre: genres });
@@ -25,6 +31,7 @@ const listController = {
 
         // Insert the movie into the user's favorites list
         const insertIntoList = await listDataMapper.insertIntoList({ id: userId }, { id: movieId, name: title, picture });
+        // const insertIntoList = await listDataMapper.insertIntoList({ id: userId }, { id: movieId, name: title, picture, date_added: date });
         
         res.json({ status: 'success', data: { insertIntoMovie, insertIntoList } });
 
@@ -49,12 +56,20 @@ const listController = {
     try {
         const userId = req.user.id;
 
+        // const date = new Date();
+        // const utcOffsetMinutes = date.getTimezoneOffset(); // Obtient le décalage en minutes
+        // const utcOffsetHours = utcOffsetMinutes / 60; // Convertit le décalage en heures
+        // // Soustrait le décalage à l'heure actuelle pour obtenir l'heure dans le fuseau horaire de l'utilisateur
+        // date.setHours(date.getHours() - utcOffsetHours);
+        // console.log(date);
+
         // Insert the movie into the database and retrieve the ID of the inserted movie
         const insertIntoMovie = await listDataMapper.insertIntoMovie({ name: title, picture, description: overview, genre: genres });
         const movieId = insertIntoMovie.id;
 
         // Insert the movie into the user's list of movies to watch again
         const insertIntoToReview = await listDataMapper.insertIntoToReview({ id: userId }, { id: movieId, name: title, picture });
+        // const insertIntoToReview = await listDataMapper.insertIntoToReview({ id: userId }, { id: movieId, name: title, picture, date_added: date });
         
         res.json({ status: 'success', data: { insertIntoMovie, insertIntoToReview } });
 
