@@ -8,17 +8,15 @@ const listController = {
   async insertIntoList(req, res) {
     debug('list insertIntoList controller called');
 
-    const { title, poster_path, overview, genres } = req.body;
+    const { userId, movieId, title, poster_path, overview, genres } = req.body;
 
-    if (!title || !overview || !genres) {
+    if (!movieId || !title || !overview || !genres) {
         return res.status(400).json({ message: 'Données incomplètes' });
     }
 
     const picture = poster_path || 'Pas d\'affiche';
     
     try {
-        const userId = req.user.id;
-
         // const date = new Date();
         // const utcOffsetMinutes = date.getTimezoneOffset(); // Obtient le décalage en minutes
         // const utcOffsetHours = utcOffsetMinutes / 60; // Convertit le décalage en heures
@@ -26,8 +24,7 @@ const listController = {
         // date.setHours(date.getHours() - utcOffsetHours);
 
         // Insert the movie into the database and retrieve the ID of the inserted movie
-        const insertIntoMovie = await listDataMapper.insertIntoMovie({ name: title, picture, description: overview, genre: genres });
-        const movieId = insertIntoMovie.id;
+        const insertIntoMovie = await listDataMapper.insertIntoMovie({ id: movieId, name: title, picture, description: overview, genre: genres });
 
         // Insert the movie into the user's favorites list
         const insertIntoList = await listDataMapper.insertIntoList({ id: userId }, { id: movieId, name: title, picture });
@@ -38,24 +35,22 @@ const listController = {
     } catch (error) {
         debug('Erreur lors de l\'insertion dans la liste des favoris:', error);
         res.status(500).json({ status: 'error', message: 'Erreur lors de l\'insertion dans la liste des favoris.' });
-    }
+    };
 },
 
 // Function which inserts a film into the list of films to watch again
   async insertIntoToReview(req, res) {
     debug('list insertIntoToReview controller called');
 
-    const { title, poster_path, overview, genres } = req.body;
+    const { userId, movieId, title, poster_path, overview, genres } = req.body;
 
-    if (!title || !overview || !genres) {
+    if (!movieId || !title || !overview || !genres) {
         return res.status(400).json({ message: 'Données incomplètes' });
     }
 
     const picture = poster_path || 'Pas d\'affiche';
 
     try {
-        const userId = req.user.id;
-
         // const date = new Date();
         // const utcOffsetMinutes = date.getTimezoneOffset(); // Obtient le décalage en minutes
         // const utcOffsetHours = utcOffsetMinutes / 60; // Convertit le décalage en heures
@@ -64,8 +59,7 @@ const listController = {
         // console.log(date);
 
         // Insert the movie into the database and retrieve the ID of the inserted movie
-        const insertIntoMovie = await listDataMapper.insertIntoMovie({ name: title, picture, description: overview, genre: genres });
-        const movieId = insertIntoMovie.id;
+        const insertIntoMovie = await listDataMapper.insertIntoMovie({ id: movieId, name: title, picture, description: overview, genre: genres });
 
         // Insert the movie into the user's list of movies to watch again
         const insertIntoToReview = await listDataMapper.insertIntoToReview({ id: userId }, { id: movieId, name: title, picture });

@@ -38,7 +38,7 @@ CREATE TABLE "user" (
 );
 
 CREATE TABLE "movie" (
-  "id" INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  "id" INT NOT NULL PRIMARY KEY,
   "name" TEXT,
   "picture" TEXT,
   "description" TEXT,
@@ -75,8 +75,9 @@ $$ LANGUAGE sql STRICT;
 
 CREATE OR REPLACE FUNCTION add_movie(json) RETURNS "movie" AS
 $$
-  INSERT INTO "movie"(name, picture, description, genre)
+  INSERT INTO "movie"(id, name, picture, description, genre)
     VALUES (
+      ($1 ->> 'id'):: INT,
       ($1 ->> 'name'):: TEXT,
       ($1 ->> 'picture'):: TEXT,
       ($1 ->> 'description'):: TEXT,
@@ -105,7 +106,7 @@ $$
     RETURNING *;
 $$ LANGUAGE SQL STRICT;
 
-CREATE OR REPLACE FUNCTION delete_movie_from_list(user_id INT, movie_name TEXT, movie_picture TEXT)
+CREATE OR REPLACE FUNCTION delete_movie_from_list(user_id INT, movie_id INT, movie_name TEXT, movie_picture TEXT)
   RETURNS VOID
   LANGUAGE plpgsql
 AS $$
@@ -115,7 +116,7 @@ BEGIN
     SELECT COALESCE(
       (SELECT jsonb_agg(movie)
        FROM jsonb_array_elements("list") AS movie
-       WHERE (movie->>'name' <> movie_name OR movie->>'picture' <> movie_picture)),
+       WHERE (movie->> 'id' <> movie_id OR movie->>'name' <> movie_name OR movie->>'picture' <> movie_picture)),
       '[]'::jsonb
     )
     FROM "user"
@@ -125,7 +126,7 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION delete_movie_from_to_review(user_id INT, movie_name TEXT, movie_picture TEXT)
+CREATE OR REPLACE FUNCTION delete_movie_from_to_review(user_id INT, movie_id INT, movie_name TEXT, movie_picture TEXT)
   RETURNS VOID
   LANGUAGE plpgsql
 AS $$
@@ -135,7 +136,7 @@ BEGIN
     SELECT COALESCE(
       (SELECT jsonb_agg(movie)
        FROM jsonb_array_elements("to_review") AS movie
-       WHERE (movie->>'name' <> movie_name OR movie->>'picture' <> movie_picture)),
+       WHERE (movie->> 'id' <> movie_id OR movie->>'name' <> movie_name OR movie->>'picture' <> movie_picture)),
       '[]'::jsonb
     )
     FROM "user"

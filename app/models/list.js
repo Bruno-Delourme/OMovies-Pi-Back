@@ -42,13 +42,13 @@ const listModel = {
           toList = userResult.rows[0].list;
       };
 
-      const existingMovie = toList.find(item => item.name === movie.name);
+      const existingMovie = toList.find(item => item.id === movie.id);
       if (existingMovie) {
           return { message: 'Le film est déjà dans la liste des favoris.' };
       };
 
-      toList.push({ name: movie.name, picture: movie.picture });
-      // toList.push({ name: movie.name, picture: movie.picture, date_added: movie.date_added });
+      toList.push({id: movie.id, name: movie.name, picture: movie.picture });
+      // toList.push({id: movies.id, name: movie.name, picture: movie.picture, date_added: movie.date_added });
 
       const query = {
           text: 'UPDATE "user" SET list = $1 WHERE id = $2',
@@ -78,12 +78,12 @@ const listModel = {
           toToReview = userResult.rows[0].to_review;
       };
 
-      const existingMovie = toToReview.find(item => item.name === movie.name);
+      const existingMovie = toToReview.find(item => item.id === movie.id);
       if (existingMovie) {
           return { message: 'Le film est déjà dans la liste des films à revoir.' };
       };
 
-      toToReview.push({ name: movie.name, picture: movie.picture });
+      toToReview.push({id: movie.id, name: movie.name, picture: movie.picture });
       // toToReview.push({ name: movie.name, picture: movie.picture, date_added: movie.date_added });
 
       const query = {

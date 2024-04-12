@@ -4,7 +4,7 @@ const { voteController } = require('../controllers');
 
 const router = express.Router();
 
-
+router.post("/createVote", voteController.create);
 
 debug('API vote router initialized');
 

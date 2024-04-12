@@ -27,7 +27,7 @@ CREATE TABLE "user" (
 );
 
 CREATE TABLE "movie" (
-  "id" INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  "id" INT NOT NULL PRIMARY KEY,
   "name" TEXT,
   "picture" TEXT,
   "description" TEXT,
