@@ -230,81 +230,62 @@ const movieController = {
 
   // Function that searches for a movie by actor
   async fetchMoviesByActor(req, res) {
-
+    
     // Extracting the actor search term from the request parameters
     const searchTerm = req.params.actor;
     const language = 'fr-FR'; // Setting the language for the API request
     const page = req.query.page || 1; // Extracting the page number from the query parameters, defaulting to 1 if not provided
     const pageSize = 20; // Number of results per page
     const cacheKey = `actor_${encodeURIComponent(searchTerm)}_${page}`; // Generating a cache key based on the actor search term and page number
-
     try {
         // Attempting to retrieve movies data from the cache
         const cachedMovies = cache.get(cacheKey);
-
         // If movies data is found in the cache, return it
         if (cachedMovies) {
             console.log('Movies retrieved from cache');
-
-            return res.json({
-              movies: cachedMovies,
-              currentPage: page,
-              totalPages: cachedMovies.total_pages
-          });
+            return res.json(cachedMovies);
         };
-
         // If movies data is not found in the cache, fetch data from the TMDB API based on the actor search term
         const encodedSearchTerm = encodeURIComponent(searchTerm);
         const responseByActor = await fetch(`${process.env.API_TMDB_BASE_URL}search/person?api_key=${process.env.API_TMDB_KEY}&query=${encodedSearchTerm}&language=${language}`);
-        
         // If there's an issue with the network or the response is not valid, throw an error
         if (!responseByActor.ok) {
             throw new Error('Network error or invalid response');
         };
-
         // Parse the actor data response into JSON format
         const actorsData = await responseByActor.json();
-
         // Extract movies data for each actor asynchronously
         const moviesByActorPromises = actorsData.results.map(async actor => {
         const response = await fetch(`${process.env.API_TMDB_BASE_URL}person/${actor.id}/movie_credits?api_key=${process.env.API_TMDB_KEY}&language=${language}&page=${page}`);
-          
           if (response.ok) {
               const credits = await response.json();
               // Calculating the start and end index for pagination
               const startIndex = (page - 1) * pageSize;
               const endIndex = startIndex + pageSize;
-
               // Paginating the credits data
               const paginatedCredits = credits.cast.slice(startIndex, endIndex);
               // Return the paginated credits as is
-              return { credits: paginatedCredits, totalPages: credits.total_pages };
-
+              return paginatedCredits;
           } else {
-            return { credits: [], totalPages: 0 };
+              return [];
           }
         });
-
         // Await for all movies data by actors to be fetched
         const moviesByActor = await Promise.all(moviesByActorPromises);
-
         // Flatten the array of arrays into a single array
         const allMovies = moviesByActor.flat();
-
         // Cache the combined movies data for future use
         cache.set(cacheKey, {
           movies: allMovies,
           currentPage: page,
-          totalPages: moviesByActor.total_pages
+          totalPages: allMovies.total_pages
       });
-
         // Send the combined movies data in the response
         res.json({
           movies: allMovies,
           currentPage: page,
-          totalPages: moviesByActor.total_pages
+          totalPages: allMovies.total_pages
       });
-
     } catch (error) {
         // If any error occurs during the process, log it and send an error response
         console.error('Error fetching movies by actor:', error);
