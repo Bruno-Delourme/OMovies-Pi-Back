@@ -109,66 +109,223 @@ const movieController = {
     const cacheKey = `${genre}_${page}`; // Generating a cache key based on the genre and page number
   
     try {
-      // Attempting to retrieve movies data from the cache
-      const cachedMovies = cache.get(cacheKey);
+        // Attempting to retrieve movies data from the cache
+        const cachedMovies = cache.get(cacheKey);
   
-      // If movies data is found in the cache, return it
-      if (cachedMovies) {
-        console.log(`Données récupérées du cache: ${genre}`);
+        // If movies data is found in the cache, return it
+        if (cachedMovies) {
+            console.log(`Données récupérées du cache: ${genre}`);
   
-        return res.json({
-          movies: cachedMovies,
-          currentPage: page,
-          totalPages: cachedMovies.total_pages
-        });
-      }
+            return res.json({
+                movies: cachedMovies,
+                currentPage: page,
+                totalPages: cachedMovies.total_pages
+            });
+        };
   
-      // If movies data is not found in the cache, fetch genre data from the TMDB API
-      const genreResponse = await fetch(`${process.env.API_TMDB_BASE_URL}/genre/movie/list?api_key=${process.env.API_TMDB_KEY}&language=${language}`);
+        // If movies data is not found in the cache, fetch genre data from the TMDB API
+        const genreResponse = await fetch(`${process.env.API_TMDB_BASE_URL}/genre/movie/list?api_key=${process.env.API_TMDB_KEY}&language=${language}`);
   
-      // If there's an issue with the network or the response is not valid, throw an error
-      if (!genreResponse.ok) {
-        throw new Error('Erreur réseau ou réponse invalide lors de la récupération des genres');
-      }
+        // If there's an issue with the network or the response is not valid, throw an error
+        if (!genreResponse.ok) {
+            throw new Error('Erreur réseau ou réponse invalide lors de la récupération des genres');
+        };
   
-      // Parse the genre response into JSON format
-      const genreData = await genreResponse.json();
+        // Parse the genre response into JSON format
+        const genreData = await genreResponse.json();
   
-      // Find the genre id corresponding to the provided genre name
-      const genreId = genreData.genres.find(g => g.name.toLowerCase() === genre.toLowerCase())?.id;
+        // Find the genre corresponding to the provided genre name
+        const selectedGenre = genreData.genres.find(g => g.name.toLowerCase() === genre.toLowerCase());
   
-      // If the genre id is not found, throw an error
-      if (!genreId) {
-        throw new Error('Genre not found');
-      }
+        // If the genre is not found, throw an error
+        if (!selectedGenre) {
+            throw new Error('Genre not found');
+        };
   
-      // Fetch movies data for the specified genre from the TMDB API
-      const response = await fetch(`${process.env.API_TMDB_BASE_URL}/discover/movie?api_key=${process.env.API_TMDB_KEY}&language=${language}&sort_by=popularity.desc&with_genres=${genreId}&page=${page}`);
+        // Fetch movies data for the specified genre from the TMDB API
+        const response = await fetch(`${process.env.API_TMDB_BASE_URL}/discover/movie?api_key=${process.env.API_TMDB_KEY}&language=${language}&sort_by=popularity.desc&with_genres=${selectedGenre.id}&page=${page}`);
       
-      // If there's an issue with the network or the response is not valid, throw an error
-      if (!response.ok) {
-        throw new Error('Network error or invalid response while fetching movies');
-      }
+        // If there's an issue with the network or the response is not valid, throw an error
+        if (!response.ok) {
+            throw new Error('Network error or invalid response while fetching movies');
+        }
   
-      // Parse the movies response into JSON format
-      const moviesData = await response.json();
-      const movies = moviesData.results;
+        // Parse the movies response into JSON format
+        const moviesData = await response.json();
+        const movies = moviesData.results;
   
-      // Cache the movies data for future use
-      cache.set(cacheKey, movies);
+        // Fetch details for each movie in the genre
+        const moviesWithDetailsPromises = movies.map(async movie => {
+            const movieDetailsResponse = await fetch(`${process.env.API_TMDB_BASE_URL}/movie/${movie.id}?api_key=${process.env.API_TMDB_KEY}&language=${language}`);
+            if (movieDetailsResponse.ok) {
+                const movieDetails = await movieDetailsResponse.json();
+                movie.title = movieDetails.title; // Add title to the movie object
+                movie.genres = movieDetails.genres.map(genre => genre.name); // Add genre names to the movie object
+            }
+            // Fetch providers for the movie
+            const providersResponse = await fetch(`${process.env.API_TMDB_BASE_URL}movie/${movie.id}/watch/providers?api_key=${process.env.API_TMDB_KEY}&region=FR`);
+            if (providersResponse.ok) {
+                const providersData = await providersResponse.json();
+                movie.providers = [];
+                // Check if information is available for France
+                if (providersData.results.FR) {
+                    const franceProviders = providersData.results.FR;
+                    // Browse the keys of the franceProviders object
+                    for (const offerType in franceProviders) {
+                        if (Object.hasOwnProperty.call(franceProviders, offerType)) {
+                            const offers = franceProviders[offerType];
+                            // Check if the offer is an array
+                            if (Array.isArray(offers)) {
+                                // Add the names of content providers for each offer type
+                                offers.forEach(provider => {
+                                    if (provider.provider_name) {
+                                        movie.providers.push(provider.provider_name);
+                                    }
+                                });
+                            } else {
+                                // If it is not an array, add the provider name directly
+                                if (offers.provider_name) {
+                                    movie.providers.push(offers.provider_name);
+                                };
+                            };
+                        };
+                    };
+                };
+            }
+            return movie;
+        });
+        // Wait for all movies with details to be fetched
+        const moviesWithDetails = await Promise.all(moviesWithDetailsPromises);
   
-      // Send the movies data in the response along with current page and total pages
-      res.json({
-        movies: movies,
-        currentPage: page,
-        totalPages: moviesData.total_pages
-      });
+        // Cache the movies data for future use
+        cache.set(cacheKey, moviesWithDetails);
+  
+        // Send the movies data in the response along with current page and total pages
+        res.json({
+            movies: moviesWithDetails,
+            currentPage: page,
+            totalPages: moviesData.total_pages
+        });
   
     } catch (error) {
-      // If any error occurs during the process, log it and send an error response
-      console.error('Error fetching movies by genre:', error);
-      res.status(500).json({ error: 'Error fetching movies by genre.' });
-    }
+        // If any error occurs during the process, log it and send an error response
+        console.error('Error fetching movies by genre:', error);
+        res.status(500).json({ error: 'Error fetching movies by genre.' });
+    };
+  },
+
+  // Function that searches films by genre and rating
+  async fetchMoviesByGenreRating(req, res) {
+    // Extracting the genre from the request parameters
+    const genre = req.params.genre;
+    const language = 'fr-FR'; // Setting the language for the API request
+    const page = req.query.page || 1; // Extracting the page number from the query parameters, defaulting to 1 if not provided
+    const cacheKey = `recommendations_rating_${genre}_${page}`; // Generating a cache key based on the genre and page number
+  
+    try {
+        // Attempting to retrieve movies data from the cache
+        const cachedMovies = cache.get(cacheKey);
+  
+        // If movies data is found in the cache, return it
+        if (cachedMovies) {
+            console.log(`Données récupérées du cache: ${genre}`);
+  
+            return res.json({
+                movies: cachedMovies,
+                currentPage: page,
+                totalPages: cachedMovies.total_pages
+            });
+        };
+  
+        // If movies data is not found in the cache, fetch genre data from the TMDB API
+        const genreResponse = await fetch(`${process.env.API_TMDB_BASE_URL}/genre/movie/list?api_key=${process.env.API_TMDB_KEY}&language=${language}`);
+  
+        // If there's an issue with the network or the response is not valid, throw an error
+        if (!genreResponse.ok) {
+            throw new Error('Erreur réseau ou réponse invalide lors de la récupération des genres');
+        };
+  
+        // Parse the genre response into JSON format
+        const genreData = await genreResponse.json();
+  
+        // Find the genre corresponding to the provided genre name
+        const selectedGenre = genreData.genres.find(g => g.name.toLowerCase() === genre.toLowerCase());
+  
+        // If the genre is not found, throw an error
+        if (!selectedGenre) {
+            throw new Error('Genre not found');
+        };
+  
+        // Fetch movies data for the specified genre from the TMDB API
+        const response = await fetch(`${process.env.API_TMDB_BASE_URL}/discover/movie?api_key=${process.env.API_TMDB_KEY}&language=${language}&page=${page}&sort_by=vote_average.desc`);
+      
+        // If there's an issue with the network or the response is not valid, throw an error
+        if (!response.ok) {
+            throw new Error('Network error or invalid response while fetching movies');
+        }
+  
+        // Parse the movies response into JSON format
+        const moviesData = await response.json();
+        const movies = moviesData.results;
+  
+        // Fetch details for each movie in the genre
+        const moviesWithDetailsPromises = movies.map(async movie => {
+            const movieDetailsResponse = await fetch(`${process.env.API_TMDB_BASE_URL}/movie/${movie.id}?api_key=${process.env.API_TMDB_KEY}&language=${language}`);
+            if (movieDetailsResponse.ok) {
+                const movieDetails = await movieDetailsResponse.json();
+                movie.title = movieDetails.title; // Add title to the movie object
+                movie.genres = movieDetails.genres.map(genre => genre.name); // Add genre names to the movie object
+            }
+            // Fetch providers for the movie
+            const providersResponse = await fetch(`${process.env.API_TMDB_BASE_URL}movie/${movie.id}/watch/providers?api_key=${process.env.API_TMDB_KEY}&region=FR`);
+            if (providersResponse.ok) {
+                const providersData = await providersResponse.json();
+                movie.providers = [];
+                // Check if information is available for France
+                if (providersData.results.FR) {
+                    const franceProviders = providersData.results.FR;
+                    // Browse the keys of the franceProviders object
+                    for (const offerType in franceProviders) {
+                        if (Object.hasOwnProperty.call(franceProviders, offerType)) {
+                            const offers = franceProviders[offerType];
+                            // Check if the offer is an array
+                            if (Array.isArray(offers)) {
+                                // Add the names of content providers for each offer type
+                                offers.forEach(provider => {
+                                    if (provider.provider_name) {
+                                        movie.providers.push(provider.provider_name);
+                                    }
+                                });
+                            } else {
+                                // If it is not an array, add the provider name directly
+                                if (offers.provider_name) {
+                                    movie.providers.push(offers.provider_name);
+                                };
+                            };
+                        };
+                    };
+                };
+            }
+            return movie;
+        });
+        // Wait for all movies with details to be fetched
+        const moviesWithDetails = await Promise.all(moviesWithDetailsPromises);
+  
+        // Cache the movies data for future use
+        cache.set(cacheKey, moviesWithDetails);
+  
+        // Send the movies data in the response along with current page and total pages
+        res.json({
+            movies: moviesWithDetails,
+            currentPage: page,
+            totalPages: moviesData.total_pages
+        });
+  
+    } catch (error) {
+        // If any error occurs during the process, log it and send an error response
+        console.error('Error fetching movies by genre:', error);
+        res.status(500).json({ error: 'Error fetching movies by genre.' });
+    };
   },
 
   // Function that searches for a movie by title
@@ -207,16 +364,53 @@ const movieController = {
         const movieData = await response.json();
         const movies = movieData.results;
 
+        // Fetch providers for each movie
+        const moviesWithProvidersPromises = movies.map(async movie => {
+            // Fetch providers for the movie
+            const providersResponse = await fetch(`${process.env.API_TMDB_BASE_URL}movie/${movie.id}/watch/providers?api_key=${process.env.API_TMDB_KEY}&region=FR`);
+            if (providersResponse.ok) {
+                const providersData = await providersResponse.json();
+                movie.providers = [];
+                // Check if information is available for France
+                if (providersData.results.FR) {
+                    const franceProviders = providersData.results.FR;
+                    // Browse the keys of the franceProviders object
+                    for (const offerType in franceProviders) {
+                        if (Object.hasOwnProperty.call(franceProviders, offerType)) {
+                            const offers = franceProviders[offerType];
+                            // Check if the offer is an array
+                            if (Array.isArray(offers)) {
+                                // Add the names of content providers for each offer type
+                                offers.forEach(provider => {
+                                    if (provider.provider_name) {
+                                        movie.providers.push(provider.provider_name);
+                                    }
+                                });
+                            } else {
+                                // If it is not an array, add the provider name directly
+                                if (offers.provider_name) {
+                                    movie.providers.push(offers.provider_name);
+                                };
+                            };
+                        };
+                    };
+                };
+            }
+            return movie;
+        });
+        // Wait for all movies with providers to be fetched
+        const moviesWithProviders = await Promise.all(moviesWithProvidersPromises);
+
         // Cache the movies data for future use
         cache.set(cacheKey, {
-            movies: movies,
+            movies: moviesWithProviders,
             currentPage: page,
             totalPages: movieData.total_pages
         });
 
         // Send the movies data in the response along with current page and total pages
         res.json({
-            movies: movies,
+            movies: moviesWithProviders,
             currentPage: page,
             totalPages: movieData.total_pages
         });
@@ -256,19 +450,54 @@ const movieController = {
         const actorsData = await responseByActor.json();
         // Extract movies data for each actor asynchronously
         const moviesByActorPromises = actorsData.results.map(async actor => {
-        const response = await fetch(`${process.env.API_TMDB_BASE_URL}person/${actor.id}/movie_credits?api_key=${process.env.API_TMDB_KEY}&language=${language}&page=${page}`);
-          if (response.ok) {
-              const credits = await response.json();
-              // Calculating the start and end index for pagination
-              const startIndex = (page - 1) * pageSize;
-              const endIndex = startIndex + pageSize;
-              // Paginating the credits data
-              const paginatedCredits = credits.cast.slice(startIndex, endIndex);
-              // Return the paginated credits as is
-              return paginatedCredits;
-          } else {
-              return [];
-          }
+            const response = await fetch(`${process.env.API_TMDB_BASE_URL}person/${actor.id}/movie_credits?api_key=${process.env.API_TMDB_KEY}&language=${language}&page=${page}`);
+            if (response.ok) {
+                const credits = await response.json();
+                // Calculating the start and end index for pagination
+                const startIndex = (page - 1) * pageSize;
+                const endIndex = startIndex + pageSize;
+                // Paginating the credits data
+                const paginatedCredits = credits.cast.slice(startIndex, endIndex);
+                // Fetch providers for each movie
+                const moviesWithProvidersPromises = paginatedCredits.map(async movie => {
+                    const providersResponse = await fetch(`${process.env.API_TMDB_BASE_URL}movie/${movie.id}/watch/providers?api_key=${process.env.API_TMDB_KEY}&region=FR`);
+                    if (providersResponse.ok) {
+                        const providersData = await providersResponse.json();
+                        movie.providers = [];
+                        // Check if information is available for France
+                        if (providersData.results.FR) {
+                            const franceProviders = providersData.results.FR;
+                            // Browse the keys of the franceProviders object
+                            for (const offerType in franceProviders) {
+                                if (Object.hasOwnProperty.call(franceProviders, offerType)) {
+                                    const offers = franceProviders[offerType];
+                                    // Check if the offer is an array
+                                    if (Array.isArray(offers)) {
+                                        // Add the names of content providers for each offer type
+                                        offers.forEach(provider => {
+                                            if (provider.provider_name) {
+                                                movie.providers.push(provider.provider_name);
+                                            }
+                                        });
+                                    } else {
+                                        // If it is not an array, add the provider name directly
+                                        if (offers.provider_name) {
+                                            movie.providers.push(offers.provider_name);
+                                        };
+                                    };
+                                };
+                            };
+                        };
+                    }
+                    return movie;
+                });
+                // Wait for all movies with providers to be fetched
+                const moviesWithProviders = await Promise.all(moviesWithProvidersPromises);
+                // Return the paginated credits with providers
+                return moviesWithProviders;
+            } else {
+                return [];
+            }
         });
         // Await for all movies data by actors to be fetched
         const moviesByActor = await Promise.all(moviesByActorPromises);
@@ -276,16 +505,16 @@ const movieController = {
         const allMovies = moviesByActor.flat();
         // Cache the combined movies data for future use
         cache.set(cacheKey, {
-          movies: allMovies,
-          currentPage: page,
-          totalPages: allMovies.total_pages
-      });
+            movies: allMovies,
+            currentPage: page,
+            totalPages: allMovies.total_pages
+        });
         // Send the combined movies data in the response
         res.json({
-          movies: allMovies,
-          currentPage: page,
-          totalPages: allMovies.total_pages
-      });
+            movies: allMovies,
+            currentPage: page,
+            totalPages: allMovies.total_pages
+        });
     } catch (error) {
         // If any error occurs during the process, log it and send an error response
         console.error('Error fetching movies by actor:', error);
@@ -298,31 +527,68 @@ const movieController = {
 
     const language = 'fr-FR'; // Setting the language for the API request
     const page = req.query.page || 1; // Extracting the page number from the query parameters, defaulting to 1 if not provided
-  
+
     try {
-      // Fetching data for new movies from the TMDB API
-      const response = await fetch(`${process.env.API_TMDB_BASE_URL}movie/now_playing?api_key=${process.env.API_TMDB_KEY}&language=${language}&page=${page}`);
-  
-      // If there's an issue with the network or the response is not valid, throw an error
-      if (!response.ok) {
-        throw new Error('Network error or invalid response');
-      };
-  
-      // Parse the response data into JSON format
-      const newMovies = await response.json();
-      const movies = newMovies.results;
-  
-      // Send the movies data in the response along with current page and total pages
-      res.json({
-        movies: movies,
-        currentPage: page,
-        totalPages: newMovies.total_pages
-      });
-  
+        // Fetching data for new movies from the TMDB API
+        const response = await fetch(`${process.env.API_TMDB_BASE_URL}movie/now_playing?api_key=${process.env.API_TMDB_KEY}&language=${language}&page=${page}`);
+
+        // If there's an issue with the network or the response is not valid, throw an error
+        if (!response.ok) {
+            throw new Error('Network error or invalid response');
+        };
+
+        // Parse the response data into JSON format
+        const newMovies = await response.json();
+        const movies = newMovies.results;
+
+        // Fetch providers for each movie
+        const moviesWithProvidersPromises = movies.map(async movie => {
+            const providersResponse = await fetch(`${process.env.API_TMDB_BASE_URL}movie/${movie.id}/watch/providers?api_key=${process.env.API_TMDB_KEY}&region=FR`);
+            if (providersResponse.ok) {
+                const providersData = await providersResponse.json();
+                movie.providers = [];
+                // Check if information is available for France
+                if (providersData.results.FR) {
+                    const franceProviders = providersData.results.FR;
+                    // Browse the keys of the franceProviders object
+                    for (const offerType in franceProviders) {
+                        if (Object.hasOwnProperty.call(franceProviders, offerType)) {
+                            const offers = franceProviders[offerType];
+                            // Check if the offer is an array
+                            if (Array.isArray(offers)) {
+                                // Add the names of content providers for each offer type
+                                offers.forEach(provider => {
+                                    if (provider.provider_name) {
+                                        movie.providers.push(provider.provider_name);
+                                    }
+                                });
+                            } else {
+                                // If it is not an array, add the provider name directly
+                                if (offers.provider_name) {
+                                    movie.providers.push(offers.provider_name);
+                                };
+                            };
+                        };
+                    };
+                };
+            }
+            return movie;
+        });
+
+        // Wait for all movies with providers to be fetched
+        const moviesWithProviders = await Promise.all(moviesWithProvidersPromises);
+
+        // Send the movies data in the response along with current page and total pages
+        res.json({
+            movies: moviesWithProviders,
+            currentPage: page,
+            totalPages: newMovies.total_pages
+        });
+
     } catch (error) {
-      // If any error occurs during the process, log it and send an error response
-      console.error('Error fetching new movies:', error);
-      res.status(500).json({ error: 'Error fetching new movies.' });
+        // If any error occurs during the process, log it and send an error response
+        console.error('Error fetching new movies:', error);
+        res.status(500).json({ error: 'Error fetching new movies.' });
     };
   },
 
@@ -404,104 +670,181 @@ const movieController = {
 
   // Function that searches for popular movies
   async fetchPopularMovie(req, res) {
+
     const language = 'fr-FR'; // Setting the language for the API request
     const page = req.query.page || 1; // Extracting the page number from the query parameters, defaulting to 1 if not provided
     const cacheKey = `popular_movies_${page}`; // Generating a cache key based on the page number for popular movies
-  
+
     try {
-      // Attempting to retrieve popular movies data from the cache
-      const cachedMovies = cache.get(cacheKey);
-  
-      // If popular movies data is found in the cache, return it
-      if (cachedMovies) {
-        console.log('Popular movies retrieved from cache');
-        return res.json(cachedMovies);
-      }
-  
-      // If popular movies data is not found in the cache, fetch it from the TMDB API
-      const response = await fetch(`${process.env.API_TMDB_BASE_URL}movie/popular?api_key=${process.env.API_TMDB_KEY}&language=${language}&page=${page}`);
-  
-      // If there's an issue with the network or the response is not valid, throw an error
-      if (!response.ok) {
-        throw new Error('Network error or invalid response');
-      };
-  
-      // Parse the response data into JSON format
-      const popularMovies = await response.json();
-      const movies = popularMovies.results;
-  
-      // Cache the popular movies data for future use
-      cache.set(cacheKey, {
-        movies: movies,
-        currentPage: page,
-        totalPages: popularMovies.total_pages
-      });
-  
-      // Send the popular movies data in the response along with current page and total pages
-      res.json({
-        movies: movies,
-        currentPage: page,
-        totalPages: popularMovies.total_pages
-      });
+        // Attempting to retrieve popular movies data from the cache
+        const cachedMovies = cache.get(cacheKey);
+
+        // If popular movies data is found in the cache, return it
+        if (cachedMovies) {
+            console.log('Popular movies retrieved from cache');
+            return res.json(cachedMovies);
+        }
+
+        // If popular movies data is not found in the cache, fetch it from the TMDB API
+        const response = await fetch(`${process.env.API_TMDB_BASE_URL}movie/popular?api_key=${process.env.API_TMDB_KEY}&language=${language}&page=${page}`);
+
+        // If there's an issue with the network or the response is not valid, throw an error
+        if (!response.ok) {
+            throw new Error('Network error or invalid response');
+        };
+
+        // Parse the response data into JSON format
+        const popularMovies = await response.json();
+        const movies = popularMovies.results;
+
+        // Fetch providers for each movie
+        const moviesWithProvidersPromises = movies.map(async movie => {
+            const providersResponse = await fetch(`${process.env.API_TMDB_BASE_URL}movie/${movie.id}/watch/providers?api_key=${process.env.API_TMDB_KEY}&region=FR`);
+            if (providersResponse.ok) {
+                const providersData = await providersResponse.json();
+                movie.providers = [];
+                // Check if information is available for France
+                if (providersData.results.FR) {
+                    const franceProviders = providersData.results.FR;
+                    // Browse the keys of the franceProviders object
+                    for (const offerType in franceProviders) {
+                        if (Object.hasOwnProperty.call(franceProviders, offerType)) {
+                            const offers = franceProviders[offerType];
+                            // Check if the offer is an array
+                            if (Array.isArray(offers)) {
+                                // Add the names of content providers for each offer type
+                                offers.forEach(provider => {
+                                    if (provider.provider_name) {
+                                        movie.providers.push(provider.provider_name);
+                                    }
+                                });
+                            } else {
+                                // If it is not an array, add the provider name directly
+                                if (offers.provider_name) {
+                                    movie.providers.push(offers.provider_name);
+                                };
+                            };
+                        };
+                    };
+                };
+            }
+            return movie;
+        });
+
+        // Wait for all movies with providers to be fetched
+        const moviesWithProviders = await Promise.all(moviesWithProvidersPromises);
+
+        // Cache the popular movies data for future use
+        cache.set(cacheKey, {
+            movies: moviesWithProviders,
+            currentPage: page,
+            totalPages: popularMovies.total_pages
+        });
+
+        // Send the popular movies data in the response along with current page and total pages
+        res.json({
+            movies: moviesWithProviders,
+            currentPage: page,
+            totalPages: popularMovies.total_pages
+        });
     } catch (error) {
-      // If any error occurs during the process, log it and send an error response
-      console.error('Error fetching popular movies:', error);
-      res.status(500).json({ error: 'Error fetching popular movies.' });
+        // If any error occurs during the process, log it and send an error response
+        console.error('Error fetching popular movies:', error);
+        res.status(500).json({ error: 'Error fetching popular movies.' });
     }
   },
 
   // Function that gives movie recommendations based on a movie's ID
   async fetchRecommendation(req, res) {
-    const movieId = req.params.id; // Extracting the movie ID from the request parameters
+
+    // Extracting the movie ID from the request parameters
+    const movieId = req.params.id; 
     const language = 'fr-FR'; // Setting the language for the API request
     const page = req.query.page || 1; // Extracting the page number from the query parameters, defaulting to 1 if not provided
     const cacheKey = `recommendations_${movieId}_${page}`; // Generating a cache key based on the movie ID and page number for recommendations
-  
+
     try {
-      // Attempting to retrieve recommendations data from the cache
-      const cachedRecommendations = cache.get(cacheKey);
-  
-      // If recommendations data is found in the cache, return it
-      if (cachedRecommendations) {
-        console.log('Recommendations retrieved from cache');
-  
-        return res.json({
-          recommendations: cachedRecommendations,
-          currentPage: page,
-          totalPages: cachedRecommendations.total_pages
+        // Attempting to retrieve recommendations data from the cache
+        const cachedRecommendations = cache.get(cacheKey);
+
+        // If recommendations data is found in the cache, return it
+        if (cachedRecommendations) {
+            console.log('Recommendations retrieved from cache');
+
+            return res.json({
+                movies: cachedRecommendations,
+                currentPage: page,
+                totalPages: cachedRecommendations.total_pages
+            });
+        }
+
+        // If recommendations data is not found in the cache, fetch it from the TMDB API
+        const response = await fetch(`${process.env.API_TMDB_BASE_URL}movie/${movieId}/recommendations?api_key=${process.env.API_TMDB_KEY}&language=${language}&page=${page}`);
+        
+        // If there's an issue with the network or the response is not valid, throw an error
+        if (!response.ok) {
+            throw new Error('Network error or invalid response');
+        };
+
+        // Parse the response data into JSON format
+        const recommendation = await response.json();
+        const recommendationResults = recommendation.results;
+
+        // Fetch providers for each recommended movie
+        const recommendationsWithProvidersPromises = recommendationResults.map(async movie => {
+            const providersResponse = await fetch(`${process.env.API_TMDB_BASE_URL}movie/${movie.id}/watch/providers?api_key=${process.env.API_TMDB_KEY}&region=FR`);
+            if (providersResponse.ok) {
+                const providersData = await providersResponse.json();
+                movie.providers = [];
+                // Check if information is available for France
+                if (providersData.results.FR) {
+                    const franceProviders = providersData.results.FR;
+                    // Browse the keys of the franceProviders object
+                    for (const offerType in franceProviders) {
+                        if (Object.hasOwnProperty.call(franceProviders, offerType)) {
+                            const offers = franceProviders[offerType];
+                            // Check if the offer is an array
+                            if (Array.isArray(offers)) {
+                                // Add the names of content providers for each offer type
+                                offers.forEach(provider => {
+                                    if (provider.provider_name) {
+                                        movie.providers.push(provider.provider_name);
+                                    }
+                                });
+                            } else {
+                                // If it is not an array, add the provider name directly
+                                if (offers.provider_name) {
+                                    movie.providers.push(offers.provider_name);
+                                };
+                            };
+                        };
+                    };
+                };
+            }
+            return movie;
         });
-      }
-  
-      // If recommendations data is not found in the cache, fetch it from the TMDB API
-      const response = await fetch(`${process.env.API_TMDB_BASE_URL}movie/${movieId}/recommendations?api_key=${process.env.API_TMDB_KEY}&language=${language}&page=${page}`);
-      
-      // If there's an issue with the network or the response is not valid, throw an error
-      if (!response.ok) {
-        throw new Error('Network error or invalid response');
-      };
-  
-      // Parse the response data into JSON format
-      const recommendation = await response.json();
-      const recommendationResults = recommendation.results;
-  
-      // Cache the recommendations data for future use
-      cache.set(cacheKey, {
-        recommendations: recommendationResults,
-        currentPage: page,
-        totalPages: recommendation.total_pages
-      });
-  
-      // Send the recommendations data in the response along with current page and total pages
-      res.json({
-        recommendations: recommendationResults,
-        currentPage: page,
-        totalPages: recommendation.total_pages
-      });
-  
+
+        // Wait for all recommendations with providers to be fetched
+        const recommendationsWithProviders = await Promise.all(recommendationsWithProvidersPromises);
+
+        // Cache the recommendations data for future use
+        cache.set(cacheKey, {
+            movies: recommendationsWithProviders,
+            currentPage: page,
+            totalPages: recommendation.total_pages
+        });
+
+        // Send the recommendations data in the response along with current page and total pages
+        res.json({
+            movies: recommendationsWithProviders,
+            currentPage: page,
+            totalPages: recommendation.total_pages
+        });
+
     } catch (error) {
-      // If any error occurs during the process, log it and send an error response
-      console.error('Error fetching recommendations:', error);
-      res.status(500).json({ error: 'Error fetching recommendations.' });
+        // If any error occurs during the process, log it and send an error response
+        console.error('Error fetching recommendations:', error);
+        res.status(500).json({ error: 'Error fetching recommendations.' });
     };
   },
 };

@@ -8,6 +8,8 @@ router.get("/movie/:id", movieController.fetchMovieById);
 
 router.get("/movies/:genre", movieController.fetchMoviesByGenre);
 
+router.get("/moviesRating/:genre", movieController.fetchMoviesByGenreRating);
+
 router.get("/movieByTitle/:title", movieController.fetchMovieByTitle);
 
 router.get("/moviesByActor/:actor", movieController.fetchMoviesByActor);
