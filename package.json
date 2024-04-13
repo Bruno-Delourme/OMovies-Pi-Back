@@ -7,7 +7,7 @@
     "start": "node index.js",
     "dev": "DEBUG=app:* nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
-    "resetDB": "sqitch revert -y && sqitch deploy"
+    "resetDB": "psql -U omovies -d omovies -f scripts/create_table.sql"
   },
   "keywords": [],
   "author": "",

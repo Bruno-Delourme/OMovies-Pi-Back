@@ -3,13 +3,13 @@
   À taper dans la console: 
 
 ```
-  bash scripts/1.init_db.sh
+  bash scripts/init_db.sh
 ```
 
-# Déployer le projet sqitch (créer les tables et les fonctions)
+# Créer les tables et les fonctions
 
 ```
-bash scripts/3.sqitch_deploy.sh
+npm run resetDB
 ```
 
 # Tests
