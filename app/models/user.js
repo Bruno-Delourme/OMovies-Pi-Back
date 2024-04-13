@@ -20,6 +20,15 @@ const userModel = {
     return results.rows[0];
   },
 
+  async showUser(user) {
+    const query = {
+      text: 'SELECT pseudo FROM "user" WHERE pseudo = $1',
+      values: [user.pseudo],
+    };
+    const results = await client.query(query);
+    return results.rows[0];
+  },
+
   async delete(id) {
     const query = {
       text: 'DELETE FROM "user" WHERE id = $1',

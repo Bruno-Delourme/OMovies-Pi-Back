@@ -3,7 +3,7 @@ const Joi = require('joi');
 const schemaCreateUser = Joi.object({
   pseudo: Joi.string().required(),
   email: Joi.string().email().required(),
-  date_of_birth: Joi.date().required(),
+  birthday: Joi.date().required(),
   password: Joi.string().required(),
 }).length(4).required();
 
@@ -16,7 +16,7 @@ const schemaUpdateUser = Joi.object({
   id: Joi.number().required(),
   pseudo: Joi.string(),
   email: Joi.string().email(),
-  date_of_birth: Joi.date(),
+  birthday: Joi.date(),
   password: Joi.string(),
 }).min(1).required();
 

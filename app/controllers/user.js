@@ -9,13 +9,13 @@ const userController = {
   async create(req, res) {
     debug('user create controller called');
 
-    const { pseudo, email, date_of_birth, password } = req.body;
+    const { pseudo, email, birthday, password } = req.body;
 
     try {
       // Password encoding
       const hashedPassword = await bcrypt.hash(password, parseInt(process.env.PASSWORD_SALT));
       // Insert a new user into the database
-      const createdUser = await userDataMapper.insert({ pseudo, email, date_of_birth, hashed_password: hashedPassword });
+      const createdUser = await userDataMapper.insert({ pseudo, email, birthday, password: hashedPassword });
       res.json({ status: 'success', data: createdUser });
 
     } catch (error) {
@@ -38,13 +38,13 @@ const userController = {
     };
 
     // Comparing the provided password with the hashed password stored in the database
-    const isEqual = await bcrypt.compare(req.body.password, result.hashed_password);
+    const isEqual = await bcrypt.compare(req.body.password, result.password);
     debug(isEqual);
 
     // If the passwords match, generate a JWT token for authentication
     if (isEqual) {
       // Removing the hashed password from the user data
-      delete result.hashed_password;
+      delete result.password;
 
       // Generating a JWT token with user data and the secret key
       const token = jwt.sign({ user: result }, process.env.JWT_SECRET);
@@ -65,7 +65,7 @@ const userController = {
     const { pseudo } = req.body;
 
     // Attempting to find the user based on the provided credentials
-    const result = await userDataMapper.findUser({pseudo});
+    const result = await userDataMapper.showUser({ pseudo });
 
     // If no user is found, return an error
     if (!result) {
@@ -74,7 +74,7 @@ const userController = {
 
   } else {
      // Sending a success response with user data and the token
-    res.json({ status: 'success' });
+    res.json({ status: 'success', data: result});
   };
   },
 
@@ -99,7 +99,7 @@ const userController = {
   async update(req, res) {
     debug('user update controller called');
     
-    const { id, pseudo, email, date_of_birth, password } = req.body;
+    const { id, pseudo, email, birthday, password } = req.body;
 
     let userData = {};
     let hashedPassword;
@@ -113,8 +113,8 @@ const userController = {
         if (email !== undefined) {
             userData.email = email;
         }
-        if (date_of_birth !== undefined) {
-            userData.date_of_birth = date_of_birth;
+        if (birthday !== undefined) {
+            userData.birthday = birthday;
         }
         if (password !== undefined) {
             // Hashing the new password using bcrypt with the provided salt value
@@ -125,7 +125,7 @@ const userController = {
         userData.updated_at = updated_at; // Adding the updated_at field to userData
         
         // Updating the user data in the database using the userDataMapper
-        const updatedUser = await userDataMapper.update({ id, pseudo, email, date_of_birth, hashed_password: hashedPassword, updated_at });
+        const updatedUser = await userDataMapper.update({ id, pseudo, email, birthday, password: hashedPassword, updated_at });
         
         res.json({ status: 'success', data: updatedUser });
 
