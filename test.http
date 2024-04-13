@@ -52,7 +52,7 @@
 
 
 
-# POST {{endpoint}}/api/addToList
+# POST {{endpoint}}/api/addToFavorite
 # content-type: application/json
 # Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUb3RvIiwiZW1haWwiOiJ0b3RvQHRvdG8uZnIiLCJiaXJ0aGRheSI6IjE5OTAtMDUtMTFUMjI6MDA6MDAuMDAwWiIsImNyZWF0ZWRfYXQiOiIyMDI0LTA0LTEzVDEyOjQzOjA3Ljg5NFoiLCJ1cGRhdGVkX2F0IjpudWxsfSwiaWF0IjoxNzEzMDEyMjg5fQ.HVSQcGJYmNPhJeilxZn9inaAnWWW-qs8eBg8kZty1Fs
 
@@ -82,12 +82,12 @@
 
 
 
-# GET {{endpoint}}/api/list/1
+# GET {{endpoint}}/api/showFavorite/1
 # Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUb3RvIiwiZW1haWwiOiJ0b3RvQHRvdG8uZnIiLCJiaXJ0aGRheSI6IjE5OTAtMDUtMTFUMjI6MDA6MDAuMDAwWiIsImNyZWF0ZWRfYXQiOiIyMDI0LTA0LTEzVDEyOjQzOjA3Ljg5NFoiLCJ1cGRhdGVkX2F0IjpudWxsfSwiaWF0IjoxNzEzMDEyMjg5fQ.HVSQcGJYmNPhJeilxZn9inaAnWWW-qs8eBg8kZty1Fs
 
 
 
-# GET {{endpoint}}/api/toReview/1
+# GET {{endpoint}}/api/showToReview/1
 # Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUb3RvIiwiZW1haWwiOiJ0b3RvQHRvdG8uZnIiLCJiaXJ0aGRheSI6IjE5OTAtMDUtMTFUMjI6MDA6MDAuMDAwWiIsImNyZWF0ZWRfYXQiOiIyMDI0LTA0LTEzVDEyOjQzOjA3Ljg5NFoiLCJ1cGRhdGVkX2F0IjpudWxsfSwiaWF0IjoxNzEzMDEyMjg5fQ.HVSQcGJYmNPhJeilxZn9inaAnWWW-qs8eBg8kZty1Fs
 
 
@@ -97,9 +97,8 @@
 # Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUb3RvIiwiZW1haWwiOiJ0b3RvQHRvdG8uZnIiLCJiaXJ0aGRheSI6IjE5OTAtMDUtMTFUMjI6MDA6MDAuMDAwWiIsImNyZWF0ZWRfYXQiOiIyMDI0LTA0LTEzVDEyOjQzOjA3Ljg5NFoiLCJ1cGRhdGVkX2F0IjpudWxsfSwiaWF0IjoxNzEzMDEyMjg5fQ.HVSQcGJYmNPhJeilxZn9inaAnWWW-qs8eBg8kZty1Fs
 
 # {
-#   "movieId": 4,
-#   "title": "Spirit",
-#   "poster_path": "Chemin de l'écurie"
+#   "userId": 1,
+#   "movieId": 5
 # }
 
 
