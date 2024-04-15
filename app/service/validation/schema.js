@@ -13,11 +13,11 @@ const schemaLoginUser = Joi.object({
 }).length(2).required();
 
 const schemaUpdateUser = Joi.object({
-  id: Joi.number().required(),
   pseudo: Joi.string(),
   email: Joi.string().email(),
   birthday: Joi.date(),
   password: Joi.string(),
+  token: Joi.string().required(),
 }).min(1).required();
 
 const schemaFindUser = Joi.object({

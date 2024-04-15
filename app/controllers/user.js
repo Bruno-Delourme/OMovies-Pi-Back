@@ -13,7 +13,7 @@ const userController = {
 
     try {
       // Check if user with same pseudo or email already exists
-      const existingUser = await userDataMapper.findByPseudoOrEmail({ pseudo, email });
+      const existingUser = await userDataMapper.findByPseudoOrEmail( pseudo, email );
 
       if (existingUser) {
         return res.status(400).json({ status: 'error', message: 'Un utilisateur avec ce pseudo ou cette adresse e-mail existe déjà.' });
@@ -66,6 +66,7 @@ const userController = {
   };
   },
 
+  // Function that displays a user
   async show(req, res) {
     debug('user show controller called');
 
@@ -103,6 +104,7 @@ const userController = {
   },
 
   // Function that allows you to modify a user's information
+  // Function that allows you to modify a user's information
   async update(req, res) {
     debug('user update controller called');
     
@@ -112,6 +114,7 @@ const userController = {
     let userData = {};
     let hashedPassword;
     const updated_at = new Date(); // Getting the current date for the updated_at field
+    updated_at.setHours(updated_at.getHours() + 2);
 
     try {
         // Checking if each field is defined and updating the userData object accordingly

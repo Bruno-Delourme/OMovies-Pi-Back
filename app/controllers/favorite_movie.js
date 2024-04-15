@@ -16,14 +16,16 @@ const favoriteMovieController = {
     }
 
     const picture = poster_path || 'Pas d\'affiche';
-    
+
+    const updated_at = new Date(); // Getting the current date for the updated_at field
+
     try {
 
         // Insert the movie into the database
-        const insertIntoMovie = await movieDBDataMapper.insertIntoMovie({ id: movieId, title, poster_path: picture, overview, genre: genres });
+        const insertIntoMovie = await movieDBDataMapper.insertIntoMovie({ id: movieId, title, poster_path: picture, overview, genre: genres, updated_at });
 
         // Insert the movie into the user's favorites list
-        const insertIntoFavorite = await favoriteMovieDataMapper.insertIntoFavorite({ id: userId }, { id: movieId });
+        const insertIntoFavorite = await favoriteMovieDataMapper.insertIntoFavorite({ id: userId }, { id: movieId, updated_at });
         
         res.json({ status: 'success', data: { insertIntoMovie, insertIntoFavorite } });
 

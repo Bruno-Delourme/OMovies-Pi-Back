@@ -58,31 +58,34 @@ $$ LANGUAGE sql STRICT;
 
 CREATE OR REPLACE FUNCTION add_movie(json) RETURNS "movie" AS
 $$
-  INSERT INTO "movie"(id, title, poster_path, overview, genre)
+  INSERT INTO "movie"(id, title, poster_path, overview, genre, updated_at)
     VALUES (
       ($1 ->> 'id'):: INT,
       ($1 ->> 'title'):: TEXT,
       ($1 ->> 'poster_path'):: TEXT,
       ($1 ->> 'overview'):: TEXT,
-      ($1 ->> 'genre'):: TEXT
+      ($1 ->> 'genre'):: TEXT,
+      ($1 ->> 'updated_at'):: TIMESTAMPTZ
   ) RETURNING *;
 $$ LANGUAGE sql STRICT;
 
 CREATE OR REPLACE FUNCTION add_favorite_movie(json) RETURNS "favorite_movie" AS
 $$
-   INSERT INTO "favorite_movie"(movie_id, user_id)
+   INSERT INTO "favorite_movie"(movie_id, user_id, updated_at)
     VALUES (
       ($1 ->> 'movie_id'):: INT,
-      ($1 ->> 'user_id'):: INT
+      ($1 ->> 'user_id'):: INT,
+      ($1 ->> 'updated_at'):: TIMESTAMPTZ
   ) RETURNING *;
 $$ LANGUAGE sql STRICT;
 
 CREATE OR REPLACE FUNCTION add_to_review_movie(json) RETURNS "to_review_movie" AS
 $$
-   INSERT INTO "to_review_movie"(movie_id, user_id)
+   INSERT INTO "to_review_movie"(movie_id, user_id, updated_at)
     VALUES (
       ($1 ->> 'movie_id'):: INT,
-      ($1 ->> 'user_id'):: INT
+      ($1 ->> 'user_id'):: INT,
+      ($1 ->> 'updated_at'):: TIMESTAMPTZ
   ) RETURNING *;
 $$ LANGUAGE sql STRICT;
 

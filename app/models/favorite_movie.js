@@ -19,8 +19,8 @@ const favoriteMovieModel = {
 
       // Insert favorite into database
       const insertQuery = {
-          text: 'INSERT INTO "favorite_movie" (user_id, movie_id) VALUES ($1, $2) RETURNING *',
-          values: [user.id, movie.id],
+          text: 'INSERT INTO "favorite_movie" (user_id, movie_id, updated_at) VALUES ($1, $2, $3) RETURNING *',
+          values: [user.id, movie.id, movie.updated_at],
       };
 
       const results = await client.query(insertQuery);
