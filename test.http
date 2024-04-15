@@ -13,13 +13,13 @@
 
 
 
-# POST {{endpoint}}/api/login
-# content-type: application/json
+POST {{endpoint}}/api/login
+content-type: application/json
 
-# {
-#   "pseudo": "Toto",
-#   "password": "toto"
-# }
+{
+  "pseudo": "toutou",
+  "password": "orange"
+}
 
 
 
@@ -38,17 +38,16 @@
 
 
 
-# PATCH {{endpoint}}/api/updateUser
-# content-type: application/json
-# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUb3RvIiwiZW1haWwiOiJ0b3RvQHRvdG8uZnIiLCJiaXJ0aGRheSI6IjE5OTAtMDUtMTFUMjI6MDA6MDAuMDAwWiIsImNyZWF0ZWRfYXQiOiIyMDI0LTA0LTEzVDEyOjQzOjA3Ljg5NFoiLCJ1cGRhdGVkX2F0IjpudWxsfSwiaWF0IjoxNzEzMDEyMjg5fQ.HVSQcGJYmNPhJeilxZn9inaAnWWW-qs8eBg8kZty1Fs
+PATCH {{endpoint}}/api/updateUser
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUb3RvIiwiZW1haWwiOiJ0b3RvQHRvdG8uZnIiLCJiaXJ0aGRheSI6IjE5OTAtMDUtMTFUMjI6MDA6MDAuMDAwWiIsImNyZWF0ZWRfYXQiOiIyMDI0LTA0LTEzVDEyOjQzOjA3Ljg5NFoiLCJ1cGRhdGVkX2F0IjpudWxsfSwiaWF0IjoxNzEzMDEyMjg5fQ.HVSQcGJYmNPhJeilxZn9inaAnWWW-qs8eBg8kZty1Fs
 
-# {
-#   "id": 1,
-#   "pseudo": "toutou",
-#   "email": "blanc@vert.fr",
-#   "birthday": "04/04/2020",
-#   "password": "orange"
-# }
+{
+  "pseudo": "toto",
+  "email": "toto@toto.fr",
+  "birthday": "24/05/1991",
+  "password": "toto"
+}
 
 
 

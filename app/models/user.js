@@ -11,6 +11,15 @@ const userModel = {
     return results.rows[0];
   },
 
+  async findByPseudoOrEmail(pseudo, email) {
+    const query = {
+        text: 'SELECT * FROM "user" WHERE pseudo = $1 OR email = $2',
+        values: [pseudo, email],
+    };
+    const results = await client.query(query);
+    return results.rows[0];
+  },
+
   async findUser(user) {
     const query = {
       text: 'SELECT * FROM "user" WHERE pseudo = $1',

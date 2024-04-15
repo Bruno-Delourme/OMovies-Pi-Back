@@ -12,6 +12,13 @@ const userController = {
     const { pseudo, email, birthday, password } = req.body;
 
     try {
+      // Check if user with same pseudo or email already exists
+      const existingUser = await userDataMapper.findByPseudoOrEmail({ pseudo, email });
+
+      if (existingUser) {
+        return res.status(400).json({ status: 'error', message: 'Un utilisateur avec ce pseudo ou cette adresse e-mail existe déjà.' });
+      };
+
       // Password encoding
       const hashedPassword = await bcrypt.hash(password, parseInt(process.env.PASSWORD_SALT));
       // Insert a new user into the database
@@ -99,7 +106,8 @@ const userController = {
   async update(req, res) {
     debug('user update controller called');
     
-    const { id, pseudo, email, birthday, password } = req.body;
+    const { pseudo, email, birthday, password } = req.body;
+    const { id } = req.params
 
     let userData = {};
     let hashedPassword;
