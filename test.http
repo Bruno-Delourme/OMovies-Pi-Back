@@ -17,8 +17,8 @@ POST {{endpoint}}/api/login
 content-type: application/json
 
 {
-  "pseudo": "toutou",
-  "password": "orange"
+  "pseudo": "toto",
+  "password": "toto"
 }
 
 

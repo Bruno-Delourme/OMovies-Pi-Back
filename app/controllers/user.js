@@ -57,7 +57,7 @@ const userController = {
       const token = jwt.sign({ user: result }, process.env.JWT_SECRET);
 
       // Sending a success response with user data and the token
-      res.json({ status: 'success', data: { user: result, token } });
+      res.json({ status: 'success', data: { user: result, token }});
 
   } else {
       // If the passwords don't match, return an internal server error response

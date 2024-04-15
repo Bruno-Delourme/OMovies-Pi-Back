@@ -12,7 +12,7 @@ router.post("/login", validation.loginUser, userController.login);
 
 router.post("/findUser", authMiddleware.authMiddleware, validation.findUser, userController.show);
 
-router.patch("/updateUser", authMiddleware.authMiddleware, validation.updateUser, userController.update);
+router.patch("/updateUser/:id", authMiddleware.authMiddleware, validation.updateUser, userController.update);
 
 router.delete("/deleteUser/:id", authMiddleware.authMiddleware,  userController.delete);
 
