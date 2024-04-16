@@ -18,15 +18,13 @@ const favoriteMovieController = {
 
     const picture = poster_path || 'No poster';
 
-    const updated_at = new Date(); // Getting the current date for the updated_at field
-
     try {
 
         // Insert the movie into the database
-        const insertIntoMovie = await movieDBDataMapper.insertIntoMovie({ id: movieId, title, poster_path: picture, overview, genre: genres, updated_at });
+        const insertIntoMovie = await movieDBDataMapper.insertIntoMovie({ id: movieId, title, poster_path: picture, overview, genre: genres });
 
         // Insert the movie into the user's favorites list
-        const insertIntoFavorite = await favoriteMovieDataMapper.insertIntoFavorite({ id: userId }, { id: movieId, updated_at });
+        const insertIntoFavorite = await favoriteMovieDataMapper.insertIntoFavorite({ id: userId }, { id: movieId });
         
         res.json({ status: 'success', data: { insertIntoMovie, insertIntoFavorite } });
 
@@ -41,7 +39,7 @@ const favoriteMovieController = {
     debug('favorite show controller called');
 
     try {
-      const id = req.user.id
+      const { id } = req.params;
 
       // Shows the user's list of favorites
       const favorite = await favoriteMovieDataMapper.showFavorite(id);
@@ -53,6 +51,24 @@ const favoriteMovieController = {
       errorHandler._500(error, req, res);
     };
 },
+
+  async showFavoriteByGenre(req, res) {
+    debug('favorite showByGenre controller called');
+
+    try {
+      const id = req.params.id;
+      const { genre } = req.body;
+
+      const favorite = await favoriteMovieDataMapper.showFavoriteByGenre({ id }, { genre });
+      console.log(favorite);
+
+      res.json({ status: 'success', data: favorite });
+
+    } catch {
+      debug('Error displaying list of favorite movies:', error);
+      errorHandler._500(error, req, res);
+    };
+  },
 
 // Function that allows you to delete a film from the list of favorite films
   async deleteFromFavorite(req, res) {

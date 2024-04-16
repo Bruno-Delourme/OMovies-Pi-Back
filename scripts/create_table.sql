@@ -27,6 +27,21 @@ CREATE TABLE "movie" (
   "poster_path" TEXT,
   "overview" TEXT,
   "genre" TEXT,
+  "actor" TEXT,
+  "created_at" TIMESTAMPTZ NOT NULL default(now()),
+  "updated_at" TIMESTAMPTZ
+);
+
+CREATE TABLE "genre" (
+  "id" INT NOT NULL PRIMARY KEY,
+  "name" TEXT,
+  "created_at" TIMESTAMPTZ NOT NULL default(now()),
+  "updated_at" TIMESTAMPTZ
+);
+
+CREATE TABLE "actor" (
+  "id" INT NOT NULL PRIMARY KEY,
+  "name" TEXT,
   "created_at" TIMESTAMPTZ NOT NULL default(now()),
   "updated_at" TIMESTAMPTZ
 );
@@ -41,6 +56,20 @@ CREATE TABLE "favorite_movie" (
 CREATE TABLE "to_review_movie" (
   "movie_id" INT REFERENCES "movie"(id),
   "user_id" INT REFERENCES "user"(id),
+  "created_at" TIMESTAMPTZ NOT NULL default(now()),
+  "updated_at" TIMESTAMPTZ
+);
+
+CREATE TABLE "movie_genre" (
+  "movie_id" INT REFERENCES "movie"(id),
+  "genre_id" INT REFERENCES "genre"(id),
+  "created_at" TIMESTAMPTZ NOT NULL default(now()),
+  "updated_at" TIMESTAMPTZ
+);
+
+CREATE TABLE "movie_actor" (
+  "movie_id" INT REFERENCES "movie"(id),
+  "actor_id" INT REFERENCES "actor"(id),
   "created_at" TIMESTAMPTZ NOT NULL default(now()),
   "updated_at" TIMESTAMPTZ
 );
@@ -69,13 +98,30 @@ $$
   ) RETURNING *;
 $$ LANGUAGE sql STRICT;
 
+CREATE OR REPLACE FUNCTION add_genre(json) RETURNS "genre" AS
+$$
+  INSERT INTO "genre"(id, name)
+    VALUES (
+      ($1 ->> 'id'):: INT,
+      ($1 ->> 'name'):: TEXT
+  ) RETURNING *;
+$$ LANGUAGE sql STRICT;
+
+CREATE OR REPLACE FUNCTION add_actor(json) RETURNS "actor" AS
+$$
+  INSERT INTO "actor"(id, name)
+    VALUES (
+      ($1 ->> 'id'):: INT,
+      ($1 ->> 'name'):: TEXT
+  ) RETURNING *;
+$$ LANGUAGE sql STRICT;
+
 CREATE OR REPLACE FUNCTION add_favorite_movie(json) RETURNS "favorite_movie" AS
 $$
-   INSERT INTO "favorite_movie"(movie_id, user_id, updated_at)
+   INSERT INTO "favorite_movie"(movie_id, user_id)
     VALUES (
       ($1 ->> 'movie_id'):: INT,
       ($1 ->> 'user_id'):: INT,
-      ($1 ->> 'updated_at'):: TIMESTAMPTZ
   ) RETURNING *;
 $$ LANGUAGE sql STRICT;
 

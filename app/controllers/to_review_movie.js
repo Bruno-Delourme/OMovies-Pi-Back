@@ -17,15 +17,13 @@ const toReviewMovieController = {
 
     const picture = poster_path || 'Pas d\'affiche';
 
-    const updated_at = new Date(); // Getting the current date for the updated_at field
-
     try {
         
         // Insert the movie into the database and retrieve the ID of the inserted movie
-        const insertIntoMovie = await movieDBDataMapper.insertIntoMovie({ id: movieId, title, poster_path: picture, overview, genre: genres, updated_at });
+        const insertIntoMovie = await movieDBDataMapper.insertIntoMovie({ id: movieId, title, poster_path: picture, overview, genre: genres });
 
         // Insert the movie into the user's list of movies to watch again
-        const insertIntoToReview = await toReviewMovieDataMapper.insertIntoToReview({ id: userId }, { id: movieId, updated_at });
+        const insertIntoToReview = await toReviewMovieDataMapper.insertIntoToReview({ id: userId }, { id: movieId });
         
         res.json({ status: 'success', data: { insertIntoMovie, insertIntoToReview } });
 

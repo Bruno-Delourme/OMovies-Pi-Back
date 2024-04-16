@@ -9,6 +9,8 @@ router.post("/addToFavorite", cw(favoriteMovieController.insertIntoFavorite));
 
 router.get("/showFavorite/:id", cw(favoriteMovieController.showFavorite));
 
+router.post("/showFavoriteByGenre/:id", cw(favoriteMovieController.showFavoriteByGenre));
+
 router.delete("/deleteFromFavorite", cw(favoriteMovieController.deleteFromFavorite));
 
 debug('API list router initialized');

@@ -47,6 +47,21 @@ const favoriteMovieModel = {
     };
   },
 
+  async showFavoriteByGenre(user, movie) {
+    try {
+      const query = {
+        text: 'SELECT * FROM "movie" WHERE id IN( SELECT movie_id FROM "favorite_movie" WHERE user_id = $1) AND genre = $2',
+        values: [user.id, movie.genre],
+      };
+      const results = await client.query(query);
+      return results.rows;
+
+    } catch {
+      console.error('Erreur lors de la récupération de la liste des favoris:', error);
+        throw error;
+    };
+  },
+
   async deleteFromFavorite(user, movie) {
     try {
       const query = {

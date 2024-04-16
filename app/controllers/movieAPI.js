@@ -161,7 +161,15 @@ const movieController = {
                 const movieDetails = await movieDetailsResponse.json();
                 movie.title = movieDetails.title; // Add title to the movie object
                 movie.genres = movieDetails.genres.map(genre => genre.name); // Add genre names to the movie object
-            }
+            };
+
+            // Recover film credits
+            const creditsResponse = await fetch(`${process.env.API_TMDB_BASE_URL}/movie/${movie.id}/credits?api_key=${process.env.API_TMDB_KEY}&language=${language}`);
+            if (creditsResponse.ok) {
+            const creditsData = await creditsResponse.json();
+            movie.credits = creditsData.cast;
+            };
+
             // Fetch providers for the movie
             const providersResponse = await fetch(`${process.env.API_TMDB_BASE_URL}movie/${movie.id}/watch/providers?api_key=${process.env.API_TMDB_KEY}&region=FR`);
             if (providersResponse.ok) {
