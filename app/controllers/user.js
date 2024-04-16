@@ -35,7 +35,8 @@ const userController = {
   async login(req, res) {
     debug('user login controller called');
 
-    // Attempting to find the user based on the provided credentials
+    try {
+      // Attempting to find the user based on the provided credentials
     const result = await userDataMapper.findUser(req.body);
 
     // If no user is found, return an unauthorized response
@@ -59,8 +60,9 @@ const userController = {
 
       // Sending a success response with user data and the token
       res.json({ status: 'success', data: { user: result, token }});
+    };
 
-  } else {
+    } catch (error) {
       // If the passwords don't match, return an internal server error response
       debug('Error during login:', error);
       res.status(500).json({ status: 'error', message: 'Error during login.' });

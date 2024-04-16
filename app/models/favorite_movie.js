@@ -27,7 +27,7 @@ const favoriteMovieModel = {
       return results.rows[0];
 
   } catch (error) {
-      console.error('Error when inserting into favorites list :', error);
+      debug('Error when inserting into favorites list :', error);
       throw error;
   }
   },
@@ -42,7 +42,7 @@ const favoriteMovieModel = {
       return results.rows;
       
     } catch (error) {
-      console.error('Error retrieving favorites list:', error);
+      debug('Error retrieving favorites list:', error);
         throw error;
     };
   },

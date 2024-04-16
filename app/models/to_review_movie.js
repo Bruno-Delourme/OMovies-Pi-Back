@@ -14,7 +14,7 @@ const toReviewMovieModel = {
 
       // If the film is already present, send a message again
       if (userResult.rows.length > 0) {
-          return { message: 'The film is already on the list of films to watch again.' };
+          return { message: 'The movie is already on the list of films to watch again.' };
       }
 
       // Insert movie into database
@@ -27,7 +27,7 @@ const toReviewMovieModel = {
       return results.rows[0];
 
   } catch (error) {
-      console.error('Error when inserting into the list of films to watch again :', error);
+      debug('Error when inserting into the list of films to watch again :', error);
       throw error;
   }
   },
@@ -40,8 +40,9 @@ const toReviewMovieModel = {
       };
       const results = await client.query(query);
       return results.rows;
+
     } catch (error) {
-      console.error('Error retrieving favorites list:', error);
+      debug('Error retrieving favorites list:', error);
         throw error;
     };
   },
@@ -55,10 +56,10 @@ const toReviewMovieModel = {
 
       await client.query(query);
         
-      return { message: 'Le film a été supprimé de la liste des film à revoir.' };
+      return { message: 'The movie has been removed from the list of films to watch again.' };
       
   } catch (error) {
-      console.error('Erreur lors de la suppression du film de la liste des films à revoir :', error);
+      debug('Error removing movie from list of movies to watch again :', error);
       throw error;
   };
   },

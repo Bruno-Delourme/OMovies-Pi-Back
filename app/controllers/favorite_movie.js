@@ -1,6 +1,7 @@
 const debug = require('debug')('app:controller');
 require('dotenv').config();
 const errorHandler = require('../service/error.js');
+
 const favoriteMovieDataMapper = require('../models/favorite_movie.js');
 const genreDataMapper = require('../models/genre.js');
 const actorDataMapper = require('../models/actor.js');
@@ -14,7 +15,8 @@ const favoriteMovieController = {
   async insertIntoFavorite(req, res) {
     debug('list insertIntoFavorite controller called');
 
-    const { userId, movieId, title, poster_path, overview, genreName, genreId, actorName, actorId } = req.body;
+    const { movieId, title, poster_path, overview, genreName, genreId, actorName, actorId } = req.body;
+    const userId = req.params.id;
 
     if (!movieId || !title || !overview || !genreName || !genreId || !actorName || !actorId) {
       return errorHandler._400('Incomplete data', req, res);
@@ -55,7 +57,7 @@ const favoriteMovieController = {
     debug('favorite show controller called');
 
     try {
-      const { id } = req.params;
+      const id = req.params.id;
 
       // Shows the user's list of favorites
       const favorite = await favoriteMovieDataMapper.showFavorite(id);
@@ -92,7 +94,7 @@ const favoriteMovieController = {
 
     
   try {
-    const userId = req.user.id;
+    const userId = req.params.id;
     const { movieId } = req.body;
 
     // Removes a movie from the user's favorites list
