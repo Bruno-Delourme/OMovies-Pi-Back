@@ -60,11 +60,29 @@ const toReviewMovieController = {
       const id = req.params.id
 
       // Shows the user's list of favorites
-      const favorite = await toReviewMovieDataMapper.showToReview(id);
+      const toReview = await toReviewMovieDataMapper.showToReview(id);
 
-      res.json({ status: 'success', data: favorite });
+      res.json({ status: 'success', data: toReview });
 
     } catch (error) {
+      debug('Error displaying the list of movies to watch again:', error);
+      errorHandler._500(error, req, res);
+    };
+  },
+
+  // Feature that displays movies to review by genre
+  async showToReviewByGenre(req, res) {
+    debug('toReview showByGenre controller called');
+
+    try {
+      const id = req.params.id;
+      const { genre } = req.body;
+
+      const toReview = await movieGenreDataMapper.showToReviewByGenre({ id }, { genre });
+
+      res.json({ status: 'success', data: toReview });
+
+    } catch {
       debug('Error displaying the list of movies to watch again:', error);
       errorHandler._500(error, req, res);
     };
@@ -88,7 +106,7 @@ const toReviewMovieController = {
       debug('Error removing movie from list of movies to watch again:', error);
       errorHandler._500(error, req, res);
     };
-},
+  },
 };
 
 module.exports = toReviewMovieController;

@@ -70,6 +70,7 @@ const favoriteMovieController = {
     };
   },
 
+  // Feature that displays favorite movies by genre
   async showFavoriteByGenre(req, res) {
     debug('favorite showByGenre controller called');
 
@@ -77,8 +78,7 @@ const favoriteMovieController = {
       const id = req.params.id;
       const { genre } = req.body;
 
-      const favorite = await favoriteMovieDataMapper.showFavoriteByGenre({ id }, { genre });
-      console.log(favorite);
+      const favorite = await movieGenreDataMapper.showFavoriteByGenre({ id }, { genre });
 
       res.json({ status: 'success', data: favorite });
 
