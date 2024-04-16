@@ -40,6 +40,7 @@ const favoriteMovieModel = {
       };
       const results = await client.query(query);
       return results.rows;
+      
     } catch (error) {
       console.error('Erreur lors de la récupération de la liste des favoris:', error);
         throw error;

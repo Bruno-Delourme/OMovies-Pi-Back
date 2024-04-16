@@ -27,18 +27,3 @@ const authMiddleware = {
 };
 
 module.exports = authMiddleware;
-
-// const bearerToken = req.headers.authorization || "";
-//     const token = bearerToken.startsWith("Bearer")
-//         ? bearerToken.substring(7)
-//         : bearerToken;
-//     if (token) {
-//         try {
-//             const decoded = jwt.verify(token, process.env.JWT_SECRET);
-//             console.log(decoded);
-//             return decoded.user;
-//         } catch (error) {
-//             throw new UnauthorizedError("Identification invalide");
-//         }
-//     }
-//     return null;

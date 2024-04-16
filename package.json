@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "dev": "DEBUG=app:* nodemon index.js",
+    "dev": "DEBUG=app:*,service:* nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1",
     "resetDB": "psql -U omovies -d omovies -f scripts/create_table.sql"
   },

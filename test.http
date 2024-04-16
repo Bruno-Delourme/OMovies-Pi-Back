@@ -51,18 +51,18 @@
 
 
 
-# POST {{endpoint}}/api/addToFavorite
-# content-type: application/json
-# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUb3RvIiwiZW1haWwiOiJ0b3RvQHRvdG8uZnIiLCJiaXJ0aGRheSI6IjE5OTAtMDUtMTFUMjI6MDA6MDAuMDAwWiIsImNyZWF0ZWRfYXQiOiIyMDI0LTA0LTE1VDEzOjQ5OjE2LjA4MFoiLCJ1cGRhdGVkX2F0IjpudWxsfSwiaWF0IjoxNzEzMTg5MDYzfQ._YpwrZ0GrmcNMQjXvaUnvcsZg5L0o0igAOjEceMkZts
+POST {{endpoint}}/api/addToFavorite
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUb3RvIiwiZW1haWwiOiJ0b3RvQHRvdG8uZnIiLCJiaXJ0aGRheSI6IjE5OTAtMDUtMTFUMjI6MDA6MDAuMDAwWiIsImNyZWF0ZWRfYXQiOiIyMDI0LTA0LTE1VDEzOjQ5OjE2LjA4MFoiLCJ1cGRhdGVkX2F0IjpudWxsfSwiaWF0IjoxNzEzMTg5MDYzfQ._YpwrZ0GrmcNMQjXvaUnvcsZg5L0o0igAOjEceMkZts
 
-# {
-#   "userId": 1,
-#   "movieId": 3,
-#   "title": "machin",
-#   "poster_path": "machin",
-#   "overview": "machin",
-#   "genres": ["machin"]
-# }
+{
+  "userId": 1,
+  "movieId": 3,
+  "title": "machin",
+  "poster_path": "machin",
+  "overview": "machin",
+  "genres": ["machin"]
+}
 
 
 

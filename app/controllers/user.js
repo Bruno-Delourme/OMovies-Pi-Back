@@ -114,7 +114,6 @@ const userController = {
     let userData = {};
     let hashedPassword;
     const updated_at = new Date(); // Getting the current date for the updated_at field
-    updated_at.setHours(updated_at.getHours() + 2);
 
     try {
         // Checking if each field is defined and updating the userData object accordingly

@@ -1,5 +1,6 @@
 const debug = require('debug')('app:controller');
 require('dotenv').config();
+const errorHandler = require('../service/error.js');
 const favoriteMovieDataMapper = require('../models/favorite_movie.js');
 const movieDBDataMapper = require('../models/movieDB.js');
 
@@ -12,10 +13,10 @@ const favoriteMovieController = {
     const { userId, movieId, title, poster_path, overview, genres } = req.body;
 
     if (!movieId || !title || !overview || !genres) {
-        return res.status(400).json({ message: 'Données incomplètes' });
+      return errorHandler._400('Incomplete data', req, res);
     }
 
-    const picture = poster_path || 'Pas d\'affiche';
+    const picture = poster_path || 'No poster';
 
     const updated_at = new Date(); // Getting the current date for the updated_at field
 
@@ -30,8 +31,8 @@ const favoriteMovieController = {
         res.json({ status: 'success', data: { insertIntoMovie, insertIntoFavorite } });
 
     } catch (error) {
-        debug('Erreur lors de l\'insertion dans la liste des favoris:', error);
-        res.status(500).json({ status: 'error', message: 'Erreur lors de l\'insertion dans la liste des favoris.' });
+        debug('Error while inserting into favorites list:', error);
+        errorHandler._500(error, req, res);
     };
 },
 
@@ -48,8 +49,8 @@ const favoriteMovieController = {
       res.json({ status: 'success', data: favorite });
 
     } catch (error) {
-      debug('Erreur lors de l\'affichage de la liste des films favoris:', error);
-      res.status(500).json({ status: 'error', message: 'Erreur lors de l\'affichage de la liste des films favoris.' });
+      debug('Error displaying list of favorite movies:', error);
+      errorHandler._500(error, req, res);
     };
 },
 
@@ -69,7 +70,7 @@ const favoriteMovieController = {
 
     } catch (error) {
       debug('Erreur lors de la suppression du film dans la liste des favoris:', error);
-      res.status(500).json({ status: 'error', message: 'Erreur lors de la suppression du film dans la liste des favoris.' });
+      errorHandler._500(error, req, res);
     };
 },
 };
