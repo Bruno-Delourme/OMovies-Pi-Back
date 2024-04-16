@@ -2,6 +2,8 @@ const debug = require('debug')('app:controller');
 require('dotenv').config();
 const errorHandler = require('../service/error.js');
 const favoriteMovieDataMapper = require('../models/favorite_movie.js');
+const genreDataMapper = require('../models/genre.js');
+const movieGenreDataMapper = require('../models/movie_genre.js');
 const movieDBDataMapper = require('../models/movieDB.js');
 
 const favoriteMovieController = {
@@ -10,23 +12,29 @@ const favoriteMovieController = {
   async insertIntoFavorite(req, res) {
     debug('list insertIntoFavorite controller called');
 
-    const { userId, movieId, title, poster_path, overview, genres } = req.body;
+    const { userId, movieId, title, poster_path, overview, genreName, genreId, actorName, actorId } = req.body;
 
-    if (!movieId || !title || !overview || !genres) {
+    if (!movieId || !title || !overview || !genreName || !genreId || !actorName || !actorId) {
       return errorHandler._400('Incomplete data', req, res);
-    }
+    };
 
     const picture = poster_path || 'No poster';
 
     try {
 
         // Insert the movie into the database
-        const insertIntoMovie = await movieDBDataMapper.insertIntoMovie({ id: movieId, title, poster_path: picture, overview, genre: genres });
+        const insertIntoMovie = await movieDBDataMapper.insertIntoMovie({ id: movieId, title, poster_path: picture, overview });
 
         // Insert the movie into the user's favorites list
         const insertIntoFavorite = await favoriteMovieDataMapper.insertIntoFavorite({ id: userId }, { id: movieId });
+
+        // Insert the genre of the film into the database table
+        const insertIntoGenre = await genreDataMapper.insertIntoGenre({ id: genreId, name: genreName });
+
+        // Insert the genre/film binary
+        const insertIntoMovieGenre = await movieGenreDataMapper.insertIntoMovieGenre({ id: movieId }, { id: genreId });
         
-        res.json({ status: 'success', data: { insertIntoMovie, insertIntoFavorite } });
+        res.json({ status: 'success', data: { insertIntoMovie, insertIntoFavorite, insertIntoGenre, insertIntoMovieGenre } });
 
     } catch (error) {
         debug('Error while inserting into favorites list:', error);

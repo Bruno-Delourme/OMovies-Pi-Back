@@ -14,20 +14,20 @@ const toReviewMovieModel = {
 
       // If the film is already present, send a message again
       if (userResult.rows.length > 0) {
-          return { message: 'Le film est déjà dans la liste des films à revoir.' };
+          return { message: 'The film is already on the list of films to watch again.' };
       }
 
       // Insert movie into database
       const insertQuery = {
-          text: 'INSERT INTO "to_review_movie" (user_id, movie_id, updated_at) VALUES ($1, $2, $3) RETURNING *',
-          values: [user.id, movie.id, movie.updated_at],
+          text: 'INSERT INTO "to_review_movie" (user_id, movie_id) VALUES ($1, $2) RETURNING *',
+          values: [user.id, movie.id],
       };
 
       const results = await client.query(insertQuery);
       return results.rows[0];
 
   } catch (error) {
-      console.error('Erreur lors de l\'insertion dans la liste des films à revoir :', error);
+      console.error('Error when inserting into the list of films to watch again :', error);
       throw error;
   }
   },
@@ -41,7 +41,7 @@ const toReviewMovieModel = {
       const results = await client.query(query);
       return results.rows;
     } catch (error) {
-      console.error('Erreur lors de la récupération de la liste des favoris:', error);
+      console.error('Error retrieving favorites list:', error);
         throw error;
     };
   },

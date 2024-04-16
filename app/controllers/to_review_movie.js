@@ -9,18 +9,18 @@ const toReviewMovieController = {
   async insertIntoToReview(req, res) {
     debug('list insertIntoToReview controller called');
 
-    const { userId, movieId, title, poster_path, overview, genres } = req.body;
+    const { userId, movieId, title, poster_path, overview, genre } = req.body;
 
-    if (!movieId || !title || !overview || !genres) {
-        return res.status(400).json({ message: 'Données incomplètes' });
-    }
+    if (!movieId || !title || !overview || !genre || !actor) {
+      return errorHandler._400('Incomplete data', req, res);
+    };
 
-    const picture = poster_path || 'Pas d\'affiche';
+    const picture = poster_path || 'No poster';
 
     try {
         
         // Insert the movie into the database and retrieve the ID of the inserted movie
-        const insertIntoMovie = await movieDBDataMapper.insertIntoMovie({ id: movieId, title, poster_path: picture, overview, genre: genres });
+        const insertIntoMovie = await movieDBDataMapper.insertIntoMovie({ id: movieId, title, poster_path: picture, overview });
 
         // Insert the movie into the user's list of movies to watch again
         const insertIntoToReview = await toReviewMovieDataMapper.insertIntoToReview({ id: userId }, { id: movieId });

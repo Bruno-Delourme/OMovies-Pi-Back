@@ -5,13 +5,13 @@ const movieDBModel = {
   async insertIntoMovie(movie) {
     try {
       const checkQuery = {
-        text: 'SELECT title FROM movie WHERE title = $1',
+        text: 'SELECT title FROM "movie" WHERE title = $1',
         values: [movie.title],
       };
       const checkResult = await client.query(checkQuery);
 
       if (checkResult.rows.length > 0) {
-        return { message: 'Le film est déjà enregistré.' }
+        return { message: 'The movie is already recorded.' }
       };
 
       const insertQuery = {
@@ -23,7 +23,7 @@ const movieDBModel = {
       return results.rows[0];      
 
     } catch (error) {
-      console.error('Erreur lors de l\'insertion du film :', error); // Gestion des erreurs
+      debug('Error inserting film:', error);
         throw error;
     };
   },
@@ -39,7 +39,7 @@ const movieDBModel = {
     return !!results.rowCount;
 
     } catch (error) {
-      console.error('Erreur lors de la suppression du film :', error);
+      debug('Error deleting movie :', error);
         throw error;
     };
   },

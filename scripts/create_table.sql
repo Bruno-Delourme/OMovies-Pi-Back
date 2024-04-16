@@ -26,8 +26,6 @@ CREATE TABLE "movie" (
   "title" TEXT,
   "poster_path" TEXT,
   "overview" TEXT,
-  "genre" TEXT,
-  "actor" TEXT,
   "created_at" TIMESTAMPTZ NOT NULL default(now()),
   "updated_at" TIMESTAMPTZ
 );
@@ -87,14 +85,12 @@ $$ LANGUAGE sql STRICT;
 
 CREATE OR REPLACE FUNCTION add_movie(json) RETURNS "movie" AS
 $$
-  INSERT INTO "movie"(id, title, poster_path, overview, genre, updated_at)
+  INSERT INTO "movie"(id, title, poster_path, overview)
     VALUES (
       ($1 ->> 'id'):: INT,
       ($1 ->> 'title'):: TEXT,
       ($1 ->> 'poster_path'):: TEXT,
-      ($1 ->> 'overview'):: TEXT,
-      ($1 ->> 'genre'):: TEXT,
-      ($1 ->> 'updated_at'):: TIMESTAMPTZ
+      ($1 ->> 'overview'):: TEXT
   ) RETURNING *;
 $$ LANGUAGE sql STRICT;
 
@@ -127,11 +123,28 @@ $$ LANGUAGE sql STRICT;
 
 CREATE OR REPLACE FUNCTION add_to_review_movie(json) RETURNS "to_review_movie" AS
 $$
-   INSERT INTO "to_review_movie"(movie_id, user_id, updated_at)
+   INSERT INTO "to_review_movie"(movie_id, user_id)
     VALUES (
       ($1 ->> 'movie_id'):: INT,
-      ($1 ->> 'user_id'):: INT,
-      ($1 ->> 'updated_at'):: TIMESTAMPTZ
+      ($1 ->> 'user_id'):: INT
+  ) RETURNING *;
+$$ LANGUAGE sql STRICT;
+
+CREATE OR REPLACE FUNCTION add_to_movie_genre(json) RETURNS "movie_genre" AS
+$$
+   INSERT INTO "movie_genre"(movie_id, genre_id)
+    VALUES (
+      ($1 ->> 'movie_id'):: INT,
+      ($1 ->> 'user_id'):: INT
+  ) RETURNING *;
+$$ LANGUAGE sql STRICT;
+
+CREATE OR REPLACE FUNCTION add_to_movie_actor(json) RETURNS "movie_actor" AS
+$$
+   INSERT INTO "movie_actor"(movie_id, actor_id)
+    VALUES (
+      ($1 ->> 'movie_id'):: INT,
+      ($1 ->> 'actor_id'):: INT
   ) RETURNING *;
 $$ LANGUAGE sql STRICT;
 
