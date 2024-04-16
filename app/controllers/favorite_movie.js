@@ -48,7 +48,7 @@ const favoriteMovieController = {
         debug('Error while inserting into favorites list:', error);
         errorHandler._500(error, req, res);
     };
-},
+  },
 
 // Function which allows you to display the list of favorites
   async showFavorite(req, res) {
@@ -66,7 +66,7 @@ const favoriteMovieController = {
       debug('Error displaying list of favorite movies:', error);
       errorHandler._500(error, req, res);
     };
-},
+  },
 
   async showFavoriteByGenre(req, res) {
     debug('favorite showByGenre controller called');
@@ -104,7 +104,7 @@ const favoriteMovieController = {
       debug('Erreur lors de la suppression du film dans la liste des favoris:', error);
       errorHandler._500(error, req, res);
     };
-},
+  },
 };
 
 module.exports = favoriteMovieController;

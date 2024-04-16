@@ -1,10 +1,16 @@
 BEGIN;
 
 DROP FUNCTION IF EXISTS add_user(json) CASCADE;
-
+DROP FUNCTION IF EXISTS add_movie(json) CASCADE;
+DROP FUNCTION IF EXISTS add_genre(json) CASCADE;
+DROP FUNCTION IF EXISTS add_actor(json) CASCADE;
+DROP FUNCTION IF EXISTS add_favorite_movie(json) CASCADE;
+DROP FUNCTION IF EXISTS add_to_review_movie(json) CASCADE;
+DROP FUNCTION IF EXISTS add_to_movie_genre(json) CASCADE;
+DROP FUNCTION IF EXISTS add_to_movie_actor(json) CASCADE;
 DROP FUNCTION IF EXISTS update_user(json) CASCADE;
 
-DROP TABLE IF EXISTS "user", "movie", "favorite_movie", "to_review_movie" CASCADE;
+DROP TABLE IF EXISTS "user", "movie","genre", "actor", "favorite_movie", "to_review_movie", "movie_genre", "movie_actor" CASCADE;
 
 DROP DOMAIN  IF EXISTS public.email CASCADE;
 
@@ -117,7 +123,7 @@ $$
    INSERT INTO "favorite_movie"(movie_id, user_id)
     VALUES (
       ($1 ->> 'movie_id'):: INT,
-      ($1 ->> 'user_id'):: INT,
+      ($1 ->> 'user_id'):: INT
   ) RETURNING *;
 $$ LANGUAGE sql STRICT;
 
