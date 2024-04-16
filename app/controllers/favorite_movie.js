@@ -3,7 +3,9 @@ require('dotenv').config();
 const errorHandler = require('../service/error.js');
 const favoriteMovieDataMapper = require('../models/favorite_movie.js');
 const genreDataMapper = require('../models/genre.js');
+const actorDataMapper = require('../models/actor.js');
 const movieGenreDataMapper = require('../models/movie_genre.js');
+const movieActorDataMapper = require('../models/movie_actor.js');
 const movieDBDataMapper = require('../models/movieDB.js');
 
 const favoriteMovieController = {
@@ -28,13 +30,19 @@ const favoriteMovieController = {
         // Insert the movie into the user's favorites list
         const insertIntoFavorite = await favoriteMovieDataMapper.insertIntoFavorite({ id: userId }, { id: movieId });
 
-        // Insert the genre of the film into the database table
+        // Insert the genre of the movie into the database table
         const insertIntoGenre = await genreDataMapper.insertIntoGenre({ id: genreId, name: genreName });
 
-        // Insert the genre/film binary
+        // Insert the genre/movie binary
         const insertIntoMovieGenre = await movieGenreDataMapper.insertIntoMovieGenre({ id: movieId }, { id: genreId });
+
+        // Insert the actor of the film into the database table
+        const insertIntoActor = await actorDataMapper.insertIntoActor({ id: actorId, name: actorName });
+
+        // Insert the actor/movie binary
+        const insertIntoMovieActor = await movieActorDataMapper.insertIntoMovieActor({ id: movieId }, { id: actorId });
         
-        res.json({ status: 'success', data: { insertIntoMovie, insertIntoFavorite, insertIntoGenre, insertIntoMovieGenre } });
+        res.json({ status: 'success', data: { insertIntoMovie, insertIntoFavorite, insertIntoGenre, insertIntoMovieGenre, insertIntoActor, insertIntoMovieActor } });
 
     } catch (error) {
         debug('Error while inserting into favorites list:', error);

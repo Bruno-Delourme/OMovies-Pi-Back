@@ -37,7 +37,7 @@ const movieGenreModel = {
       const query = {
         text: `SELECT * FROM "movie" 
                 JOIN "movie_genre" ON "movie".id = "movie_genre".movie_id 
-                JOIN "genre" ON "movie_genre".genre_id = genre.id 
+                JOIN "genre" ON "movie_genre".genre_id = "genre".id 
                 WHERE "genre".name = $1`,
         values: [genre.name]
       };

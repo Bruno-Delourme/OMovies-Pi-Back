@@ -32,41 +32,41 @@ const movieActorModel = {
   }
   },
 
-  async showMovieByGenre(genre) {
+  async showMovieByActor(actor) {
     try {
       const query = {
         text: `SELECT * FROM "movie" 
-                JOIN "movie_genre" ON "movie".id = "movie_genre".movie_id 
-                JOIN "genre" ON "movie_genre".genre_id = genre.id 
-                WHERE "genre".name = $1`,
-        values: [genre.name]
+                JOIN "movie_actor" ON "movie".id = "movie_actor".movie_id 
+                JOIN "actor" ON "movie_actor".actor_id = "actor".id 
+                WHERE "actor".name = $1`,
+        values: [actor.name]
       };
       const results = await client.query(query);
       return results.rows;
       
     } catch (error) {
-      console.error('Error retrieving list of movies by genre:', error);
+      console.error('Error retrieving list of movies by actor:', error);
         throw error;
     };
   },
 
-  async showFavoriteByGenre(user, genre) {
+  async showFavoriteByActor(user, actor) {
     try {
       const query = {
         text: `SELECT * FROM "movie"
                 JOIN "favorite_movie" ON "movie".id = "favorite_movie".movie_id
-                JOIN "movie_genre" ON "movie".id = "movie_genre".movie_id
-                JOIN "genre" ON "movie_genre".genre_id = "genre".id
+                JOIN "movie_actor" ON "movie".id = "movie_actor".movie_id
+                JOIN "actor" ON "movie_actor".actor_id = "actor".id
                 JOIN "user" ON "favorite_movie".user_id = "user".id
                 WHERE "user".id = $1
-                AND "genre".name = $2`,
-        values: [user.id, genre.name],
+                AND "actor".name = $2`,
+        values: [user.id, actor.name],
       };
       const results = await client.query(query);
       return results.rows;
 
     } catch {
-      console.error('Error retrieving list of favorite movies by genre:', error);
+      console.error('Error retrieving list of favorite movies by actor:', error);
         throw error;
     };
   },
