@@ -27,7 +27,7 @@ const movieGenreModel = {
       return results.rows[0];
 
   } catch (error) {
-      console.error('Error when inserting binomial :', error);
+      debug('Error when inserting binomial :', error);
       throw error;
   }
   },
@@ -45,7 +45,7 @@ const movieGenreModel = {
       return results.rows;
       
     } catch (error) {
-      console.error('Error retrieving list of movies by genre:', error);
+      debug('Error retrieving list of movies by genre:', error);
         throw error;
     };
   },
@@ -66,7 +66,7 @@ const movieGenreModel = {
       return results.rows;
 
     } catch {
-      console.error('Error retrieving list of favorite movies by genre:', error);
+      debug('Error retrieving list of favorite movies by genre:', error);
         throw error;
     };
   },
@@ -87,7 +87,7 @@ const movieGenreModel = {
       return results.rows;
 
     } catch {
-      console.error('Error retrieving the list of movies to rewatch by genre:', error);
+      debug('Error retrieving the list of movies to rewatch by genre:', error);
         throw error;
     };
   },

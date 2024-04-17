@@ -75,8 +75,8 @@ const toReviewMovieController = {
     debug('toReview showByGenre controller called');
 
     try {
-      const id = req.params.id;
-      const { genre } = req.body;
+      const id = req.user.id;
+      const genre = req.params.genre;
 
       const toReview = await movieGenreDataMapper.showToReviewByGenre({ id }, { genre });
 

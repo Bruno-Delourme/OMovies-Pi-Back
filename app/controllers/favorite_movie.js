@@ -11,7 +11,7 @@ const movieDBDataMapper = require('../models/movieDB.js');
 
 const favoriteMovieController = {
 
-// Function that inserts a film into the favorites list
+// Allows you to insert a movie into the favorites list
   async insertIntoFavorite(req, res) {
     debug('list insertIntoFavorite controller called');
 
@@ -52,7 +52,7 @@ const favoriteMovieController = {
     };
   },
 
-// Function which allows you to display the list of favorites
+// Allows you to view movies from the favorites list
   async showFavorite(req, res) {
     debug('favorite show controller called');
 
@@ -75,8 +75,8 @@ const favoriteMovieController = {
     debug('favorite showByGenre controller called');
 
     try {
-      const id = req.params.id;
-      const { genre } = req.body;
+      const id = req.user.id;
+      const genre = req.params.genre;
 
       const favorite = await movieGenreDataMapper.showFavoriteByGenre({ id }, { genre });
 
@@ -88,7 +88,9 @@ const favoriteMovieController = {
     };
   },
 
-// Function that allows you to delete a film from the list of favorite films
+  // 
+
+  // Function that allows you to delete a film from the list of favorite films
   async deleteFromFavorite(req, res) {
     debug('list delete controller called');
 

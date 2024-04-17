@@ -27,7 +27,7 @@ const movieActorModel = {
       return results.rows[0];
 
   } catch (error) {
-      console.error('Error when inserting binomial :', error);
+      debug('Error when inserting binomial :', error);
       throw error;
   }
   },
@@ -45,7 +45,7 @@ const movieActorModel = {
       return results.rows;
       
     } catch (error) {
-      console.error('Error retrieving list of movies by actor:', error);
+      debug('Error retrieving list of movies by actor:', error);
         throw error;
     };
   },
@@ -66,7 +66,28 @@ const movieActorModel = {
       return results.rows;
 
     } catch {
-      console.error('Error retrieving list of favorite movies by actor:', error);
+      debug('Error retrieving list of favorite movies by actor:', error);
+        throw error;
+    };
+  },
+
+  async showToReviewByActor(user, actor) {
+    try {
+      const query = {
+        text: `SELECT * FROM "movie"
+                JOIN "to_review_movie" ON "to_review".id = "to_review_movie".movie_id
+                JOIN "movie_actor" ON "movie".id = "movie_actor".movie_id
+                JOIN "actor" ON "movie_actor".actor_id = "actor".id
+                JOIN "user" ON "favorite_movie".user_id = "user".id
+                WHERE "user".id = $1
+                AND "actor".name = $2`,
+        values: [user.id, actor.name],
+      };
+      const results = await client.query(query);
+      return results.rows;
+
+    } catch {
+      debug('Error retrieving the list of movies to rewatch by actor:', error);
         throw error;
     };
   },

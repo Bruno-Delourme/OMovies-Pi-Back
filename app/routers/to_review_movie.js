@@ -9,7 +9,7 @@ router.post("/addToToReview/:id", cw(toReviewController.insertIntoToReview));
 
 router.post("/showToReview/:id", cw(toReviewController.showToReview));
 
-router.post("/showToReviewByGenre/:id", cw(toReviewController.showToReviewByGenre));
+router.post("/showToReviewByGenre/:genre", cw(toReviewController.showToReviewByGenre));
 
 router.delete("/deleteFromToReview/:id", cw(toReviewController.deleteFromToReview));
 

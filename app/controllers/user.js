@@ -56,7 +56,6 @@ const userController = {
 
       // Generating a JWT token with user data and the secret key
       const token = jwt.sign({ user: result }, process.env.JWT_SECRET);
-      console.log(token);
 
       // Sending a success response with user data and the token
       res.json({ status: 'success', data: { user: result, token }});
@@ -139,8 +138,9 @@ const userController = {
         
         // Updating the user data in the database using the userDataMapper
         const updatedUser = await userDataMapper.update({ id, pseudo, email, birthday, password: hashedPassword, updated_at });
+        const token = jwt.sign({ user: updatedUser }, process.env.JWT_SECRET);
         
-        res.json({ status: 'success', data: updatedUser });
+        res.json({ status: 'success', data: updatedUser, token });
 
     } catch (error) {
         debug('Error updating user:', error);
