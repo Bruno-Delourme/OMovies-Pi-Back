@@ -9,7 +9,7 @@ router.post("/addToFavorite/:id", cw(favoriteMovieController.insertIntoFavorite)
 
 router.post("/showFavorite/:id", cw(favoriteMovieController.showFavorite));
 
-router.post("/showNewFavorite/:id", cw(favoriteMovieController.showFavorite));
+router.post("/showNewFavorite/:id", cw(favoriteMovieController.showNewFavorite));
 
 router.delete("/deleteFromFavorite/:id", cw(favoriteMovieController.deleteFromFavorite));
 

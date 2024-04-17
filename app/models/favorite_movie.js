@@ -56,7 +56,7 @@ const favoriteMovieModel = {
       const results = await client.query(query);
       return results.rows;
 
-    } catch {
+    } catch (error) {
       debug('Error retrieving list of new favorite movies:', error);
         throw error;
     }
