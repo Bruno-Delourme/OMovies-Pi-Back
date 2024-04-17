@@ -1,6 +1,7 @@
 const debug = require('debug')('app:router');
 const express = require('express');
 const authMiddleware = require('../middlewares/authentication.js');
+
 const userRouter = require('./user.js');
 const movieAPIRouter = require('./movieAPI.js');
 const favoriteMovieRouter = require('./favorite_movie.js');

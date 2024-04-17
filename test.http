@@ -25,7 +25,7 @@
 
 # POST {{endpoint}}/api/findUser
 # content-type: application/json
-# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUb3RvIiwiZW1haWwiOiJ0b3RvQHRvdG8uZnIiLCJiaXJ0aGRheSI6IjE5OTAtMDUtMTFUMjI6MDA6MDAuMDAwWiIsImNyZWF0ZWRfYXQiOiIyMDI0LTA0LTE2VDA5OjM0OjEyLjE1M1oiLCJ1cGRhdGVkX2F0IjpudWxsfSwiaWF0IjoxNzEzMjYwMTU2fQ.5SXuNKjXcrFp7BJpzkT_EB5LsUZ_RvmzP8uXsNx17sA
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUb3RvIiwiZW1haWwiOiJ0b3RvQHRvdG8uZnIiLCJiaXJ0aGRheSI6IjE5OTAtMDUtMTFUMjI6MDA6MDAuMDAwWiIsImNyZWF0ZWRfYXQiOiIyMDI0LTA0LTE3VDEzOjA4OjAxLjQ0MVoiLCJ1cGRhdGVkX2F0IjpudWxsfSwiaWF0IjoxNzEzMzU5MzAzfQ.Anevvoifk0eOzU5DuVokeCLDvudFyiDZKFJwDed6pyU
 
 # {
 #   "pseudo": "Toto"
@@ -34,13 +34,13 @@
 
 
 # DELETE {{endpoint}}/api/deleteUser/2
-# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUb3RvIiwiZW1haWwiOiJ0b3RvQHRvdG8uZnIiLCJiaXJ0aGRheSI6IjE5OTAtMDUtMTFUMjI6MDA6MDAuMDAwWiIsImNyZWF0ZWRfYXQiOiIyMDI0LTA0LTE2VDA5OjM0OjEyLjE1M1oiLCJ1cGRhdGVkX2F0IjpudWxsfSwiaWF0IjoxNzEzMjYwMTU2fQ.5SXuNKjXcrFp7BJpzkT_EB5LsUZ_RvmzP8uXsNx17sA
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUb3RvIiwiZW1haWwiOiJ0b3RvQHRvdG8uZnIiLCJiaXJ0aGRheSI6IjE5OTAtMDUtMTFUMjI6MDA6MDAuMDAwWiIsImNyZWF0ZWRfYXQiOiIyMDI0LTA0LTE3VDEzOjA4OjAxLjQ0MVoiLCJ1cGRhdGVkX2F0IjpudWxsfSwiaWF0IjoxNzEzMzU5MzAzfQ.Anevvoifk0eOzU5DuVokeCLDvudFyiDZKFJwDed6pyU
 
 
 
 # PATCH {{endpoint}}/api/updateUser/1
 # content-type: application/json
-# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUb3RvIiwiZW1haWwiOiJ0b3RvQHRvdG8uZnIiLCJiaXJ0aGRheSI6IjE5OTAtMDUtMTFUMjI6MDA6MDAuMDAwWiIsImNyZWF0ZWRfYXQiOiIyMDI0LTA0LTE2VDA5OjM0OjEyLjE1M1oiLCJ1cGRhdGVkX2F0IjpudWxsfSwiaWF0IjoxNzEzMjYwMTU2fQ.5SXuNKjXcrFp7BJpzkT_EB5LsUZ_RvmzP8uXsNx17sA
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUb3RvIiwiZW1haWwiOiJ0b3RvQHRvdG8uZnIiLCJiaXJ0aGRheSI6IjE5OTAtMDUtMTFUMjI6MDA6MDAuMDAwWiIsImNyZWF0ZWRfYXQiOiIyMDI0LTA0LTE3VDEzOjA4OjAxLjQ0MVoiLCJ1cGRhdGVkX2F0IjpudWxsfSwiaWF0IjoxNzEzMzU5MzAzfQ.Anevvoifk0eOzU5DuVokeCLDvudFyiDZKFJwDed6pyU
 
 # {
 #   "pseudo": "tata",
@@ -51,121 +51,50 @@
 
 
 
-# POST {{endpoint}}/api/addToFavorite
+# POST {{endpoint}}/api/addToFavorite/1
 # content-type: application/json
-# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUb3RvIiwiZW1haWwiOiJ0b3RvQHRvdG8uZnIiLCJiaXJ0aGRheSI6IjE5OTAtMDUtMTFUMjI6MDA6MDAuMDAwWiIsImNyZWF0ZWRfYXQiOiIyMDI0LTA0LTE2VDA5OjM0OjEyLjE1M1oiLCJ1cGRhdGVkX2F0IjpudWxsfSwiaWF0IjoxNzEzMjYwMTU2fQ.5SXuNKjXcrFp7BJpzkT_EB5LsUZ_RvmzP8uXsNx17sA
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUb3RvIiwiZW1haWwiOiJ0b3RvQHRvdG8uZnIiLCJiaXJ0aGRheSI6IjE5OTAtMDUtMTFUMjI6MDA6MDAuMDAwWiIsImNyZWF0ZWRfYXQiOiIyMDI0LTA0LTE3VDEzOjA4OjAxLjQ0MVoiLCJ1cGRhdGVkX2F0IjpudWxsfSwiaWF0IjoxNzEzMzU5MzAzfQ.Anevvoifk0eOzU5DuVokeCLDvudFyiDZKFJwDed6pyU
 
 # {
-#   "userId": 1,
-#   "movieId": 4,
+#   "id": 4,
 #   "title": "bidule",
 #   "poster_path": "bidule",
-#   "overview": "bidule",
-#   "genres": ["bidule", "test"]
+#   "overview": "bidule"
 # }
 
 
 
-# POST {{endpoint}}/api/addToToReview
+# POST {{endpoint}}/api/addToToReview/1
 # content-type: application/json
-# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUb3RvIiwiZW1haWwiOiJ0b3RvQHRvdG8uZnIiLCJiaXJ0aGRheSI6IjE5OTAtMDUtMTFUMjI6MDA6MDAuMDAwWiIsImNyZWF0ZWRfYXQiOiIyMDI0LTA0LTE2VDA5OjM0OjEyLjE1M1oiLCJ1cGRhdGVkX2F0IjpudWxsfSwiaWF0IjoxNzEzMjYwMTU2fQ.5SXuNKjXcrFp7BJpzkT_EB5LsUZ_RvmzP8uXsNx17sA
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUb3RvIiwiZW1haWwiOiJ0b3RvQHRvdG8uZnIiLCJiaXJ0aGRheSI6IjE5OTAtMDUtMTFUMjI6MDA6MDAuMDAwWiIsImNyZWF0ZWRfYXQiOiIyMDI0LTA0LTE3VDEzOjA4OjAxLjQ0MVoiLCJ1cGRhdGVkX2F0IjpudWxsfSwiaWF0IjoxNzEzMzU5MzAzfQ.Anevvoifk0eOzU5DuVokeCLDvudFyiDZKFJwDed6pyU
 
 # {
-#   "userId": 1,
-#   "movieId": 5,
+#   "id": 5,
 #   "title": "Star Wars",
 #   "poster_path": "Chemin des étoiles",
-#   "overview": "Il était une fois, une étoile...",
-#   "genres": ["science-fiction"]
+#   "overview": "Il était une fois, une étoile..."
 # }
 
 
 
-POST {{endpoint}}/api/showFavoriteByGenre/1
-Content-Type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUb3RvIiwiZW1haWwiOiJ0b3RvQHRvdG8uZnIiLCJiaXJ0aGRheSI6IjE5OTAtMDUtMTFUMjI6MDA6MDAuMDAwWiIsImNyZWF0ZWRfYXQiOiIyMDI0LTA0LTE2VDA5OjM0OjEyLjE1M1oiLCJ1cGRhdGVkX2F0IjpudWxsfSwiaWF0IjoxNzEzMjYwMTU2fQ.5SXuNKjXcrFp7BJpzkT_EB5LsUZ_RvmzP8uXsNx17sA
-
-{
-  "genre": "machin"
-}
-
-
-# GET {{endpoint}}/api/showToReview/1
-# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUb3RvIiwiZW1haWwiOiJ0b3RvQHRvdG8uZnIiLCJiaXJ0aGRheSI6IjE5OTAtMDUtMTFUMjI6MDA6MDAuMDAwWiIsImNyZWF0ZWRfYXQiOiIyMDI0LTA0LTE2VDA5OjM0OjEyLjE1M1oiLCJ1cGRhdGVkX2F0IjpudWxsfSwiaWF0IjoxNzEzMjYwMTU2fQ.5SXuNKjXcrFp7BJpzkT_EB5LsUZ_RvmzP8uXsNx17sA
+# POST {{endpoint}}/api/showFavorite/1
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUb3RvIiwiZW1haWwiOiJ0b3RvQHRvdG8uZnIiLCJiaXJ0aGRheSI6IjE5OTAtMDUtMTFUMjI6MDA6MDAuMDAwWiIsImNyZWF0ZWRfYXQiOiIyMDI0LTA0LTE3VDEzOjA4OjAxLjQ0MVoiLCJ1cGRhdGVkX2F0IjpudWxsfSwiaWF0IjoxNzEzMzU5MzAzfQ.Anevvoifk0eOzU5DuVokeCLDvudFyiDZKFJwDed6pyU
 
 
 
-#  DELETE {{endpoint}}/api/deleteFromToReview
+#  DELETE {{endpoint}}/api/deleteFromFavorite/1
 # Content-Type: application/json
-# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUb3RvIiwiZW1haWwiOiJ0b3RvQHRvdG8uZnIiLCJiaXJ0aGRheSI6IjE5OTAtMDUtMTFUMjI6MDA6MDAuMDAwWiIsImNyZWF0ZWRfYXQiOiIyMDI0LTA0LTE2VDA5OjM0OjEyLjE1M1oiLCJ1cGRhdGVkX2F0IjpudWxsfSwiaWF0IjoxNzEzMjYwMTU2fQ.5SXuNKjXcrFp7BJpzkT_EB5LsUZ_RvmzP8uXsNx17sA
-# {
-#   "userId": 1,
-#   "movieId": 5
-# }
-
-
-
-# POST {{endpoint}}/api/addGroup
-# content-type: application/json
-# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUb3RvIiwiZW1haWwiOiJ0b3RvQHRvdG8uZnIiLCJiaXJ0aGRheSI6IjE5OTAtMDUtMTFUMjI6MDA6MDAuMDAwWiIsImNyZWF0ZWRfYXQiOiIyMDI0LTA0LTE2VDA5OjM0OjEyLjE1M1oiLCJ1cGRhdGVkX2F0IjpudWxsfSwiaWF0IjoxNzEzMjYwMTU2fQ.5SXuNKjXcrFp7BJpzkT_EB5LsUZ_RvmzP8uXsNx17sA
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUb3RvIiwiZW1haWwiOiJ0b3RvQHRvdG8uZnIiLCJiaXJ0aGRheSI6IjE5OTAtMDUtMTFUMjI6MDA6MDAuMDAwWiIsImNyZWF0ZWRfYXQiOiIyMDI0LTA0LTE3VDEzOjA4OjAxLjQ0MVoiLCJ1cGRhdGVkX2F0IjpudWxsfSwiaWF0IjoxNzEzMzU5MzAzfQ.Anevvoifk0eOzU5DuVokeCLDvudFyiDZKFJwDed6pyU
 
 # {
-#   "name": "BandOmovies2"
+#   "id": 4
 # }
-
-
-
-#  GET {{endpoint}}/api/group
-#  Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUb3RvIiwiZW1haWwiOiJ0b3RvQHRvdG8uZnIiLCJiaXJ0aGRheSI6IjE5OTAtMDUtMTFUMjI6MDA6MDAuMDAwWiIsImNyZWF0ZWRfYXQiOiIyMDI0LTA0LTE2VDA5OjM0OjEyLjE1M1oiLCJ1cGRhdGVkX2F0IjpudWxsfSwiaWF0IjoxNzEzMjYwMTU2fQ.5SXuNKjXcrFp7BJpzkT_EB5LsUZ_RvmzP8uXsNx17sA
 
 
 
 # POST {{endpoint}}/api/findUser
 # content-type: application/json
-# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUb3RvIiwiZW1haWwiOiJ0b3RvQHRvdG8uZnIiLCJiaXJ0aGRheSI6IjE5OTAtMDUtMTFUMjI6MDA6MDAuMDAwWiIsImNyZWF0ZWRfYXQiOiIyMDI0LTA0LTE2VDA5OjM0OjEyLjE1M1oiLCJ1cGRhdGVkX2F0IjpudWxsfSwiaWF0IjoxNzEzMjYwMTU2fQ.5SXuNKjXcrFp7BJpzkT_EB5LsUZ_RvmzP8uXsNx17sA
-
-# {
-#   "pseudo": "Yuki"
-# }
-
-
-
-# PATCH {{endpoint}}/api/addToGroup
-# content-type: application/json
-# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUb3RvIiwiZW1haWwiOiJ0b3RvQHRvdG8uZnIiLCJiaXJ0aGRheSI6IjE5OTAtMDUtMTFUMjI6MDA6MDAuMDAwWiIsImNyZWF0ZWRfYXQiOiIyMDI0LTA0LTE2VDA5OjM0OjEyLjE1M1oiLCJ1cGRhdGVkX2F0IjpudWxsfSwiaWF0IjoxNzEzMjYwMTU2fQ.5SXuNKjXcrFp7BJpzkT_EB5LsUZ_RvmzP8uXsNx17sA
-
-# {
-#   "groupId": 2,
-#   "pseudo": "Yuki"
-# }
-
-
-
-# GET {{endpoint}}/api/groupUsers/2
-# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUb3RvIiwiZW1haWwiOiJ0b3RvQHRvdG8uZnIiLCJiaXJ0aGRheSI6IjE5OTAtMDUtMTFUMjI6MDA6MDAuMDAwWiIsImNyZWF0ZWRfYXQiOiIyMDI0LTA0LTE2VDA5OjM0OjEyLjE1M1oiLCJ1cGRhdGVkX2F0IjpudWxsfSwiaWF0IjoxNzEzMjYwMTU2fQ.5SXuNKjXcrFp7BJpzkT_EB5LsUZ_RvmzP8uXsNx17sA
-
-
-
-# PATCH {{endpoint}}/api/removeToGroup
-# content-type: application/json
-# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUb3RvIiwiZW1haWwiOiJ0b3RvQHRvdG8uZnIiLCJiaXJ0aGRheSI6IjE5OTAtMDUtMTFUMjI6MDA6MDAuMDAwWiIsImNyZWF0ZWRfYXQiOiIyMDI0LTA0LTE2VDA5OjM0OjEyLjE1M1oiLCJ1cGRhdGVkX2F0IjpudWxsfSwiaWF0IjoxNzEzMjYwMTU2fQ.5SXuNKjXcrFp7BJpzkT_EB5LsUZ_RvmzP8uXsNx17sA
-
-# {
-#   "groupId": 2,
-#   "pseudo": "Yuki"
-# }
-
-
-
-#  DELETE {{endpoint}}/api/deleteGroup/2
-# Content-Type: application/json
-# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUb3RvIiwiZW1haWwiOiJ0b3RvQHRvdG8uZnIiLCJiaXJ0aGRheSI6IjE5OTAtMDUtMTFUMjI6MDA6MDAuMDAwWiIsImNyZWF0ZWRfYXQiOiIyMDI0LTA0LTE2VDA5OjM0OjEyLjE1M1oiLCJ1cGRhdGVkX2F0IjpudWxsfSwiaWF0IjoxNzEzMjYwMTU2fQ.5SXuNKjXcrFp7BJpzkT_EB5LsUZ_RvmzP8uXsNx17sA
-
-
-
-# POST {{endpoint}}/api/createVote
-# content-type: application/json
-# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUb3RvIiwiZW1haWwiOiJ0b3RvQHRvdG8uZnIiLCJiaXJ0aGRheSI6IjE5OTAtMDUtMTFUMjI6MDA6MDAuMDAwWiIsImNyZWF0ZWRfYXQiOiIyMDI0LTA0LTE2VDA5OjM0OjEyLjE1M1oiLCJ1cGRhdGVkX2F0IjpudWxsfSwiaWF0IjoxNzEzMjYwMTU2fQ.5SXuNKjXcrFp7BJpzkT_EB5LsUZ_RvmzP8uXsNx17sA
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUb3RvIiwiZW1haWwiOiJ0b3RvQHRvdG8uZnIiLCJiaXJ0aGRheSI6IjE5OTAtMDUtMTFUMjI6MDA6MDAuMDAwWiIsImNyZWF0ZWRfYXQiOiIyMDI0LTA0LTE3VDEzOjA4OjAxLjQ0MVoiLCJ1cGRhdGVkX2F0IjpudWxsfSwiaWF0IjoxNzEzMzU5MzAzfQ.Anevvoifk0eOzU5DuVokeCLDvudFyiDZKFJwDed6pyU
 
 # {
 #   "pseudo": "Yuki"

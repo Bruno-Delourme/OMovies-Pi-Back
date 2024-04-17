@@ -3,10 +3,6 @@ require('dotenv').config();
 const errorHandler = require('../service/error.js');
 
 const toReviewMovieDataMapper = require('../models/to_review_movie.js');
-const genreDataMapper = require('../models/genre.js');
-const actorDataMapper = require('../models/actor.js');
-const movieGenreDataMapper = require('../models/movie_genre.js');
-const movieActorDataMapper = require('../models/movie_actor.js');
 const movieDBDataMapper = require('../models/movieDB.js');
 
 const toReviewMovieController = {
@@ -15,10 +11,14 @@ const toReviewMovieController = {
   async insertIntoToReview(req, res) {
     debug('list insertIntoToReview controller called');
 
-    const { movieId, title, poster_path, overview, genreName, genreId, actorName, actorId } = req.body;
-    const userId = req.parmas.id;
+    const movieId = req.body.id;
+    const title = req.body.title;
+    const poster_path = req.body.poster_path;
+    const overview = req.body.overview;
+    
+    const userId = req.params.id;
 
-    if (!movieId || !title || !overview || !genreName || !genreId || !actorName || !actorId) {
+    if (!movieId || !title || !overview) {
       return errorHandler._400('Incomplete data', req, res);
     };
 
@@ -31,20 +31,8 @@ const toReviewMovieController = {
 
         // Insert the movie into the user's list of movies to watch again
         const insertIntoToReview = await toReviewMovieDataMapper.insertIntoToReview({ id: userId }, { id: movieId });
-
-        // Insert the genre of the movie into the database table
-        const insertIntoGenre = await genreDataMapper.insertIntoGenre({ id: genreId, name: genreName });
-
-        // Insert the genre/movie binary
-        const insertIntoMovieGenre = await movieGenreDataMapper.insertIntoMovieGenre({ id: movieId }, { id: genreId });
-
-        // Insert the actor of the film into the database table
-        const insertIntoActor = await actorDataMapper.insertIntoActor({ id: actorId, name: actorName });
-
-        // Insert the actor/movie binary
-        const insertIntoMovieActor = await movieActorDataMapper.insertIntoMovieActor({ id: movieId }, { id: actorId });
         
-        res.json({ status: 'success', data: { insertIntoMovie, insertIntoToReview, insertIntoGenre, insertIntoMovieGenre, insertIntoActor, insertIntoMovieActor } });
+        res.json({ status: 'success', data: { insertIntoMovie, insertIntoToReview } });
 
     } catch (error) {
         debug('Error when inserting into the list to review :', error);
@@ -70,40 +58,6 @@ const toReviewMovieController = {
     };
   },
 
-  // Feature that displays movies to review by genre
-  async showToReviewByGenre(req, res) {
-    debug('toReview showByGenre controller called');
-
-    try {
-      const id = req.user.id;
-      const genre = req.params.genre;
-
-      const toReview = await movieGenreDataMapper.showToReviewByGenre({ id }, { genre });
-
-      res.json({ status: 'success', data: toReview });
-
-    } catch {
-      debug('Error displaying the list of movies to watch again:', error);
-      errorHandler._500(error, req, res);
-    };
-  },
-
-  // Feature that displays favorite movies by actor
-  async showToReviewByActor(req, res) {
-    debug('toReview showByActor controller called');
-
-    try {
-      const id = req.user.id;
-      const actor = req.params.actor;
-
-      const toReview = await movieActorDataMapper.showToReviewByActor({ id }, { genre });
-      res.json({ status: 'success', date: toReview });
-    } catch {
-      debug('Error displaying the list of movies to watch again:', error);
-      errorHandler._500(error, req, res);
-    };
-  },
-
   // Function that allows you to delete a film from the list of films to watch again
   async deleteFromToReview(req, res) {
     debug('toReview delete controller called');
@@ -111,7 +65,7 @@ const toReviewMovieController = {
     
   try {
     const userId = req.params.id;
-    const { movieId } = req.body;
+    const movieId = req.body.id;
 
     // Removes a movie from the user's toReview list
     const deleteFromToReview = await toReviewMovieDataMapper.deleteFromToReview({id: userId}, {id: movieId});

@@ -47,6 +47,14 @@ const favoriteMovieModel = {
     };
   },
 
+  async showNewFavorite(user) {
+    try {
+
+    } catch {
+
+    }
+  },
+
   async deleteFromFavorite(user, movie) {
     try {
       const query = {
