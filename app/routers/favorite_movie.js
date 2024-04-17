@@ -11,6 +11,8 @@ router.post("/showFavorite/:id", cw(favoriteMovieController.showFavorite));
 
 router.post("/showFavoriteByGenre/:id", cw(favoriteMovieController.showFavoriteByGenre));
 
+router.post("/showFavoriteByActor/:id", cw(favoriteMovieController.showFavoriteByActor));
+
 router.delete("/deleteFromFavorite/:id", cw(favoriteMovieController.deleteFromFavorite));
 
 debug('API list router initialized');

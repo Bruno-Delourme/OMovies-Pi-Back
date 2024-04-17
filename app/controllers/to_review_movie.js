@@ -88,6 +88,22 @@ const toReviewMovieController = {
     };
   },
 
+  // Feature that displays favorite movies by actor
+  async showToReviewByActor(req, res) {
+    debug('toReview showByActor controller called');
+
+    try {
+      const id = req.user.id;
+      const actor = req.params.actor;
+
+      const toReview = await movieActorDataMapper.showToReviewByActor({ id }, { genre });
+      res.json({ status: 'success', date: toReview });
+    } catch {
+      debug('Error displaying the list of movies to watch again:', error);
+      errorHandler._500(error, req, res);
+    };
+  },
+
   // Function that allows you to delete a film from the list of films to watch again
   async deleteFromToReview(req, res) {
     debug('toReview delete controller called');

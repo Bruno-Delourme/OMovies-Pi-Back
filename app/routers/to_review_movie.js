@@ -11,6 +11,8 @@ router.post("/showToReview/:id", cw(toReviewController.showToReview));
 
 router.post("/showToReviewByGenre/:genre", cw(toReviewController.showToReviewByGenre));
 
+router.post("/showToReviewByActor/:id", cw(toReviewController.showToReviewByActor));
+
 router.delete("/deleteFromToReview/:id", cw(toReviewController.deleteFromToReview));
 
 module.exports = router;

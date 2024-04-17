@@ -88,9 +88,23 @@ const favoriteMovieController = {
     };
   },
 
-  // 
+  // Feature that displays favorite movies by actor
+  async showFavoriteByActor(req, res) {
+    debug('favorite showByActor controller called');
 
-  // Function that allows you to delete a film from the list of favorite films
+    try {
+      const id = req.user.id;
+      const actor = req.params.actor;
+
+      const favorite = await movieActorDataMapper.showFavoriteByActor({ id }, { genre });
+      res.json({ status: 'success', date: favorite });
+    } catch {
+      debug('Error displaying list of favorite movies:', error);
+      errorHandler._500(error, req, res);
+    };
+  },
+
+  // Allows you to delete a film from the list of favorite films
   async deleteFromFavorite(req, res) {
     debug('list delete controller called');
 
