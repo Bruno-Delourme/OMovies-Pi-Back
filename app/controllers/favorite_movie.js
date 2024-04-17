@@ -58,6 +58,23 @@ const favoriteMovieController = {
     };
   },
 
+  async showNewFavorite(req, res) {
+    debug('Newfavorite show controller called');
+
+    try {
+      const id = req.params.id;
+
+      // Shows the user's list of favorites
+      const favorite = await favoriteMovieDataMapper.showNewFavorite(id);
+
+      res.json({ status: 'success', data: favorite });
+
+    } catch (error) {
+      debug('Error displaying list of new favorite movies:', error);
+      errorHandler._500(error, req, res);
+    };
+  },
+
   // Allows you to delete a film from the list of favorite films
   async deleteFromFavorite(req, res) {
     debug('list delete controller called');

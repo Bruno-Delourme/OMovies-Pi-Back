@@ -47,11 +47,18 @@ const favoriteMovieModel = {
     };
   },
 
-  async showNewFavorite(user) {
+  async showNewFavorite(id) {
     try {
+      const query = {
+        text: 'SELECT * FROM "movie" WHERE id IN( SELECT movie_id FROM "favorite_movie" WHERE user_id = $1) ORDER BY created_at DESC',
+        values: [id]
+      };
+      const results = await client.query(query);
+      return results.rows;
 
     } catch {
-
+      debug('Error retrieving list of new favorite movies:', error);
+        throw error;
     }
   },
 
