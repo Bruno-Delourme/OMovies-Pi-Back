@@ -122,11 +122,15 @@
 
 
 
-POST {{endpoint}}/api/createComment/1
-content-type: application/json
-Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJ0ZXN0IiwiZW1haWwiOiJ0ZXN0QHRlc3QuZnIiLCJiaXJ0aGRheSI6IjE5OTEtMDUtMjNUMjI6MDA6MDAuMDAwWiIsImNyZWF0ZWRfYXQiOiIyMDI0LTA0LTE4VDA4OjExOjMyLjUzM1oiLCJ1cGRhdGVkX2F0IjpudWxsfSwiaWF0IjoxNzEzNDI4MzM0fQ.QknjlhbuOkXgrjMXW9m2sonlLF4JG7NdtgSgZ5q_ce0
+# POST {{endpoint}}/api/createComment/1
+# content-type: application/json
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJ0ZXN0IiwiZW1haWwiOiJ0ZXN0QHRlc3QuZnIiLCJiaXJ0aGRheSI6IjE5OTEtMDUtMjNUMjI6MDA6MDAuMDAwWiIsImNyZWF0ZWRfYXQiOiIyMDI0LTA0LTE4VDA4OjExOjMyLjUzM1oiLCJ1cGRhdGVkX2F0IjpudWxsfSwiaWF0IjoxNzEzNDI4MzM0fQ.QknjlhbuOkXgrjMXW9m2sonlLF4JG7NdtgSgZ5q_ce0
 
-{
-  "userId": 1,
-  "content": "Super site, j'adore"
-}
+# {
+#   "userId": 1,
+#   "content": "Truc"
+# }
+
+
+
+GET {{endpoint}}/api/showComment

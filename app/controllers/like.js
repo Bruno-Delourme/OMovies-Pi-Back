@@ -33,7 +33,7 @@ const likeController = {
     const result = await likeDataMapper.showTotalLikes();
 
     if (!result) {
-      debug('No likes recorded');
+      debug('No likes recorded.');
       return res.status(401).json({ status: 'error', message: 'No likes recorded.' });
 
     } else {

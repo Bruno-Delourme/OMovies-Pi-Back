@@ -19,6 +19,20 @@ const commentController = {
       res.status(500).json({ status: 'error', message: 'Error creating comment.' });
     };
   },
+
+  async show(req, res) {
+    debug('comment show controller called');
+
+    const result = await commentDataMapper.show();
+console.log(result);
+    if (!result) {
+      debug('No comment recorded.');
+      return res.status(401).json({ status: 'error', message: 'No comment recorded.' });
+
+    } else {
+      res.json({ status: 'success', data: result });
+    };
+  },
 };
 
 module.exports = commentController;

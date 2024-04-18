@@ -8,4 +8,6 @@ const router = express.Router();
 
 router.post("/createComment/:id",authMiddleware.authMiddleware, commentController.create);
 
+router.get("/showComment", commentController.show);
+
 module.exports = router;
