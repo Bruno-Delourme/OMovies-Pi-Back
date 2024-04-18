@@ -46,6 +46,21 @@ CREATE TABLE "to_review_movie" (
   "updated_at" TIMESTAMPTZ
 );
 
+CREATE TABLE "like" (
+  "like_counter" INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  "user_id" INT REFERENCES "user"(id),
+  "created_at" TIMESTAMPTZ NOT NULL default(now()),
+  "updated_at" TIMESTAMPTZ
+);
+
+CREATE TABLE "comment" (
+  "id" INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  "user_id" INT REFERENCES "user"(id),
+  "content" TEXT NOT NULL,
+  "created_at" TIMESTAMPTZ NOT NULL default(now()),
+  "updated_at" TIMESTAMPTZ
+);
+
 CREATE OR REPLACE FUNCTION add_user(json) RETURNS "user" AS
 $$
   INSERT INTO "user" (pseudo, email, birthday, password)
@@ -76,6 +91,15 @@ $$
       ($1 ->> 'user_id'):: INT
   ) RETURNING *;
 $$ LANGUAGE sql STRICT;
+
+-- CREATE OR REPLACE FUNCTION add_like(json) RETURNS "to_review_movie" AS
+-- $$
+--    INSERT INTO "to_review_movie"(movie_id, user_id)
+--     VALUES (
+--       ($1 ->> 'movie_id'):: INT,
+--       ($1 ->> 'user_id'):: INT
+--   ) RETURNING *;
+-- $$ LANGUAGE sql STRICT;
 
 CREATE OR REPLACE FUNCTION add_to_review_movie(json) RETURNS "to_review_movie" AS
 $$

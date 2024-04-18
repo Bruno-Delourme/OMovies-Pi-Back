@@ -1,6 +1,7 @@
 const debug = require('debug')('app:MovieRouter');
 const express = require('express');
 const { movieAPIController } = require('../controllers');
+const authMiddleware = require('../middlewares/authentication.js');
 
 const router = express.Router();
 
@@ -19,6 +20,8 @@ router.get("/newMovies", movieAPIController.fetchNewMovies);
 router.get("/searchBar", movieAPIController.fetchBySearchBar);
 
 router.get("/popularMovies", movieAPIController.fetchPopularMovie);
+
+router.post("/recommendationByFavoris/:id",authMiddleware.authMiddleware, movieAPIController.fetchRecommendationWithRandomMovie);
 
 router.get("/recommendation/:id", movieAPIController.fetchRecommendation);
 

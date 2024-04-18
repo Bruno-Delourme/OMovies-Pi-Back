@@ -7,12 +7,12 @@ const router = express.Router();
 
 router.post("/addToFavorite/:id", cw(favoriteMovieController.insertIntoFavorite));
 
-router.post("/showFavorite/:id", cw(favoriteMovieController.showFavorite));
+router.get("/showFavorite/:id", cw(favoriteMovieController.showFavorite));
 
-router.post("/showNewFavorite/:id", cw(favoriteMovieController.showNewFavorite));
+router.get("/showNewFavorite/:id", cw(favoriteMovieController.showNewFavorite));
 
 router.delete("/deleteFromFavorite/:id", cw(favoriteMovieController.deleteFromFavorite));
 
-debug('API list router initialized');
+debug('API favorite router initialized');
 
 module.exports = router;

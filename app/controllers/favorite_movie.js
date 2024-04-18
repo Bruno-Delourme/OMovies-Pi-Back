@@ -66,7 +66,7 @@ const favoriteMovieController = {
 
       // Shows the user's list of favorites
       const favorite = await favoriteMovieDataMapper.showNewFavorite(id);
-console.log(favorite);
+
       res.json({ status: 'success', data: favorite });
 
     } catch (error) {

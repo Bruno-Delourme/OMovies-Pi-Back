@@ -7,8 +7,12 @@ const router = express.Router();
 
 router.post("/addToToReview/:id", cw(toReviewController.insertIntoToReview));
 
-router.post("/showToReview/:id", cw(toReviewController.showToReview));
+router.get("/showToReview/:id", cw(toReviewController.showToReview));
+
+router.get("/showNewToReview/:id", cw(toReviewController.showNewToReview));
 
 router.delete("/deleteFromToReview/:id", cw(toReviewController.deleteFromToReview));
+
+debug('API toReview router initialized');
 
 module.exports = router;

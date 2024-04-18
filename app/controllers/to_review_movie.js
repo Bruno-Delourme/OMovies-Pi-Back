@@ -58,6 +58,23 @@ const toReviewMovieController = {
     };
   },
 
+  async showNewToReview(req, res) {
+    debug('NewToReview show controller called');
+
+    try {
+      const id = req.params.id;
+
+      // Shows the user's list of to review
+      const toReview = await toReviewMovieDataMapper.showNewToReview(id);
+console.log(toReview);
+      res.json({ status: 'success', data: toReview });
+
+    } catch (error) {
+      debug('Error displaying list of new movies to review:', error);
+      errorHandler._500(error, req, res);
+    };
+  },
+
   // Function that allows you to delete a film from the list of films to watch again
   async deleteFromToReview(req, res) {
     debug('toReview delete controller called');

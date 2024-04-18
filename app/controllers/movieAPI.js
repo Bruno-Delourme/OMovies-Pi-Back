@@ -1,11 +1,14 @@
 const debug = require('debug')('app:controller');
 require('dotenv').config();
+
+const recommendationDataMapper = require('../models/recommendation.js');
+
 const NodeCache = require('node-cache');
 const cache = new NodeCache({ stdTTL: 604800 });
 
 const movieController = {
 
-  // Function that searches for a movie by id
+  // Search for a movie by id
   async fetchMovieById(req, res) {
 
     // Extracting the movie id from the request parameters
@@ -99,7 +102,7 @@ const movieController = {
     }
   },
 
-  // Function that searches for a film by genre
+  // Search for a film by genre
   async fetchMoviesByGenre(req, res) {
     
     // Extracting the genre from the request parameters
@@ -222,7 +225,7 @@ const movieController = {
     };
   },
 
-  // Function that searches films by genre and rating
+  // Search films by genre and rating
   async fetchMoviesByGenreRating(req, res) {
     // Extracting the genre from the request parameters
     const genre = req.params.genre;
@@ -336,7 +339,7 @@ const movieController = {
     };
   },
 
-  // Function that searches for a movie by title
+  // Search for a movie by title
   async fetchMovieByTitle(req, res) {
     
     // Extracting the movie title from the request parameters
@@ -430,7 +433,7 @@ const movieController = {
     }
   },
 
-  // Function that searches for a movie by actor
+  // Search for a movie by actor
   async fetchMoviesByActor(req, res) {
     
     // Extracting the actor search term from the request parameters
@@ -530,7 +533,7 @@ const movieController = {
     };
   },
 
-  // Function that searches for new movies
+  // Search for new movies
   async fetchNewMovies(req, res) {
 
     const language = 'fr-FR'; // Setting the language for the API request
@@ -600,7 +603,7 @@ const movieController = {
     };
   },
 
-  // Function that searches for movies in a search bar
+  // Search for movies in a search bar
   async fetchBySearchBar(req, res) {
 
     const searchTerm = req.query.query;
@@ -676,7 +679,7 @@ const movieController = {
     }
   },
 
-  // Function that searches for popular movies
+  // Search for popular movies
   async fetchPopularMovie(req, res) {
 
     const language = 'fr-FR'; // Setting the language for the API request
@@ -762,7 +765,7 @@ const movieController = {
     }
   },
 
-  // Function that gives movie recommendations based on a movie's ID
+  // Gives movie recommendations based on a movie's ID
   async fetchRecommendation(req, res) {
 
     // Extracting the movie ID from the request parameters
@@ -855,6 +858,24 @@ const movieController = {
         res.status(500).json({ error: 'Error fetching recommendations.' });
     };
   },
-};
 
+  // Allows you to recommend a movie based on the random id of a movie in the favorites list
+  fetchRecommendationWithRandomMovie: async (req, res) => {
+
+    const userId = req.params.id;
+
+    try {
+        // Retrieve random favorite movie ID
+        const randomFavoriteMovie = await recommendationDataMapper.getRandomFavoriteMovieId(userId);
+        const randomFavoriteMovieId = randomFavoriteMovie.id;
+
+        // Call fetchRecommendation with random favorite movie ID
+        await movieController.fetchRecommendation({ params: { id: randomFavoriteMovieId }, query: req.query }, res);
+        
+    } catch (error) {
+        console.error('Error fetching random favorite movie and calling fetchRecommendation :', error);
+        res.status(500).json({ error: 'Error fetching random favorite movie and calling fetchRecommendation.' });
+    };
+  },
+};
 module.exports = movieController;

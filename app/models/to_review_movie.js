@@ -47,6 +47,21 @@ const toReviewMovieModel = {
     };
   },
 
+  async showNewToReview(id) {
+    try {
+      const query = {
+        text: 'SELECT * FROM "movie" WHERE id IN( SELECT movie_id FROM "to_review_movie" WHERE user_id = $1) ORDER BY created_at DESC',
+        values: [id]
+      };
+      const results = await client.query(query);
+      return results.rows;
+
+    } catch (error) {
+      debug('Error retrieving list of new movies to rewatch:', error);
+        throw error;
+    };
+  },
+
   async deleteFromToReview(user, movie) {
     try {
       const query = {
