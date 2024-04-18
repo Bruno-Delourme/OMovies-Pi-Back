@@ -3,10 +3,12 @@ BEGIN;
 DROP FUNCTION IF EXISTS add_user(json) CASCADE;
 DROP FUNCTION IF EXISTS add_movie(json) CASCADE;
 DROP FUNCTION IF EXISTS add_favorite_movie(json) CASCADE;
+DROP FUNCTION IF EXISTS add_like(json) CASCADE;
+DROP FUNCTION IF EXISTS add_comment(json) CASCADE;
 DROP FUNCTION IF EXISTS add_to_review_movie(json) CASCADE;
 DROP FUNCTION IF EXISTS update_user(json) CASCADE;
 
-DROP TABLE IF EXISTS "user", "movie", "actor", "favorite_movie", "to_review_movie" CASCADE;
+DROP TABLE IF EXISTS "user", "movie", "actor", "favorite_movie", "to_review_movie", "like", "comment" CASCADE;
 
 DROP DOMAIN  IF EXISTS public.email CASCADE;
 
@@ -47,7 +49,7 @@ CREATE TABLE "to_review_movie" (
 );
 
 CREATE TABLE "like" (
-  "like_counter" INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  "like_id" INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   "user_id" INT REFERENCES "user"(id),
   "created_at" TIMESTAMPTZ NOT NULL default(now()),
   "updated_at" TIMESTAMPTZ
@@ -92,14 +94,22 @@ $$
   ) RETURNING *;
 $$ LANGUAGE sql STRICT;
 
--- CREATE OR REPLACE FUNCTION add_like(json) RETURNS "to_review_movie" AS
--- $$
---    INSERT INTO "to_review_movie"(movie_id, user_id)
---     VALUES (
---       ($1 ->> 'movie_id'):: INT,
---       ($1 ->> 'user_id'):: INT
---   ) RETURNING *;
--- $$ LANGUAGE sql STRICT;
+CREATE OR REPLACE FUNCTION add_like(json) RETURNS "like" AS
+$$
+   INSERT INTO "like"(user_id)
+    VALUES (
+      ($1 ->> 'user_id'):: INT
+  ) RETURNING *;
+$$ LANGUAGE sql STRICT;
+
+CREATE OR REPLACE FUNCTION add_comment(json) RETURNS "comment" AS
+$$
+   INSERT INTO "comment"(user_id, content)
+    VALUES (
+      ($1 ->> 'user_id'):: INT,
+      ($1 ->> 'content'):: TEXT
+  ) RETURNING *;
+$$ LANGUAGE sql STRICT;
 
 CREATE OR REPLACE FUNCTION add_to_review_movie(json) RETURNS "to_review_movie" AS
 $$

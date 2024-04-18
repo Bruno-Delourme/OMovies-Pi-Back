@@ -17,7 +17,7 @@ const recommendationModel = {
 
       // Select random movie ID from favorites list
       const randomMovieQuery = {
-        text: 'SELECT movie_id FROM "favorite_movie" WHERE user_id = $1 OFFSET $2 LIMIT 1',
+        text: 'SELECT * FROM "favorite_movie" WHERE user_id = $1 OFFSET $2 LIMIT 1',
         values: [userId, randomIndex]
       };
       const randomMovieResult = await client.query(randomMovieQuery);

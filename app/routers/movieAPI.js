@@ -21,7 +21,7 @@ router.get("/searchBar", movieAPIController.fetchBySearchBar);
 
 router.get("/popularMovies", movieAPIController.fetchPopularMovie);
 
-router.post("/recommendationByFavoris/:id",authMiddleware.authMiddleware, movieAPIController.fetchRecommendationWithRandomMovie);
+router.get("/recommendationByFavoris/:id",authMiddleware.authMiddleware, movieAPIController.fetchRecommendationWithRandomMovie);
 
 router.get("/recommendation/:id", movieAPIController.fetchRecommendation);
 

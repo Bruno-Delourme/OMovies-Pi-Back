@@ -56,7 +56,7 @@ const userController = {
 
       // Generating a JWT token with user data and the secret key
       const token = jwt.sign({ user: result }, process.env.JWT_SECRET);
-
+console.log(token);
       // Sending a success response with user data and the token
       res.json({ status: 'success', data: { user: result, token }});
     };

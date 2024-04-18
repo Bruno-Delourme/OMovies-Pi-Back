@@ -1,7 +1,8 @@
 const debug = require('debug')('app:controller');
 require('dotenv').config();
 
-const recommendationDataMapper = require('../models/recommendation.js');
+const recommendationDataMapper = require('../../models/recommendation.js');
+const { getRecommendations } = require('../movieAPI/getRecommendations.js');
 
 const NodeCache = require('node-cache');
 const cache = new NodeCache({ stdTTL: 604800 });
@@ -767,115 +768,35 @@ const movieController = {
 
   // Gives movie recommendations based on a movie's ID
   async fetchRecommendation(req, res) {
-
-    // Extracting the movie ID from the request parameters
-    const movieId = req.params.id; 
-    const language = 'fr-FR'; // Setting the language for the API request
-    const page = req.query.page || 1; // Extracting the page number from the query parameters, defaulting to 1 if not provided
-    const cacheKey = `recommendations_${movieId}_${page}`; // Generating a cache key based on the movie ID and page number for recommendations
+    const movieId = req.params.id;
+    const language = 'fr-FR';
+    const page = req.query.page || 1;
 
     try {
-        // Attempting to retrieve recommendations data from the cache
-        const cachedRecommendations = cache.get(cacheKey);
-
-        // If recommendations data is found in the cache, return it
-        if (cachedRecommendations) {
-            console.log('Recommendations retrieved from cache');
-
-            return res.json({
-                movies: cachedRecommendations,
-                currentPage: page,
-                totalPages: cachedRecommendations.total_pages
-            });
-        }
-
-        // If recommendations data is not found in the cache, fetch it from the TMDB API
-        const response = await fetch(`${process.env.API_TMDB_BASE_URL}movie/${movieId}/recommendations?api_key=${process.env.API_TMDB_KEY}&language=${language}&page=${page}`);
-        
-        // If there's an issue with the network or the response is not valid, throw an error
-        if (!response.ok) {
-            throw new Error('Network error or invalid response');
-        };
-
-        // Parse the response data into JSON format
-        const recommendation = await response.json();
-        const recommendationResults = recommendation.results;
-
-        // Fetch providers for each recommended movie
-        const recommendationsWithProvidersPromises = recommendationResults.map(async movie => {
-            const providersResponse = await fetch(`${process.env.API_TMDB_BASE_URL}movie/${movie.id}/watch/providers?api_key=${process.env.API_TMDB_KEY}&region=FR`);
-            if (providersResponse.ok) {
-                const providersData = await providersResponse.json();
-                movie.providers = [];
-                // Check if information is available for France
-                if (providersData.results.FR) {
-                    const franceProviders = providersData.results.FR;
-                    // Browse the keys of the franceProviders object
-                    for (const offerType in franceProviders) {
-                        if (Object.hasOwnProperty.call(franceProviders, offerType)) {
-                            const offers = franceProviders[offerType];
-                            // Check if the offer is an array
-                            if (Array.isArray(offers)) {
-                                // Add the names of content providers for each offer type
-                                offers.forEach(provider => {
-                                    if (provider.provider_name) {
-                                        movie.providers.push(provider.provider_name);
-                                    }
-                                });
-                            } else {
-                                // If it is not an array, add the provider name directly
-                                if (offers.provider_name) {
-                                    movie.providers.push(offers.provider_name);
-                                };
-                            };
-                        };
-                    };
-                };
-            }
-            return movie;
-        });
-
-        // Wait for all recommendations with providers to be fetched
-        const recommendationsWithProviders = await Promise.all(recommendationsWithProvidersPromises);
-
-        // Cache the recommendations data for future use
-        cache.set(cacheKey, {
-            movies: recommendationsWithProviders,
-            currentPage: page,
-            totalPages: recommendation.total_pages
-        });
-
-        // Send the recommendations data in the response along with current page and total pages
-        res.json({
-            movies: recommendationsWithProviders,
-            currentPage: page,
-            totalPages: recommendation.total_pages
-        });
+      const recommendation = await getRecommendations(movieId, language, page);
+      res.json(recommendation);
 
     } catch (error) {
-        // If any error occurs during the process, log it and send an error response
-        console.error('Error fetching recommendations:', error);
-        res.status(500).json({ error: 'Error fetching recommendations.' });
-    };
+      console.error('Error fetching recommendations:', error);
+      res.status(500).json({ error: 'Error fetching recommendations.' });
+    }
   },
 
   // Allows you to recommend a movie based on the random id of a movie in the favorites list
-  fetchRecommendationWithRandomMovie: async (req, res) => {
-
+  async fetchRecommendationWithRandomMovie(req, res) {
     const userId = req.params.id;
 
     try {
-        // Retrieve random favorite movie ID
-        const randomFavoriteMovie = await recommendationDataMapper.getRandomFavoriteMovieId(userId);
-        const randomFavoriteMovieId = randomFavoriteMovie.id;
+      const randomFavoriteMovie = await recommendationDataMapper.getRandomFavoriteMovieId(userId);
+      const recommendation = await getRecommendations(randomFavoriteMovie, 'fr-FR', req.query.page || 1);
+      
+      res.json(recommendation);
 
-        // Call fetchRecommendation with random favorite movie ID
-        await movieController.fetchRecommendation({ params: { id: randomFavoriteMovieId }, query: req.query }, res);
-        
     } catch (error) {
-        console.error('Error fetching random favorite movie and calling fetchRecommendation :', error);
-        res.status(500).json({ error: 'Error fetching random favorite movie and calling fetchRecommendation.' });
-    };
+      debug('Error fetching random favorite movie and calling fetchRecommendation :', error);
+      res.status(500).json({ error: 'Error fetching random favorite movie and calling fetchRecommendation.' });
+    }
   },
 };
+
 module.exports = movieController;

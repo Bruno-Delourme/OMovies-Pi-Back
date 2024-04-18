@@ -66,7 +66,7 @@ const toReviewMovieController = {
 
       // Shows the user's list of to review
       const toReview = await toReviewMovieDataMapper.showNewToReview(id);
-console.log(toReview);
+
       res.json({ status: 'success', data: toReview });
 
     } catch (error) {
