@@ -16,7 +16,7 @@ const userController = {
       const existingUser = await userDataMapper.findByPseudoOrEmail( pseudo, email );
 
       if (existingUser) {
-        return res.status(400).json({ status: 'error', message: 'Un utilisateur avec ce pseudo ou cette adresse e-mail existe déjà.' });
+        return res.status(400).json({ status: 'error', message: 'A user with this nickname or email address already exists.' });
       };
 
       // Password encoding
@@ -26,8 +26,8 @@ const userController = {
       res.json({ status: 'success', data: createdUser });
 
     } catch (error) {
-      debug('Erreur lors de la création de l\'utilisateur :', error);
-      res.status(500).json({ status: 'error', message: 'Erreur lors de la création de l\'utilisateur.' });
+      debug('Error creating user :', error);
+      res.status(500).json({ status: 'error', message: 'Error creating user.' });
     };
   },
 
@@ -79,8 +79,8 @@ console.log(token);
 
     // If no user is found, return an error
     if (!result) {
-      debug('Aucun utilisateur trouvé avec le pseudo spécifié');
-      return res.status(401).json({ status: 'error', message: 'Aucun utilisateur trouvé avec le pseudo spécifié.' });
+      debug('No users found with specified nickname');
+      return res.status(401).json({ status: 'error', message: 'No users found with specified nickname.' });
 
   } else {
      // Sending a success response with user data and the token
@@ -105,7 +105,6 @@ console.log(token);
     };
   },
 
-  // Function that allows you to modify a user's information
   // Function that allows you to modify a user's information
   async update(req, res) {
     debug('user update controller called');

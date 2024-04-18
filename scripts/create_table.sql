@@ -94,14 +94,6 @@ $$
   ) RETURNING *;
 $$ LANGUAGE sql STRICT;
 
-CREATE OR REPLACE FUNCTION add_like(json) RETURNS "like" AS
-$$
-   INSERT INTO "like"(user_id)
-    VALUES (
-      ($1 ->> 'user_id'):: INT
-  ) RETURNING *;
-$$ LANGUAGE sql STRICT;
-
 CREATE OR REPLACE FUNCTION add_comment(json) RETURNS "comment" AS
 $$
    INSERT INTO "comment"(user_id, content)

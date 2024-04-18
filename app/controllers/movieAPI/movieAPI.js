@@ -259,17 +259,17 @@ const movieController = {
   
         // Parse the genre response into JSON format
         const genreData = await genreResponse.json();
-  
+
         // Find the genre corresponding to the provided genre name
         const selectedGenre = genreData.genres.find(g => g.name.toLowerCase() === genre.toLowerCase());
-  
+
         // If the genre is not found, throw an error
         if (!selectedGenre) {
             throw new Error('Genre not found');
         };
   
         // Fetch movies data for the specified genre from the TMDB API
-        const response = await fetch(`${process.env.API_TMDB_BASE_URL}/discover/movie?api_key=${process.env.API_TMDB_KEY}&language=${language}&page=${page}&sort_by=vote_average.desc`);
+        const response = await fetch(`${process.env.API_TMDB_BASE_URL}/discover/movie?api_key=${process.env.API_TMDB_KEY}&with_genres=${selectedGenre.id}&language=${language}&page=${page}&sort_by=vote_average.desc`);
       
         // If there's an issue with the network or the response is not valid, throw an error
         if (!response.ok) {
@@ -279,7 +279,7 @@ const movieController = {
         // Parse the movies response into JSON format
         const moviesData = await response.json();
         const movies = moviesData.results;
-  
+
         // Fetch details for each movie in the genre
         const moviesWithDetailsPromises = movies.map(async movie => {
             const movieDetailsResponse = await fetch(`${process.env.API_TMDB_BASE_URL}/movie/${movie.id}?api_key=${process.env.API_TMDB_KEY}&language=${language}`);

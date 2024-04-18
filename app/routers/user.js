@@ -1,5 +1,6 @@
 const debug = require('debug')('app:UserRouter');
 const express = require('express');
+
 const { userController } = require('../controllers');
 const validation = require('../service/validation/validate.js');
 const authMiddleware = require('../middlewares/authentication.js');
