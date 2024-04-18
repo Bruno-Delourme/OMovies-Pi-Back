@@ -67,6 +67,22 @@ const commentController = {
         res.status(500).json({ status: 'error', message: 'Error updating comment.' });
     };
   },
+
+  async delete(req, res) {
+    debug('comment delete controller called');
+
+    const id = req.params.id;
+
+    // Delete a comment from the database
+    const isRemoved = await commentDataMapper.delete(id);
+
+    if (isRemoved) {
+      res.json({ status: 'success' });
+
+    } else {
+      res.json({ status: 'fail' });
+    };
+  },
 };
 
 module.exports = commentController;

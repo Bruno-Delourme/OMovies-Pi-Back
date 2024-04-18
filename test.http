@@ -145,3 +145,13 @@
 #   "userId": "1",
 #   "content": "Trop bien"
 # }
+
+
+
+#  DELETE {{endpoint}}/api/deleteComment/1
+# Content-Type: application/json
+# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUb3RvIiwiZW1haWwiOiJ0b3RvQHRvdG8uZnIiLCJiaXJ0aGRheSI6IjE5OTAtMDUtMTFUMjI6MDA6MDAuMDAwWiIsImNyZWF0ZWRfYXQiOiIyMDI0LTA0LTE4VDE1OjQyOjM2Ljk2OVoiLCJ1cGRhdGVkX2F0IjpudWxsfSwiaWF0IjoxNzEzNDU0OTY0fQ.abcunxJ0sXzuE1JfQvVgEAB85T595DYanHx-MRJCP0Y
+
+# {
+#   "id": 1
+# }

@@ -13,6 +13,9 @@ router.get("/showComment", commentController.show);
 // :id => Comment 's id
 router.patch("/updateComment/:id", authMiddleware.authMiddleware, commentController.update);
 
+// :id => Comment 's id
+router.delete("/deleteComment/:id", authMiddleware.authMiddleware, commentController.delete);
+
 debug('API comment router initialized');
 
 module.exports = router;
