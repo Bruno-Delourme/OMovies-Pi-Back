@@ -129,7 +129,8 @@ CREATE OR REPLACE FUNCTION update_comment(json) RETURNS "comment" AS
 $$
     UPDATE "comment" SET
       user_id = ($1->>'user_id')::INT,
-      content = ($1->>'content')::TEXT
+      content = ($1->>'content')::TEXT,
+      updated_at = ($1->>'updated_at')::TIMESTAMPTZ
     WHERE id = ($1->>'id')::INT
     RETURNING *;
 $$ LANGUAGE SQL STRICT;

@@ -41,23 +41,32 @@ const commentController = {
     const { content, userId } = req.body;
     const commentId = req.params.id;
 
-    let commentData = {};
     const updated_at = new Date();
 
     try {
-      commentData.user_id = userId;
+        // Data verification
+        if (content === undefined) {
+            return errorHandler._400('Incomplete data', req, res);
+        }
 
-      if (content !== undefined) {
-        return errorHandler._400('Incomplete data', req, res);
-      };
+        // Construction of the object containing the data to update
+        const commentData = {
+            id: commentId,
+            content: content,
+            user_id: userId,
+            updated_at: updated_at
+        };
 
-      commentData.updated_at = updated_at;
+        // Calling the comment update function
+        const updatedComment = await commentDataMapper.update(commentData);
+        
+        res.status(200).json({ status: 'success', message: 'Comment updated successfully' });
 
-      const updatedComment = await commentDataMapper.update({ id: commentId })
     } catch (error) {
-
-    }
-  }
+        debug('Error updating comment:', error);
+        res.status(500).json({ status: 'error', message: 'Error updating comment.' });
+    };
+  },
 };
 
 module.exports = commentController;

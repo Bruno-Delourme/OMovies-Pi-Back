@@ -12,4 +12,6 @@ router.get("/showTotalLikes", likeController.showTotalLikes);
 
 router.get("/dislike/:id", authMiddleware.authMiddleware, likeController.delete);
 
+debug('API like router initialized');
+
 module.exports = router;

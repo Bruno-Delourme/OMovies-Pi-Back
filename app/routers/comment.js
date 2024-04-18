@@ -10,4 +10,9 @@ router.post("/createComment/:id",authMiddleware.authMiddleware, commentControlle
 
 router.get("/showComment", commentController.show);
 
+// :id => Comment 's id
+router.patch("/updateComment/:id", authMiddleware.authMiddleware, commentController.update);
+
+debug('API comment router initialized');
+
 module.exports = router;
