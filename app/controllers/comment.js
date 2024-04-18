@@ -1,4 +1,5 @@
 const debug = require('debug')('app:controller');
+const errorHandler = require('../service/error.js');
 
 const commentDataMapper = require('../models/comment');
 
@@ -24,7 +25,7 @@ const commentController = {
     debug('comment show controller called');
 
     const result = await commentDataMapper.show();
-console.log(result);
+
     if (!result) {
       debug('No comment recorded.');
       return res.status(401).json({ status: 'error', message: 'No comment recorded.' });
@@ -33,6 +34,30 @@ console.log(result);
       res.json({ status: 'success', data: result });
     };
   },
+
+  async update(req, res) {
+    debug('comment update controller called');
+
+    const { content, userId } = req.body;
+    const commentId = req.params.id;
+
+    let commentData = {};
+    const updated_at = new Date();
+
+    try {
+      commentData.user_id = userId;
+
+      if (content !== undefined) {
+        return errorHandler._400('Incomplete data', req, res);
+      };
+
+      commentData.updated_at = updated_at;
+
+      const updatedComment = await commentDataMapper.update({ id: commentId })
+    } catch (error) {
+
+    }
+  }
 };
 
 module.exports = commentController;

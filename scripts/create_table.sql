@@ -7,6 +7,7 @@ DROP FUNCTION IF EXISTS add_like(json) CASCADE;
 DROP FUNCTION IF EXISTS add_comment(json) CASCADE;
 DROP FUNCTION IF EXISTS add_to_review_movie(json) CASCADE;
 DROP FUNCTION IF EXISTS update_user(json) CASCADE;
+DROP FUNCTION IF EXISTS update_comment(json) CASCADE;
 
 DROP TABLE IF EXISTS "user", "movie", "actor", "favorite_movie", "to_review_movie", "like", "comment" CASCADE;
 
@@ -120,6 +121,15 @@ $$
       birthday = ($1->>'birthday')::DATE,
       password = ($1->>'password')::TEXT,
       updated_at = ($1->>'updated_at')::TIMESTAMPTZ
+    WHERE id = ($1->>'id')::INT
+    RETURNING *;
+$$ LANGUAGE SQL STRICT;
+
+CREATE OR REPLACE FUNCTION update_comment(json) RETURNS "comment" AS
+$$
+    UPDATE "comment" SET
+      user_id = ($1->>'user_id')::INT,
+      content = ($1->>'content')::TEXT
     WHERE id = ($1->>'id')::INT
     RETURNING *;
 $$ LANGUAGE SQL STRICT;

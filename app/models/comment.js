@@ -21,6 +21,15 @@ const commentModel = {
     const results = await client.query(query);
     return results.rows;
   },
+
+  async update(comment) {
+    const query = {
+      text: 'SELECT * FROM update_comment($1)',
+      values: [JSON.stringify(comment)],
+    };
+    const results = await client.query(query);
+    return results.rows[0];
+  },
 };
 
 module.exports = commentModel;
