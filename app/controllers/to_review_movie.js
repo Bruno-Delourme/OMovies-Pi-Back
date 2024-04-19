@@ -7,7 +7,7 @@ const movieDBDataMapper = require('../models/movieDB.js');
 
 const toReviewMovieController = {
 
-  // Function which inserts a film into the list of films to watch again
+  // Allows you to insert a film into the list of films to watch again
   async insertIntoToReview(req, res) {
     debug('list insertIntoToReview controller called');
 
@@ -40,7 +40,7 @@ const toReviewMovieController = {
     };
   },
 
-  // Function which allows you to display the list of films to watch again
+  // Allows you to display the list of films to watch again
   async showToReview(req, res) {
     debug('ToReview show controller called');
 
@@ -58,6 +58,7 @@ const toReviewMovieController = {
     };
   },
 
+  // Allows you to display the list of latest movies to watch again
   async showNewToReview(req, res) {
     debug('NewToReview show controller called');
 
@@ -75,7 +76,7 @@ const toReviewMovieController = {
     };
   },
 
-  // Function that allows you to delete a film from the list of films to watch again
+  // Allows you to delete a film from the list of films to watch again
   async deleteFromToReview(req, res) {
     debug('toReview delete controller called');
 

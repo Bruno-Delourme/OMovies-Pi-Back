@@ -5,6 +5,7 @@ const likeDataMapper = require('../models/like.js');
 
 const likeController = {
 
+  // Allows you to like the site
   async create(req, res) {
     debug('like create controller called');
 
@@ -28,6 +29,7 @@ const likeController = {
     };
   },
 
+  // Allows you to display the total likes
   async showTotalLikes(_, res) {
     debug('like show controller called');
 
@@ -42,6 +44,7 @@ const likeController = {
     };
   },
 
+  // Allows you to dislike
   async delete(req, res) {
     debug('like delete controller called');
 

@@ -1,5 +1,6 @@
 const debug = require('debug')('app:controller');
 require('dotenv').config();
+const errorHandler = require('../../service/error.js');
 
 const fetchProviders = require('./providers.js');
 
@@ -52,7 +53,7 @@ async function fetchBySearchBar(req, res) {
     }
 
     // Retrieve movies by title and actors
-    const moviesByTitle = moviesByTitleData.results.map(movie => ({ title: movie.title, poster_path: movie.poster_path }));
+    const moviesByTitle = moviesByTitleData.results.map(movie => ({ id: movie.id, title: movie.title, poster_path: movie.poster_path }));
     const actors = moviesByActorData.results.map(actor => actor.name);
 
     // Retrieve the films in which the actors starred
@@ -60,7 +61,7 @@ async function fetchBySearchBar(req, res) {
       const response = await fetch(`${process.env.API_TMDB_BASE_URL}person/${actor.id}/movie_credits?api_key=${process.env.API_TMDB_KEY}&language=fr-FR`);
       if (response.ok) {
         const credits = await response.json();
-        return credits.cast.map(movie => ({ title: movie.title, poster_path: movie.poster_path }));
+        return credits.cast.map(movie => ({ id: movie.id, title: movie.title, poster_path: movie.poster_path }));
       } else {
         return [];
       }
@@ -77,8 +78,8 @@ async function fetchBySearchBar(req, res) {
     res.json(combinedResults);
 
   } catch (error) {
-    console.error('Erreur lors de la récupération des films par titre, genre ou acteur :', error);
-    res.status(500).json({ error: 'Erreur lors de la récupération des films par titre, genre ou acteur.' });
+    debug('Erreur lors de la récupération des films par titre, genre ou acteur :', error);
+    errorHandler._500(error, req, res);
   };
 };
 

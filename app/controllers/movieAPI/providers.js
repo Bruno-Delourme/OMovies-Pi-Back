@@ -1,6 +1,6 @@
 const debug = require('debug')('app:controller');
 require('dotenv').config();
-const errorHandler = require('../service/error.js');
+const errorHandler = require('../../service/error.js');
 
 async function fetchProviders(movieId) {
   const providersResponse = await fetch(`${process.env.API_TMDB_BASE_URL}movie/${movieId}/watch/providers?api_key=${process.env.API_TMDB_KEY}&region=FR`);

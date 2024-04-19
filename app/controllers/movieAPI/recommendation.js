@@ -1,5 +1,6 @@
 const debug = require('debug')('app:controller');
 require('dotenv').config();
+const errorHandler = require('../../service/error.js');
 
 const getRecommendations = require('../movieAPI/getRecommendations.js');
 
@@ -17,8 +18,8 @@ const cache = new NodeCache({ stdTTL: 604800 });
     res.json(recommendation);
 
   } catch (error) {
-    console.error('Error fetching recommendations:', error);
-    res.status(500).json({ error: 'Error fetching recommendations.' });
+    debug('Error fetching recommendations:', error);
+    errorHandler._500(error, req, res);
   };
 };
 

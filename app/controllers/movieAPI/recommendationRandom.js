@@ -1,5 +1,6 @@
 const debug = require('debug')('app:controller');
 require('dotenv').config();
+const errorHandler = require('../../service/error.js');
 
 const fetchProviders = require('./providers.js');
 const getRecommendations = require('../movieAPI/getRecommendations.js');
@@ -19,7 +20,7 @@ async function fetchRecommendationWithRandomMovie(req, res) {
 
   } catch (error) {
     debug('Error fetching random favorite movie and calling fetchRecommendation :', error);
-    res.status(500).json({ error: 'Error fetching random favorite movie and calling fetchRecommendation.' });
+    errorHandler._500(error, req, res);
   };
 };
 

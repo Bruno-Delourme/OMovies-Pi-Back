@@ -1,6 +1,6 @@
 const debug = require('debug')('app:controller');
 require('dotenv').config();
-const errorHandler = require('../service/error.js');
+const errorHandler = require('../../service/error.js');
 
 const fetchProviders = require('./providers.js');
 

@@ -6,7 +6,7 @@ const errorHandler = require('../service/error.js');
 
 const userController = {
 
-  // Function that creates a user
+  // Allows you to create a user
   async create(req, res) {
     debug('user create controller called');
 
@@ -32,7 +32,7 @@ const userController = {
     };
   },
 
-  // Function that allows you to connect
+  // Allows you to connect
   async login(req, res) {
     debug('user login controller called');
 
@@ -69,7 +69,7 @@ const userController = {
   };
   },
 
-  // Function that displays a user
+  // Allows you to display a user
   async show(req, res) {
     debug('user show controller called');
 
@@ -89,7 +89,7 @@ const userController = {
   };
   },
 
-  // Function that deletes a user
+  // Allows you to delete a user
   async delete(req, res) {
     debug('user delete controller called');
 
@@ -106,7 +106,7 @@ const userController = {
     };
   },
 
-  // Function that allows you to modify a user's information
+  // Allows you to modify a user's information
   async update(req, res) {
     debug('user update controller called');
     

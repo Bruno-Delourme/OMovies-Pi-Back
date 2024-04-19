@@ -1,6 +1,6 @@
 const debug = require('debug')('app:controller');
 require('dotenv').config();
-const errorHandler = require('../service/error.js');
+const errorHandler = require('../../service/error.js');
 
 const fetchProviders = require('./providers.js');
 
@@ -65,7 +65,7 @@ async function fetchMovieById(req, res) {
 
     } catch (error) {
         // If any error occurs during the process, log it and send an error response
-        debug('Erreur lors de la récupération du film par identifiant:', error);
+        debug('Error retrieving movie by ID:', error);
         errorHandler._500(error, req, res);
     }
 };

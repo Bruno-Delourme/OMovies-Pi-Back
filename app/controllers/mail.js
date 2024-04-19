@@ -4,13 +4,15 @@ require('dotenv').config();
 const errorHandler = require('../service/error.js');
 
 const mailController = {
+
+  // Allows you to send an email
   async sendMail(req, res) {
     debug('mail send controller called');
 
     const { email, subject, message } = req.body;
 
     try {
-      // Créer un transporter pour envoyer le mail
+      // Create a transport to send the email
       const transporter = nodemailer.createTransport({
         service: 'Outlook',
         auth: {
@@ -19,7 +21,7 @@ const mailController = {
         }
       });
 
-      // Définir les options du mail
+      // Set email options
       const mailOptions = {
         from: process.env.OUTLOOK_USER,
         to: email,
@@ -27,7 +29,7 @@ const mailController = {
         text: message
       };
 
-      // Envoyer le mail
+      // Send the email
       await transporter.sendMail(mailOptions);
 
       res.json({ status: 'success', message: 'Mail sent successfully' });
