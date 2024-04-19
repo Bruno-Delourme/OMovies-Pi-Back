@@ -16,4 +16,15 @@ app.use(express.json());
 
 app.use("/api", router);
 
+app.post('/api/send-mail', async (req, res) => {
+  try {
+    const { email, subject, message } = req.body;
+    await sendEmail(email, subject, message);
+    res.status(200).json({ message: 'E-mail envoyé avec succès' });
+  } catch (error) {
+    console.error('Error sending email:', error);
+    res.status(500).json({ message: 'Erreur lors de l\'envoi de l\'e-mail' });
+  }
+});
+
 app.listen(PORT, () => debug(`server ready on http://localhost:${PORT}`));

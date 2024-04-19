@@ -8,6 +8,7 @@ const favoriteMovieRouter = require('./favorite_movie.js');
 const toReviewMovieRouter = require('./to_review_movie.js');
 const likeRouter = require('./like.js');
 const commentRouter = require('./comment.js');
+const mailRouter = require('./mail.js');
  
 const router = express.Router();
 
@@ -17,6 +18,7 @@ router.use(likeRouter);
 router.use(commentRouter);
 router.use(authMiddleware.authMiddleware, favoriteMovieRouter);
 router.use(authMiddleware.authMiddleware, toReviewMovieRouter);
+router.use(authMiddleware.authMiddleware, mailRouter);
 
 
 module.exports = router;
