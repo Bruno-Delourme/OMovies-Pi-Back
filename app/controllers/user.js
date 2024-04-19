@@ -2,6 +2,7 @@ const debug = require('debug')('app:controller');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
 const userDataMapper = require('../models/user.js');
+const errorHandler = require('../service/error.js');
 
 const userController = {
 
@@ -16,7 +17,7 @@ const userController = {
       const existingUser = await userDataMapper.findByPseudoOrEmail( pseudo, email );
 
       if (existingUser) {
-        return res.status(400).json({ status: 'error', message: 'A user with this nickname or email address already exists.' });
+        return errorHandler._400('A user with this nickname or email address already exists.', req, res);
       };
 
       // Password encoding
@@ -27,7 +28,7 @@ const userController = {
 
     } catch (error) {
       debug('Error creating user :', error);
-      res.status(500).json({ status: 'error', message: 'Error creating user.' });
+      errorHandler._500(error, req, res);
     };
   },
 
@@ -42,7 +43,7 @@ const userController = {
     // If no user is found, return an unauthorized response
     if (!result) {
       debug('Aucun utilisateur trouvé avec le pseudo spécifié');
-      return res.status(401).json({ status: 'error', message: 'Nom d\'utilisateur ou mot de passe incorrect.' });
+      return errorHandler._401(error, req, res);
     };
 
     // Comparing the provided password with the hashed password stored in the database
@@ -64,7 +65,7 @@ const userController = {
     } catch (error) {
       // If the passwords don't match, return an internal server error response
       debug('Error during login:', error);
-      res.status(500).json({ status: 'error', message: 'Error during login.' });
+      errorHandler._500(error, req, res);
   };
   },
 
@@ -80,7 +81,7 @@ const userController = {
     // If no user is found, return an error
     if (!result) {
       debug('No users found with specified nickname');
-      return res.status(401).json({ status: 'error', message: 'No users found with specified nickname.' });
+      return errorHandler._401(error, req, res);
 
   } else {
      // Sending a success response with user data and the token
@@ -143,7 +144,7 @@ const userController = {
 
     } catch (error) {
         debug('Error updating user:', error);
-        res.status(500).json({ status: 'error', message: 'Error updating user.' });
+        errorHandler._500(error, req, res);
     }
   },
 };

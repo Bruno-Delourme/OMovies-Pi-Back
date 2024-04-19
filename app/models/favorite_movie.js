@@ -74,7 +74,7 @@ const favoriteMovieModel = {
       return { message: 'The movie has been removed from the favorites list.' };
       
   } catch (error) {
-      console.error('Error removing movie from favorites list :', error);
+      debug('Error removing movie from favorites list :', error);
       throw error;
   };
   },

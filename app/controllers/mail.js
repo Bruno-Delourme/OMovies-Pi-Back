@@ -1,12 +1,13 @@
 const nodemailer = require('nodemailer'); // npm install nodemailer
 const debug = require('debug')('app:controller');
 require('dotenv').config();
+const errorHandler = require('../service/error.js');
 
 const mailController = {
   async sendMail(req, res) {
     debug('mail send controller called');
 
-    const { email, subject, text } = req.body;
+    const { email, subject, message } = req.body;
 
     try {
       // Créer un transporter pour envoyer le mail
@@ -23,16 +24,17 @@ const mailController = {
         from: process.env.OUTLOOK_USER,
         to: email,
         subject: subject,
-        text: text
+        text: message
       };
 
       // Envoyer le mail
       await transporter.sendMail(mailOptions);
 
       res.json({ status: 'success', message: 'Mail sent successfully' });
+
     } catch (error) {
       debug('Error sending mail:', error);
-      res.status(500).json({ status: 'error', message: 'Error sending mail' });
+      errorHandler._500(error, req, res);
     }
   }
 };

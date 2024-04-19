@@ -26,7 +26,7 @@ const recommendationModel = {
       return randomMovieResult.rows[0].movie_id;
 
     } catch (error) {
-      console.error('Error recovering random movie ID:', error);
+      debug('Error recovering random movie ID:', error);
       throw error;
     }
   }

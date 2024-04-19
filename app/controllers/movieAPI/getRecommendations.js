@@ -21,7 +21,8 @@ async function getRecommendations(movieId, language, page) {
       const response = await fetch(`${process.env.API_TMDB_BASE_URL}movie/${movieId}/recommendations?api_key=${process.env.API_TMDB_KEY}&language=${language}&page=${page}`);
 
       if (!response.ok) {
-          throw new Error('Network error or invalid response');
+        debug('Network error or invalid response');
+        errorHandler._500(error, req, res);
       }
 
       const recommendation = await response.json();
@@ -47,8 +48,8 @@ async function getRecommendations(movieId, language, page) {
           totalPages: recommendation.total_pages
       };
   } catch (error) {
-      console.error('Error fetching recommendations:', error);
-      throw error;
+    debug('Error fetching recommendations:', error);
+    errorHandler._500(error, req, res);
   };
 };
 

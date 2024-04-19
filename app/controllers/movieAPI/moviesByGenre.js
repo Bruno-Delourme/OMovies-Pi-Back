@@ -1,5 +1,6 @@
 const debug = require('debug')('app:controller');
 require('dotenv').config();
+const errorHandler = require('../service/error.js');
 
 const fetchProviders = require('./providers.js');
 
@@ -35,7 +36,8 @@ async function fetchMoviesByGenre(req, res) {
 
       // If there's an issue with the network or the response is not valid, throw an error
       if (!genreResponse.ok) {
-          throw new Error('Erreur réseau ou réponse invalide lors de la récupération des genres');
+        debug('Network error or invalid response');
+        errorHandler._500(error, req, res);
       };
 
       // Parse the genre response into JSON format
@@ -46,7 +48,8 @@ async function fetchMoviesByGenre(req, res) {
 
       // If the genre is not found, throw an error
       if (!selectedGenre) {
-          throw new Error('Genre not found');
+          debug('Genre not found');
+          errorHandler._500(error, req, res);
       };
 
       // Fetch movies data for the specified genre from the TMDB API
@@ -54,7 +57,8 @@ async function fetchMoviesByGenre(req, res) {
 
       // If there's an issue with the network or the response is not valid, throw an error
       if (!response.ok) {
-          throw new Error('Network error or invalid response while fetching movies');
+          debug('Network error or invalid response while fetching movies');
+          errorHandler._500(error, req, res);
       }
 
       // Parse the movies response into JSON format
@@ -83,8 +87,8 @@ async function fetchMoviesByGenre(req, res) {
 
   } catch (error) {
       // If any error occurs during the process, log it and send an error response
-      console.error('Error fetching movies by genre:', error);
-      res.status(500).json({ error: 'Error fetching movies by genre.' });
+      debug('Error fetching movies by genre:', error);
+      errorHandler._500(error, req, res);
   };
 };
 

@@ -9,7 +9,7 @@ DROP FUNCTION IF EXISTS add_to_review_movie(json) CASCADE;
 DROP FUNCTION IF EXISTS update_user(json) CASCADE;
 DROP FUNCTION IF EXISTS update_comment(json) CASCADE;
 
-DROP TABLE IF EXISTS "user", "movie", "actor", "favorite_movie", "to_review_movie", "like", "comment" CASCADE;
+DROP TABLE IF EXISTS "user", "movie", "favorite_movie", "to_review_movie", "like", "comment" CASCADE;
 
 DROP DOMAIN  IF EXISTS public.email CASCADE;
 

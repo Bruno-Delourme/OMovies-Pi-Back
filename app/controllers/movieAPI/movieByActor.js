@@ -1,5 +1,6 @@
 const debug = require('debug')('app:controller');
 require('dotenv').config();
+const errorHandler = require('../service/error.js');
 
 const fetchProviders = require('./providers.js');
 
@@ -27,13 +28,16 @@ async function fetchMoviesByActor(req, res) {
               totalPages: cachedMovies.totalPages
           });
       };
+
       // If movies data is not found in the cache, fetch data from the TMDB API based on the actor search term
       const encodedSearchTerm = encodeURIComponent(searchTerm);
       const responseByActor = await fetch(`${process.env.API_TMDB_BASE_URL}search/person?api_key=${process.env.API_TMDB_KEY}&query=${encodedSearchTerm}&language=${language}`);
       // If there's an issue with the network or the response is not valid, throw an error
       if (!responseByActor.ok) {
-          throw new Error('Network error or invalid response');
+        debug('Network error or invalid response');
+        errorHandler._500(error, req, res);
       };
+
       // Parse the actor data response into JSON format
       const actorsData = await responseByActor.json();
       // Extract movies data for each actor asynchronously
@@ -56,9 +60,10 @@ async function fetchMoviesByActor(req, res) {
               const moviesWithProviders = await Promise.all(moviesWithProvidersPromises);
               // Return the paginated credits with providers
               return moviesWithProviders;
+
           } else {
               return [];
-          }
+          };
       });
       // Await for all movies data by actors to be fetched
       const moviesByActor = await Promise.all(moviesByActorPromises);
@@ -78,8 +83,8 @@ async function fetchMoviesByActor(req, res) {
       });
   } catch (error) {
       // If any error occurs during the process, log it and send an error response
-      console.error('Error fetching movies by actor:', error);
-      res.status(500).json({ error: 'Error fetching movies by actor.' });
+      deubg('Error fetching movies by actor:', error);
+      errorHandler._500(error, req, res);
   };
 };
 

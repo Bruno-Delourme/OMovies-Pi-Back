@@ -10,7 +10,7 @@ const authMiddleware = {
     const token = req.headers.authorization.split(' ')[1];
 
     if (!token) {
-        return res.status(401).json({ message: 'Jetons JWT manquant' });
+        return errorHandler._401(error, req, res);
     };
 
     try {
@@ -20,8 +20,8 @@ const authMiddleware = {
         next(); 
         
     } catch (error) {
-        console.error('Erreur de vérification du jeton JWT:', error);
-        return res.status(401).json({ message: 'Jetons JWT invalide' });
+        debug('Erreur de vérification du jeton JWT:', error);
+        return errorHandler._401(error, req, res);
     };
 },
 };

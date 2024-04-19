@@ -1,5 +1,6 @@
 const debug = require('debug')('app:controller');
 require('dotenv').config();
+const errorHandler = require('../service/error.js');
 
 const fetchProviders = require('./providers.js');
 
@@ -22,15 +23,16 @@ async function fetchMovieById(req, res) {
         if (cachedMovie) {
             console.log('Film récupéré du cache');
             return res.json(cachedMovie);
-        }
+        };
 
         // If the movie is not in the cache, fetch it from the external API
         const movieResponse = await fetch(`${process.env.API_TMDB_BASE_URL}movie/${movieId}?api_key=${process.env.API_TMDB_KEY}&language=fr-FR`);
 
         // If there's an issue with the network or the response is not valid, throw an error
         if (!movieResponse.ok) {
-            throw new Error('Erreur réseau ou réponse invalide');
-        }
+            debug('Network error or invalid response');
+            errorHandler._500(error, req, res);
+        };
 
         // Parse the movie response into JSON format
         const movie = await movieResponse.json();
@@ -40,8 +42,8 @@ async function fetchMovieById(req, res) {
 
         // If there's an issue with the network or the response is not valid, throw an error
         if (!creditsResponse.ok) {
-            throw new Error('Erreur réseau ou réponse invalide lors de la récupération des crédits');
-        }
+            errorHandler._500(error, req, res);
+        };
 
         // Parse the credits response into JSON format
         const credits = await creditsResponse.json();
@@ -63,8 +65,8 @@ async function fetchMovieById(req, res) {
 
     } catch (error) {
         // If any error occurs during the process, log it and send an error response
-        console.error('Erreur lors de la récupération du film par identifiant:', error);
-        res.status(500).json({ error: 'Erreur lors de la récupération du film par identifiant.' });
+        debug('Erreur lors de la récupération du film par identifiant:', error);
+        errorHandler._500(error, req, res);
     }
 };
 

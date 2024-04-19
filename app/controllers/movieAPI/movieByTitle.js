@@ -1,5 +1,6 @@
 const debug = require('debug')('app:controller');
 require('dotenv').config();
+const errorHandler = require('../service/error.js');
 
 const fetchProviders = require('./providers.js');
 
@@ -35,7 +36,8 @@ async function fetchMovieByTitle(req, res) {
       
       // If there's an issue with the network or the response is not valid, throw an error
       if (!response.ok) {
-          throw new Error('Network error or invalid response');
+        debug('Network error or invalid response');
+        errorHandler._500(error, req, res);
       };
 
       // Parse the movie data response into JSON format
@@ -69,8 +71,8 @@ async function fetchMovieByTitle(req, res) {
 
   } catch (error) {
       // If any error occurs during the process, log it and send an error response
-      console.error('Error fetching movies by title:', error);
-      res.status(500).json({ error: 'Error fetching movies by title.' });
+      debug('Error fetching movies by title:', error);
+      errorHandler._500(error, req, res);
   };
 };
 

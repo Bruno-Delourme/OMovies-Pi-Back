@@ -1,4 +1,5 @@
 const debug = require('debug')('app:controller');
+const errorHandler = require('../service/error.js');
 
 const likeDataMapper = require('../models/like.js');
 
@@ -14,7 +15,7 @@ const likeController = {
       const existingLike = await likeDataMapper.findLike(userId)
 
       if (existingLike) {
-        return res.status(400).json({ status: 'error', message: 'You have already voted.' });
+        return errorHandler._400('You are already vote', req, res);
       };
 
       // Insert a new like into the database
@@ -23,7 +24,7 @@ const likeController = {
 
     } catch (error) {
       debug('Error when liking the site :', error);
-      res.status(500).json({ status: 'error', message: 'Error when liking the site.' });
+      errorHandler._500(error, req, res);
     };
   },
 
@@ -34,7 +35,7 @@ const likeController = {
 
     if (!result) {
       debug('No likes recorded.');
-      return res.status(401).json({ status: 'error', message: 'No likes recorded.' });
+      return errorHandler._401(error, req, res);
 
     } else {
       res.json({ status: 'success', data: result});
