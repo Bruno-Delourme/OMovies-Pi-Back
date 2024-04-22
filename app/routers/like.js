@@ -6,7 +6,7 @@ const authMiddleware = require('../middlewares/authentication.js');
 
 const router = express.Router();
 
-router.get("/like/:id",authMiddleware.authMiddleware, likeController.create);
+router.post("/like/:id",authMiddleware.authMiddleware, likeController.create);
 
 router.get("/showTotalLikes", likeController.showTotalLikes);
 
