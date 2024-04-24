@@ -1,7 +1,7 @@
 const debug = require('debug')('app:controller');
 const errorHandler = require('../service/error.js');
 
-const commentDataMapper = require('../models/comment');
+const commentDataMapper = require('../datamapper/comment.js');
 
 const commentController = {
 
