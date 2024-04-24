@@ -1,6 +1,7 @@
 const debug = require('debug')('app:router');
 const express = require('express');
 const authMiddleware = require('../middlewares/authentication.js');
+const filterByAge = require('../middlewares/filterByAge.js');
 
 const userRouter = require('./user.js');
 const movieAPIRouter = require('./movieAPI.js');
@@ -12,7 +13,7 @@ const mailRouter = require('./mail.js');
  
 const router = express.Router();
 
-router.use(movieAPIRouter);
+router.use(filterByAge.movieFilterMiddleware, movieAPIRouter);
 router.use(userRouter);
 router.use(likeRouter);
 router.use(commentRouter);

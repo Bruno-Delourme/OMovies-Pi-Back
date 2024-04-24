@@ -12,8 +12,11 @@ async function fetchRecommendationWithRandomMovie(req, res) {
   try {
     const randomFavoriteMovie = await recommendationDataMapper.getRandomFavoriteMovieId(userId);
     const recommendation = await getRecommendations(randomFavoriteMovie, 'fr-FR', req.query.page || 1);
+
+    // Filter adult films
+    const filteredMovies = req.filterAdult ? recommendation.filter(movie => !movie.adult) : recommendation;
     
-    res.json(recommendation);
+    res.json(filteredMovies);
 
   } catch (error) {
     debug('Error fetching random favorite movie and calling fetchRecommendation :', error);

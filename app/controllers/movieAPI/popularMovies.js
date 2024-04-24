@@ -25,7 +25,7 @@ async function fetchPopularMovie(req, res) {
         }
 
         // If popular movies data is not found in the cache, fetch it from the TMDB API
-        const response = await fetch(`${process.env.API_TMDB_BASE_URL}movie/popular?api_key=${process.env.API_TMDB_KEY}&language=${language}&page=${page}`);
+        const response = await fetch(`${process.env.API_TMDB_BASE_URL}movie/popular?api_key=${process.env.API_TMDB_KEY}&language=${language}&sort_by=popularity.desc&page=${page}`);
 
         // If there's an issue with the network or the response is not valid, throw an error
         if (!response.ok) {
@@ -47,16 +47,20 @@ async function fetchPopularMovie(req, res) {
         // Wait for all movies with providers to be fetched
         const moviesWithProviders = await Promise.all(moviesWithProvidersPromises);
 
+
+        // Filter adult films
+        const filteredMovies = req.filterAdult ? moviesWithProviders.filter(movie => !movie.adult) : moviesWithProviders;
+
         // Cache the popular movies data for future use
         cache.set(cacheKey, {
-            movies: moviesWithProviders,
+            movies: filteredMovies,
             currentPage: page,
             totalPages: popularMovies.total_pages
         });
 
         // Send the popular movies data in the response along with current page and total pages
         res.json({
-            movies: moviesWithProviders,
+            movies: filteredMovies,
             currentPage: page,
             totalPages: popularMovies.total_pages
         });

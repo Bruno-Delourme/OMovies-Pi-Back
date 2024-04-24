@@ -14,7 +14,7 @@ async function fetchMoviesByActor(req, res) {
   const searchTerm = req.params.actor;
   const language = 'fr-FR'; // Setting the language for the API request
   const page = req.query.page || 1; // Extracting the page number from the query parameters, defaulting to 1 if not provided
-  const pageSize = 20; // Number of results per page
+  const pageSize = 20;
   const cacheKey = `actor_${encodeURIComponent(searchTerm)}_${page}`; // Generating a cache key based on the actor search term and page number
 
   try {
@@ -72,17 +72,22 @@ async function fetchMoviesByActor(req, res) {
       });
       // Await for all movies data by actors to be fetched
       const moviesByActor = await Promise.all(moviesByActorPromises);
+
       // Flatten the array of arrays into a single array
       const allMovies = moviesByActor.flat();
+
+      // Filter adult films
+      const filteredMovies = req.filterAdult ? allMovies.filter(movie => !movie.adult) : allMovies;
+
       // Cache the combined movies data for future use
       cache.set(cacheKey, {
-          movies: allMovies,
+          movies: filteredMovies,
           currentPage: page,
           totalPages: actorsData.total_pages
       });
       // Send the combined movies data in the response
       res.json({
-          movies: allMovies,
+          movies: filteredMovies,
           currentPage: page,
           totalPages: actorsData.total_pages
       });

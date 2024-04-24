@@ -1,7 +1,7 @@
 const debug = require('debug')('app:controller');
 const errorHandler = require('../service/error.js');
 
-const likeDataMapper = require('../datamapper/like.js');
+const likeDataMapper = require('../models/like.js');
 
 const likeController = {
 

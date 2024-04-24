@@ -55,16 +55,19 @@ async function fetchMovieByTitle(req, res) {
       // Wait for all movies with providers to be fetched
       const moviesWithProviders = await Promise.all(moviesWithProvidersPromises);
 
+      // Filter adult films
+      const filteredMovies = req.filterAdult ? moviesWithProviders.filter(movie => !movie.adult) : moviesWithProviders;
+
       // Cache the movies data for future use
       cache.set(cacheKey, {
-          movies: moviesWithProviders,
+          movies: filteredMovies,
           currentPage: page,
           totalPages: movieData.total_pages
       });
 
       // Send the movies data in the response along with current page and total pages
       res.json({
-          movies: moviesWithProviders,
+          movies: filteredMovies,
           currentPage: page,
           totalPages: movieData.total_pages
       });

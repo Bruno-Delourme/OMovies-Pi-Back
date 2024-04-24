@@ -2,8 +2,8 @@ const debug = require('debug')('app:controller');
 require('dotenv').config();
 const errorHandler = require('../service/error.js');
 
-const toReviewMovieDataMapper = require('../datamapper/to_review_movie.js');
-const movieDBDataMapper = require('../datamapper/movieDB.js');
+const toReviewMovieDataMapper = require('../models/to_review_movie.js');
+const movieDBDataMapper = require('../models/movieDB.js');
 
 const toReviewMovieController = {
 

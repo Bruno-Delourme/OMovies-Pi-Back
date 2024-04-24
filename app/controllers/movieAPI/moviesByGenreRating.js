@@ -68,6 +68,7 @@ async function fetchMoviesByGenreRating(req, res) {
       // Fetch details and providers for each movie in the genre
       const moviesWithDetailsPromises = movies.map(async movie => {
           const movieDetailsResponse = await fetch(`${process.env.API_TMDB_BASE_URL}/movie/${movie.id}?api_key=${process.env.API_TMDB_KEY}&language=${language}`);
+
           if (movieDetailsResponse.ok) {
               const movieDetails = await movieDetailsResponse.json();
               movie.title = movieDetails.title; // Add title to the movie object
@@ -84,12 +85,19 @@ async function fetchMoviesByGenreRating(req, res) {
       // Wait for all movies with details to be fetched
       const moviesWithDetails = await Promise.all(moviesWithDetailsPromises);
 
+      // Filter adult films
+      const filteredMovies = req.filterAdult ? moviesWithDetails.filter(movie => !movie.adult) : moviesWithDetails;
+
       // Cache the movies data for future use
-      cache.set(cacheKey, moviesWithDetails);
+      cache.set(cacheKey, {
+        movies: filteredMovies,
+        currentPage: page,
+        totalPages: moviesData.total_pages
+    });
 
       // Send the movies data in the response along with current page and total pages
       res.json({
-          movies: moviesWithDetails,
+          movies: filteredMovies,
           currentPage: page,
           totalPages: moviesData.total_pages
       });
