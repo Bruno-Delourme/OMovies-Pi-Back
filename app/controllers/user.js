@@ -28,7 +28,7 @@ const userController = {
 
     } catch (error) {
       debug('Error creating user :', error);
-      errorHandler._500(error, req, res);
+      errorHandler._500("The password must be at least 8 characters long, an uppercase letter, a lowercase letter, a number and a special character", req, res);
     };
   },
 
