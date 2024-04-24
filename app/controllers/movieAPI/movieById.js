@@ -12,7 +12,7 @@ async function fetchMovieById(req, res) {
 
   // Extracting the movie id from the request parameters
     const movieId = req.params.id;
-    // Creating a cache key for the movie using its id
+    const language = 'fr-FR'; // Setting the language for the API request
     const cacheKey = `movie_${movieId}`;
 
     try {
@@ -21,12 +21,12 @@ async function fetchMovieById(req, res) {
 
         // If the movie is found in the cache, return it
         if (cachedMovie) {
-            console.log('Film récupéré du cache');
+            console.log('Movie by id retrieved from cache');
             return res.json(cachedMovie);
         };
 
         // If the movie is not in the cache, fetch it from the external API
-        const movieResponse = await fetch(`${process.env.API_TMDB_BASE_URL}movie/${movieId}?api_key=${process.env.API_TMDB_KEY}&language=fr-FR`);
+        const movieResponse = await fetch(`${process.env.API_TMDB_BASE_URL}movie/${movieId}?api_key=${process.env.API_TMDB_KEY}&language=${language}`);
 
         // If there's an issue with the network or the response is not valid, throw an error
         if (!movieResponse.ok) {
@@ -41,10 +41,7 @@ async function fetchMovieById(req, res) {
         const creditsResponse = await fetch(`${process.env.API_TMDB_BASE_URL}movie/${movieId}/credits?api_key=${process.env.API_TMDB_KEY}`);
 
         // If there's an issue with the network or the response is not valid, throw an error
-        if (!creditsResponse.ok) {
-            errorHandler._500(error, req, res);
-        };
-
+        if (creditsResponse.ok) {   
         // Parse the credits response into JSON format
         const credits = await creditsResponse.json();
 
@@ -62,12 +59,12 @@ async function fetchMovieById(req, res) {
 
         // Send the movie data in the response
         res.json(movie);
-
+};
     } catch (error) {
         // If any error occurs during the process, log it and send an error response
         debug('Error retrieving movie by ID:', error);
         errorHandler._500(error, req, res);
-    }
+    };
 };
 
 module.exports = fetchMovieById;

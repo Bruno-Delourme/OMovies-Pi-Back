@@ -5,9 +5,6 @@ const errorHandler = require('../../service/error.js');
 const fetchProviders = require('./providers.js');
 const getRecommendations = require('../movieAPI/getRecommendations.js');
 
-const NodeCache = require('node-cache');
-const cache = new NodeCache({ stdTTL: 604800 });
-
 // Allows you to recommend a movie based on the random id of a movie in the favorites list
 async function fetchRecommendationWithRandomMovie(req, res) {
   const userId = req.params.id;

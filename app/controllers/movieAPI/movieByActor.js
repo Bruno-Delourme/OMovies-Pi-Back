@@ -16,12 +16,13 @@ async function fetchMoviesByActor(req, res) {
   const page = req.query.page || 1; // Extracting the page number from the query parameters, defaulting to 1 if not provided
   const pageSize = 20; // Number of results per page
   const cacheKey = `actor_${encodeURIComponent(searchTerm)}_${page}`; // Generating a cache key based on the actor search term and page number
+
   try {
       // Attempting to retrieve movies data from the cache
       const cachedMovies = cache.get(cacheKey);
       // If movies data is found in the cache, return it
       if (cachedMovies) {
-          console.log('Movies retrieved from cache');
+          console.log('Movies by actor retrieved from cache');
           return res.json({
               movies: cachedMovies.movies,
               currentPage: cachedMovies.currentPage,
@@ -43,19 +44,23 @@ async function fetchMoviesByActor(req, res) {
       // Extract movies data for each actor asynchronously
       const moviesByActorPromises = actorsData.results.map(async actor => {
           const response = await fetch(`${process.env.API_TMDB_BASE_URL}person/${actor.id}/movie_credits?api_key=${process.env.API_TMDB_KEY}&language=${language}&page=${page}`);
+
           if (response.ok) {
               const credits = await response.json();
+
               // Calculating the start and end index for pagination
               const startIndex = (page - 1) * pageSize;
               const endIndex = startIndex + pageSize;
               // Paginating the credits data
               const paginatedCredits = credits.cast.slice(startIndex, endIndex);
+
               // Fetch providers for each movie
               const moviesWithProvidersPromises = paginatedCredits.map(async movie => {
                   const providers = await fetchProviders(movie.id);
                   movie.providers = providers;
                   return movie;
               });
+              
               // Wait for all movies with providers to be fetched
               const moviesWithProviders = await Promise.all(moviesWithProvidersPromises);
               // Return the paginated credits with providers

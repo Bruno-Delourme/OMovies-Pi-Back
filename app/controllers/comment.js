@@ -30,7 +30,7 @@ const commentController = {
 
     if (!result) {
       debug('No comment recorded.');
-      return res.status(401).json({ status: 'error', message: 'No comment recorded.' });
+      return errorHandler._401('No comment recorded', req, res);
 
     } else {
       res.json({ status: 'success', data: result });
@@ -67,7 +67,7 @@ const commentController = {
 
     } catch (error) {
         debug('Error updating comment:', error);
-        res.status(500).json({ status: 'error', message: 'Error updating comment.' });
+        return errorHandler._500('Error updating comment', req, res);
     };
   },
 

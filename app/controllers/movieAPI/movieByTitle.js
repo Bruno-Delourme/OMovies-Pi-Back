@@ -22,7 +22,7 @@ async function fetchMovieByTitle(req, res) {
 
       // If movies data is found in the cache, return it
       if (cachedMovies) {
-          console.log('Movies retrieved from cache');
+          console.log('Movies by title retrieved from cache');
 
           return res.json({
               movies: cachedMovies.movies,

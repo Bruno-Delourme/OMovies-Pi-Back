@@ -22,7 +22,7 @@ async function fetchMoviesByGenreRating(req, res) {
 
       // If movies data is found in the cache, return it
       if (cachedMovies) {
-          console.log(`Données récupérées du cache: ${genre}`);
+          console.log(`Data retrieved from cache: ${genre}`);
 
           return res.json({
               movies: cachedMovies,

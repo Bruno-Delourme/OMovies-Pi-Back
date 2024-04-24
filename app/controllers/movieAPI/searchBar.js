@@ -4,9 +4,6 @@ const errorHandler = require('../../service/error.js');
 
 const fetchProviders = require('./providers.js');
 
-const NodeCache = require('node-cache');
-const cache = new NodeCache({ stdTTL: 604800 });
-
 // Search for movies in a search bar
 async function fetchBySearchBar(req, res) {
 
