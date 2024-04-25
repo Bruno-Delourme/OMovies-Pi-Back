@@ -6,7 +6,8 @@ const favoriteMovieModel = {
     try {
       // Check if the movie is already in the user's favorite list
       const userQuery = {
-          text: 'SELECT * FROM "favorite_movie" WHERE user_id = $1 AND movie_id = $2',
+          text: `SELECT * FROM "favorite_movie"
+                   WHERE user_id = $1 AND movie_id = $2`,
           values: [user.id, movie.id],
       };
 

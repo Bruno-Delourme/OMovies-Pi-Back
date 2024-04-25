@@ -1,6 +1,7 @@
 BEGIN;
 
 DROP FUNCTION IF EXISTS add_user(json) CASCADE;
+DROP FUNCTION IF EXISTS add_group(json) CASCADE;
 DROP FUNCTION IF EXISTS add_movie(json) CASCADE;
 DROP FUNCTION IF EXISTS add_favorite_movie(json) CASCADE;
 DROP FUNCTION IF EXISTS add_like(json) CASCADE;
@@ -9,12 +10,19 @@ DROP FUNCTION IF EXISTS add_to_review_movie(json) CASCADE;
 DROP FUNCTION IF EXISTS update_user(json) CASCADE;
 DROP FUNCTION IF EXISTS update_comment(json) CASCADE;
 
-DROP TABLE IF EXISTS "user", "movie", "favorite_movie", "to_review_movie", "like", "comment" CASCADE;
+DROP TABLE IF EXISTS "group", "user", "movie", "favorite_movie", "to_review_movie", "like", "comment" CASCADE;
 
 DROP DOMAIN  IF EXISTS public.email CASCADE;
 
 CREATE DOMAIN email AS TEXT 
 CHECK(VALUE ~ '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
+
+CREATE TABLE "group" (
+  "id" INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
+  "name" TEXT NOT NULL,
+  "created_at" TIMESTAMPTZ NOT NULL default(now()),
+  "updated_at" TIMESTAMPTZ
+);
 
 CREATE TABLE "user" (
   "id" INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -22,6 +30,7 @@ CREATE TABLE "user" (
   "email" email UNIQUE NOT NULL,
   "birthday" DATE NOT NULL,
   "password" TEXT NOT NULL,
+  "group_id" INT REFERENCES "group"(id),
   "created_at" TIMESTAMPTZ NOT NULL default(now()),
   "updated_at" TIMESTAMPTZ
 );
@@ -72,6 +81,14 @@ $$
       ($1 ->> 'email'):: email,
       ($1 ->> 'birthday'):: DATE,
       ($1 ->> 'password'):: TEXT
+  ) RETURNING *;
+$$ LANGUAGE sql STRICT;
+
+CREATE OR REPLACE FUNCTION add_group(json) RETURNS "group" AS
+$$
+  INSERT INTO "group" (name)
+    VALUES (
+      ($1 ->> 'name'):: TEXT
   ) RETURNING *;
 $$ LANGUAGE sql STRICT;
 

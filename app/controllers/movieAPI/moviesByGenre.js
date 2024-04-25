@@ -80,7 +80,7 @@ async function fetchMoviesByGenre(req, res) {
 
       // Cache the movies data for future use
       cache.set(cacheKey, {
-        movie: filteredMovies,
+        movies: filteredMovies,
         currentPage: page,
         totalPages: moviesData.total_pages
     });
