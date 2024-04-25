@@ -4,7 +4,7 @@ const groupModel = {
 
   async create(group, user) {
       const createQuery = {
-          text: 'SELECT * FROM add_group($1)',
+          text: `SELECT * FROM add_group($1)`,
           values: [JSON.stringify(group)],
       };
       const groupResult = await client.query(createQuery);
@@ -104,7 +104,7 @@ const groupModel = {
             await client.query(updateUserGroupQuery);
 
       const deleteGroupQuery = {
-          text: 'DELETE FROM "group" WHERE id = $1',
+          text: `DELETE FROM "group" WHERE id = $1`,
           values: [group.id]
       };
       const results = await client.query(deleteGroupQuery);

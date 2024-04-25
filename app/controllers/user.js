@@ -1,8 +1,9 @@
 const debug = require('debug')('app:controller');
 const jwt = require('jsonwebtoken');
 const bcrypt = require('bcrypt');
-const userDataMapper = require('../models/user.js');
 const errorHandler = require('../service/error.js');
+
+const userDataMapper = require('../models/user.js');
 
 const userController = {
 

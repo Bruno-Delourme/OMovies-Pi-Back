@@ -4,7 +4,7 @@ const userModel = {
 
   async insert(user) {
     const query = {
-      text: 'SELECT * FROM add_user($1)',
+      text: `SELECT * FROM add_user($1)`,
       values: [JSON.stringify(user)],
     };
     const results = await client.query(query);
@@ -13,7 +13,8 @@ const userModel = {
 
   async findByPseudoOrEmail(pseudo, email) {
     const query = {
-        text: 'SELECT * FROM "user" WHERE pseudo = $1 OR email = $2',
+        text: `SELECT * FROM "user" 
+                WHERE pseudo = $1 OR email = $2`,
         values: [pseudo, email],
     };
     const results = await client.query(query);
@@ -22,7 +23,7 @@ const userModel = {
 
   async findUser(user) {
     const query = {
-      text: 'SELECT * FROM "user" WHERE pseudo = $1',
+      text: `SELECT * FROM "user" WHERE pseudo = $1`,
       values: [user.pseudo],
     };
     const results = await client.query(query);
@@ -31,7 +32,8 @@ const userModel = {
 
   async showUser(user) {
     const query = {
-      text: 'SELECT pseudo FROM "user" WHERE pseudo = $1',
+      text: `SELECT pseudo FROM "user" 
+              WHERE pseudo = $1`,
       values: [user.pseudo],
     };
     const results = await client.query(query);
@@ -40,7 +42,7 @@ const userModel = {
 
   async delete(id) {
     const query = {
-      text: 'DELETE FROM "user" WHERE id = $1',
+      text: `DELETE FROM "user" WHERE id = $1`,
       values: [id],
     };
     const results = await client.query(query);
@@ -50,7 +52,7 @@ const userModel = {
 
   async update(user) {
     const query = {
-      text: 'SELECT * FROM update_user($1)',
+      text: `SELECT * FROM update_user($1)`,
       values: [JSON.stringify(user)],
     };
     const results = await client.query(query);

@@ -1,7 +1,8 @@
 const debug = require('debug')('app:ToReviewRouter');
 const express = require('express');
-const { toReviewController } = require('../controllers');
 const cw = require('../controllers/controllerWrapper.js');
+
+const { toReviewController } = require('../controllers');
 
 const router = express.Router();
 

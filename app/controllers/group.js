@@ -104,7 +104,7 @@ const groupController = {
 
       const result = await groupDataMapper.delete({ id, updated_at });
 
-      return res.json({ status: 'success', message: 'Groupe supprimé avec succès.' });
+      return res.json({ status: 'success', message: 'Group successfully deleted.' });
 
     } catch {
         console.error('Error deleting group:', error);

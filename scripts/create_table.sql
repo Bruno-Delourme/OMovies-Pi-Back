@@ -4,13 +4,13 @@ DROP FUNCTION IF EXISTS add_user(json) CASCADE;
 DROP FUNCTION IF EXISTS add_group(json) CASCADE;
 DROP FUNCTION IF EXISTS add_movie(json) CASCADE;
 DROP FUNCTION IF EXISTS add_favorite_movie(json) CASCADE;
-DROP FUNCTION IF EXISTS add_like(json) CASCADE;
-DROP FUNCTION IF EXISTS add_comment(json) CASCADE;
 DROP FUNCTION IF EXISTS add_to_review_movie(json) CASCADE;
+DROP FUNCTION IF EXISTS add_vote(json) CASCADE;
+DROP FUNCTION IF EXISTS add_comment(json) CASCADE;
 DROP FUNCTION IF EXISTS update_user(json) CASCADE;
 DROP FUNCTION IF EXISTS update_comment(json) CASCADE;
 
-DROP TABLE IF EXISTS "group", "user", "movie", "favorite_movie", "to_review_movie", "like", "comment" CASCADE;
+DROP TABLE IF EXISTS "group", "user", "movie", "favorite_movie", "to_review_movie", "vote", "like", "comment" CASCADE;
 
 DROP DOMAIN  IF EXISTS public.email CASCADE;
 
@@ -57,6 +57,15 @@ CREATE TABLE "to_review_movie" (
   "created_at" TIMESTAMPTZ NOT NULL default(now()),
   "updated_at" TIMESTAMPTZ
 );
+
+CREATE TABLE "vote" (
+  "user_id" INT REFERENCES "user"(id),
+  "movie_id" INT REFERENCES "movie"(id),
+  "group_id" INT REFERENCES "group"(id),
+  "created_at" TIMESTAMPTZ NOT NULL default(now()),
+  "updated_at" TIMESTAMPTZ
+);
+
 
 CREATE TABLE "like" (
   "like_id" INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
@@ -112,21 +121,31 @@ $$
   ) RETURNING *;
 $$ LANGUAGE sql STRICT;
 
-CREATE OR REPLACE FUNCTION add_comment(json) RETURNS "comment" AS
-$$
-   INSERT INTO "comment"(user_id, content)
-    VALUES (
-      ($1 ->> 'user_id'):: INT,
-      ($1 ->> 'content'):: TEXT
-  ) RETURNING *;
-$$ LANGUAGE sql STRICT;
-
 CREATE OR REPLACE FUNCTION add_to_review_movie(json) RETURNS "to_review_movie" AS
 $$
    INSERT INTO "to_review_movie"(movie_id, user_id)
     VALUES (
       ($1 ->> 'movie_id'):: INT,
       ($1 ->> 'user_id'):: INT
+  ) RETURNING *;
+$$ LANGUAGE sql STRICT;
+
+CREATE OR REPLACE FUNCTION add_vote(json) RETURNS "vote" AS
+$$
+   INSERT INTO "vote"(user_id, movie_id, group_id)
+    VALUES (
+      ($1 ->> 'user_id'):: INT,
+      ($1 ->> 'movie_id'):: INT,
+      ($1 ->> 'group_id'):: INT
+  ) RETURNING *;
+$$ LANGUAGE sql STRICT;
+
+CREATE OR REPLACE FUNCTION add_comment(json) RETURNS "comment" AS
+$$
+   INSERT INTO "comment"(user_id, content)
+    VALUES (
+      ($1 ->> 'user_id'):: INT,
+      ($1 ->> 'content'):: TEXT
   ) RETURNING *;
 $$ LANGUAGE sql STRICT;
 

@@ -2,6 +2,7 @@ const debug = require('debug')('app:controller');
 
 const userController = require('./user.js');
 const groupController = require('./group.js');
+const voteController = require('./vote.js');
 
 const movieAPIController = require('./movieAPI');
 
@@ -16,6 +17,7 @@ const mailController = require('./mail.js');
 module.exports = { 
   userController,
   groupController,
+  voteController,
   movieAPIController,
   favoriteMovieController,
   toReviewController,

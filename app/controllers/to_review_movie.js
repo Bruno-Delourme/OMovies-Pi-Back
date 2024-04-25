@@ -36,7 +36,7 @@ const toReviewMovieController = {
 
     } catch (error) {
         debug('Error when inserting into the list to review :', error);
-        errorHandler._500(error, req, res);
+        errorHandler._500('Error when inserting into the list to review', req, res);
     };
   },
 
@@ -54,7 +54,7 @@ const toReviewMovieController = {
 
     } catch (error) {
       debug('Error displaying the list of movies to watch again:', error);
-      errorHandler._500(error, req, res);
+      errorHandler._500('Error displaying the list of movies to watch again', req, res);
     };
   },
 
@@ -72,7 +72,7 @@ const toReviewMovieController = {
 
     } catch (error) {
       debug('Error displaying list of new movies to review:', error);
-      errorHandler._500(error, req, res);
+      errorHandler._500('Error displaying list of new movies to review', req, res);
     };
   },
 
@@ -80,7 +80,6 @@ const toReviewMovieController = {
   async deleteFromToReview(req, res) {
     debug('toReview delete controller called');
 
-    
   try {
     const userId = req.params.id;
     const movieId = req.body.id;
@@ -92,7 +91,7 @@ const toReviewMovieController = {
 
     } catch (error) {
       debug('Error removing movie from list of movies to watch again:', error);
-      errorHandler._500(error, req, res);
+      errorHandler._500('Error removing movie from list of movies to watch again', req, res);
     };
   },
 };

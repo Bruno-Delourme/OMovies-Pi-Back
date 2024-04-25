@@ -6,7 +6,8 @@ const toReviewMovieModel = {
     try {
       // Check if the movie is already in the user's to_review list
       const userQuery = {
-          text: 'SELECT * FROM "to_review_movie" WHERE user_id = $1 AND movie_id = $2',
+          text: `SELECT * FROM "to_review_movie" 
+                  WHERE user_id = $1 AND movie_id = $2`,
           values: [user.id, movie.id],
       };
 
@@ -35,7 +36,9 @@ const toReviewMovieModel = {
   async showToReview(id) {
     try {
       const query = {
-        text: 'SELECT * FROM "movie" WHERE id IN( SELECT movie_id FROM "to_review_movie" WHERE user_id = $1)',
+        text: `SELECT * FROM "movie" WHERE id IN(
+                SELECT movie_id FROM "to_review_movie" 
+                  WHERE user_id = $1)`,
         values: [id]
       };
       const results = await client.query(query);
@@ -50,7 +53,10 @@ const toReviewMovieModel = {
   async showNewToReview(id) {
     try {
       const query = {
-        text: 'SELECT * FROM "movie" WHERE id IN( SELECT movie_id FROM "to_review_movie" WHERE user_id = $1) ORDER BY created_at DESC',
+        text: `SELECT * FROM "movie" WHERE id IN(
+                SELECT movie_id FROM "to_review_movie" 
+                  WHERE user_id = $1) 
+                  ORDER BY created_at DESC`,
         values: [id]
       };
       const results = await client.query(query);
@@ -65,7 +71,8 @@ const toReviewMovieModel = {
   async deleteFromToReview(user, movie) {
     try {
       const query = {
-        text: 'DELETE FROM "to_review_movie" WHERE user_id = $1 AND movie_id = $2',
+        text: `DELETE FROM "to_review_movie" 
+                WHERE user_id = $1 AND movie_id = $2`,
         values: [user.id, movie.id]
       };
 

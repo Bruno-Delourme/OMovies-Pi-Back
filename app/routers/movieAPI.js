@@ -1,29 +1,33 @@
 const debug = require('debug')('app:MovieRouter');
 const express = require('express');
-const { movieAPIController } = require('../controllers');
+
+const cw = require('../controllers/controllerWrapper.js');
 const authMiddleware = require('../middlewares/authentication.js');
+
+const { movieAPIController } = require('../controllers');
+
 
 const router = express.Router();
 
-router.get("/movie/:id", movieAPIController.fetchMovieById);
+router.get("/movie/:id", cw(movieAPIController.fetchMovieById));
 
-router.get("/movies/:genre", movieAPIController.fetchMoviesByGenre);
+router.get("/movies/:genre", cw(movieAPIController.fetchMoviesByGenre));
 
-router.get("/moviesRating/:genre", movieAPIController.fetchMoviesByGenreRating);
+router.get("/moviesRating/:genre", cw(movieAPIController.fetchMoviesByGenreRating));
 
-router.get("/movieByTitle/:title", movieAPIController.fetchMovieByTitle);
+router.get("/movieByTitle/:title", cw(movieAPIController.fetchMovieByTitle));
 
-router.get("/moviesByActor/:actor", movieAPIController.fetchMoviesByActor);
+router.get("/moviesByActor/:actor", cw(movieAPIController.fetchMoviesByActor));
 
-router.get("/newMovies", movieAPIController.fetchNewMovies);
+router.get("/newMovies", cw(movieAPIController.fetchNewMovies));
 
-router.get("/searchBar", movieAPIController.fetchBySearchBar);
+router.get("/searchBar", cw(movieAPIController.fetchBySearchBar));
 
-router.get("/popularMovies", movieAPIController.fetchPopularMovie);
+router.get("/popularMovies", cw(movieAPIController.fetchPopularMovie));
 
-router.get("/recommendationByFavoris/:id",authMiddleware.authMiddleware, movieAPIController.fetchRecommendationWithRandomMovie);
+router.get("/recommendationByFavoris/:id",authMiddleware.authMiddleware, cw(movieAPIController.fetchRecommendationWithRandomMovie));
 
-router.get("/recommendation/:id", movieAPIController.fetchRecommendation);
+router.get("/recommendation/:id", cw(movieAPIController.fetchRecommendation));
 
 debug('API movie router initialized');
 

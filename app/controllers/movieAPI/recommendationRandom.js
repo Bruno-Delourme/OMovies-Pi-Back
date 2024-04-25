@@ -2,7 +2,7 @@ const debug = require('debug')('app:controller');
 require('dotenv').config();
 const errorHandler = require('../../service/error.js');
 
-const fetchProviders = require('./providers.js');
+const recommendationDataMapper = require('../../models/recommendation.js');
 const getRecommendations = require('../movieAPI/getRecommendations.js');
 
 // Allows you to recommend a movie based on the random id of a movie in the favorites list
