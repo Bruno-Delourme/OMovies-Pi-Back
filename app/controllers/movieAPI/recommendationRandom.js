@@ -9,19 +9,14 @@ const getRecommendations = require('../movieAPI/getRecommendations.js');
 async function fetchRecommendationWithRandomMovie(req, res) {
   const userId = req.params.id;
 
-  try {
-    const randomFavoriteMovie = await recommendationDataMapper.getRandomFavoriteMovieId(userId);
-    const recommendation = await getRecommendations(randomFavoriteMovie, 'fr-FR', req.query.page || 1);
+  
+  const randomFavoriteMovie = await recommendationDataMapper.getRandomFavoriteMovieId(userId);
+  const recommendation = await getRecommendations(randomFavoriteMovie, 'fr-FR', req.query.page || 1);
 
-    // Filter adult films
-    const filteredMovies = req.filterAdult ? recommendation.filter(movie => !movie.adult) : recommendation;
+  // Filter adult films
+  const filteredMovies = req.filterAdult ? recommendation.filter(movie => !movie.adult) : recommendation;
     
-    res.json(filteredMovies);
-
-  } catch (error) {
-    debug('Error fetching random favorite movie and calling fetchRecommendation :', error);
-    errorHandler._500(error, req, res);
-  };
+  res.json(filteredMovies);
 };
 
 module.exports = fetchRecommendationWithRandomMovie;

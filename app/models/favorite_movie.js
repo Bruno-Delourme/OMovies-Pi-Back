@@ -1,4 +1,5 @@
 const client = require('../data/client.js');
+const errorHandler = require('../service/error.js');
 
 const favoriteMovieModel = {
 
@@ -27,10 +28,9 @@ const favoriteMovieModel = {
       const results = await client.query(insertQuery);
       return results.rows[0];
 
-  } catch (error) {
-      debug('Error when inserting into favorites list :', error);
-      throw error;
-  }
+    } catch (error) {
+      errorHandler._500(error, null, null);
+    };
   },
 
   async showFavorite(id) {
@@ -45,8 +45,7 @@ const favoriteMovieModel = {
       return results.rows;
       
     } catch (error) {
-      debug('Error retrieving favorites list:', error);
-        throw error;
+      errorHandler._500(error, null, null);
     };
   },
 
@@ -63,9 +62,8 @@ const favoriteMovieModel = {
       return results.rows;
 
     } catch (error) {
-      debug('Error retrieving list of new favorite movies:', error);
-        throw error;
-    }
+      errorHandler._500(error, null, null);
+    };
   },
 
   async deleteFromFavorite(user, movie) {
@@ -80,10 +78,9 @@ const favoriteMovieModel = {
         
       return { message: 'The movie has been removed from the favorites list.' };
       
-  } catch (error) {
-      debug('Error removing movie from favorites list :', error);
-      throw error;
-  };
+    } catch (error) {
+      errorHandler._500(error, null, null);
+    };
   },
 };
 

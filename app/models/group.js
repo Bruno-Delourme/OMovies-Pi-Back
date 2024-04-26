@@ -1,12 +1,15 @@
 const client = require('../data/client.js');
+const errorHandler = require('../service/error.js');
 
 const groupModel = {
 
   async create(group, user) {
+    try {
       const createQuery = {
           text: `SELECT * FROM add_group($1)`,
           values: [JSON.stringify(group)],
       };
+
       const groupResult = await client.query(createQuery);
       const groupId = groupResult.rows[0].id;
 
@@ -16,33 +19,49 @@ const groupModel = {
                   WHERE id = $3`,
           values: [groupId, user.updated_at, user.id],
       };
-      await client.query(updateUserQuery);
 
+      await client.query(updateUserQuery);
       return groupResult.rows[0];
+
+    } catch (error) {
+      errorHandler._500(error, null, null);
+    };
   },
 
   async findGroup(id) {
-    const query = {
+    try {
+      const query = {
       text: `SELECT name, "group".id 
               FROM "group" 
               JOIN "user" ON "user".group_id = "group".id 
               WHERE "user".id = $1`,
       values: [id],
     };
+
     const results = await client.query(query);
     return results.rows[0];
+
+    } catch (error) {
+      errorHandler._500(error, null, null);
+    };
   },
 
   async findGroupUsers(id) {
-    const query = {
-      text: `SELECT pseudo 
-              FROM "user" 
-              JOIN "group" ON "user".group_id = "group".id 
-              WHERE "group".id = $1`,
-      values: [id]
+    try {
+      const query = {
+        text: `SELECT pseudo 
+                FROM "user" 
+                JOIN "group" ON "user".group_id = "group".id 
+                WHERE "group".id = $1`,
+        values: [id]
+      };
+
+      const results = await client.query(query);
+      return results.rows;
+
+    } catch (error) {
+      errorHandler._500(error, null, null);
     };
-    const results = await client.query(query);
-    return results.rows;
   },
 
   async addToGroup(group, user) {
@@ -69,10 +88,9 @@ const groupModel = {
       
       return results.rows[0];
 
-  } catch (error) {
-      console.error('Error adding user to group:', error);
-      return { status: 'error', message: 'Error adding user to group.' };
-  };
+    } catch (error) {
+       errorHandler._500(error, null, null);
+    };
   },
 
   async removeToGroup(user) {
@@ -88,8 +106,7 @@ const groupModel = {
       return results.rows[0];
 
     } catch (error) {
-      console.error('Error removing user from group:', error);
-      return { status: 'error', message: 'Error removing user from group.' };
+      errorHandler._500(error, null, null);
     };
   },
 
@@ -111,11 +128,10 @@ const groupModel = {
 
       return !!results.rowCount;
 
-  } catch (error) {
-      console.error('Error deleting group:', error);
-      return { status: 'error', message: 'Error deleting group.' };
-  }
-},
+    } catch (error) {
+        errorHandler._500(error, null, null);
+    };
+  },
 };
 
 module.exports = groupModel;

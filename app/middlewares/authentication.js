@@ -1,5 +1,7 @@
 const debug = require('debug')('app:middleware');
 require('dotenv').config();
+
+const errorHandler = require('../service/error.js');
 const jwt = require('jsonwebtoken');
 
 const authMiddleware = {
@@ -10,7 +12,7 @@ const authMiddleware = {
     const token = req.headers.authorization.split(' ')[1];
 
     if (!token) {
-        return errorHandler._401(error, req, res);
+        errorHandler._401('Missing token', req, res);
     };
 
     try {
@@ -20,8 +22,7 @@ const authMiddleware = {
         next(); 
         
     } catch (error) {
-        debug('Erreur de vérification du jeton JWT:', error);
-        return errorHandler._401(error, req, res);
+        errorHandler._401('JWT token verification error', req, res);
     };
 },
 };

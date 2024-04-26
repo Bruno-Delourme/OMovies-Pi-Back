@@ -1,4 +1,5 @@
 const client = require('../data/client.js');
+const errorHandler = require('../service/error.js');
 
 const recommendationModel = {
   
@@ -17,14 +18,14 @@ const recommendationModel = {
       // Return random movie ID
       if (randomMovieResult.rows.length > 0) {
         return randomMovieResult.rows[0].movie_id;
+
       } else {
-        throw new Error('No favorite movies found for the user');
-      }
+        errorHandler._404('No favorite movies found for the user', null, null);
+      };
   
     } catch (error) {
-      debug('Error recovering random movie ID:', error);
-      throw error;
-    }
+      errorHandler._500(error, null, null);
+    };
   },
 };
 

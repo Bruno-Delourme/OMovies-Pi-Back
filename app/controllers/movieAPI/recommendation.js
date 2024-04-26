@@ -6,18 +6,13 @@ const getRecommendations = require('../movieAPI/getRecommendations.js');
 
  // Gives movie recommendations based on a movie's ID
  async function fetchRecommendation(req, res) {
+
   const movieId = req.params.id;
   const language = 'fr-FR';
   const page = req.query.page || 1;
 
-  try {
-    const recommendation = await getRecommendations(movieId, language, page);
-    res.json(recommendation);
-
-  } catch (error) {
-    debug('Error fetching recommendations:', error);
-    errorHandler._500(error, req, res);
-  };
+  const recommendation = await getRecommendations(movieId, language, page);
+  res.json(recommendation);
 };
 
 module.exports = fetchRecommendation;

@@ -13,38 +13,32 @@ const userController = {
 
     const { pseudo, email, birthday, password } = req.body;
 
-    try {
-      // Check if user with same pseudo or email already exists
-      const existingUser = await userDataMapper.findByPseudoOrEmail( pseudo, email );
+    // Check if user with same pseudo or email already exists
+    const existingUser = await userDataMapper.findByPseudoOrEmail( pseudo, email );
 
-      if (existingUser) {
-        return errorHandler._400('A user with this nickname or email address already exists.', req, res);
-      };
-
-      // Password encoding
-      const hashedPassword = await bcrypt.hash(password, parseInt(process.env.PASSWORD_SALT));
-      // Insert a new user into the database
-      const createdUser = await userDataMapper.insert({ pseudo, email, birthday, password: hashedPassword });
-      res.json({ status: 'success', data: createdUser });
-
-    } catch (error) {
-      debug('Error creating user :', error);
-      errorHandler._500("The password must be at least 8 characters long, an uppercase letter, a lowercase letter, a number and a special character", req, res);
+    if (existingUser) {
+      return errorHandler._400('A user with this nickname or email address already exists.', req, res);
     };
+
+    // Password encoding
+    const hashedPassword = await bcrypt.hash(password, parseInt(process.env.PASSWORD_SALT));
+
+    // Insert a new user into the database
+    const createdUser = await userDataMapper.insert({ pseudo, email, birthday, password: hashedPassword });
+
+    res.json({ status: 'success', data: createdUser });
   },
 
   // Allows you to connect
   async login(req, res) {
     debug('user login controller called');
 
-    try {
-      // Attempting to find the user based on the provided credentials
+    // Attempting to find the user based on the provided credentials
     const result = await userDataMapper.findUser(req.body);
 
     // If no user is found, return an unauthorized response
     if (!result) {
-      debug('Aucun utilisateur trouvé avec le pseudo spécifié');
-      return errorHandler._401(error, req, res);
+      return errorHandler._401('No users found with specified nickname', req, res);
     };
 
     // Comparing the provided password with the hashed password stored in the database
@@ -62,12 +56,6 @@ const userController = {
       // Sending a success response with user data and the token
       res.json({ status: 'success', data: { user: result, token }});
     };
-
-    } catch (error) {
-      // If the passwords don't match, return an internal server error response
-      debug('Error during login:', error);
-      errorHandler._500(error, req, res);
-  };
   },
 
   // Allows you to display a user
@@ -81,13 +69,12 @@ const userController = {
 
     // If no user is found, return an error
     if (!result) {
-      debug('No users found with specified nickname');
-      return errorHandler._401(error, req, res);
+      return errorHandler._401('No users found with specified nickname', req, res);
 
-  } else {
-     // Sending a success response with user data and the token
-    res.json({ status: 'success', data: result});
-  };
+    } else {
+      // Sending a success response with user data and the token
+      res.json({ status: 'success', data: result});
+    };
   },
 
   // Allows you to delete a user
@@ -118,35 +105,29 @@ const userController = {
     let hashedPassword;
     const updated_at = new Date(); // Getting the current date for the updated_at field
 
-    try {
-        // Checking if each field is defined and updating the userData object accordingly
-        if (pseudo !== undefined) {
-            userData.pseudo = pseudo;
-        }
-        if (email !== undefined) {
-            userData.email = email;
-        }
-        if (birthday !== undefined) {
-            userData.birthday = birthday;
-        }
-        if (password !== undefined) {
-            // Hashing the new password using bcrypt with the provided salt value
-            hashedPassword = await bcrypt.hash(password, parseInt(process.env.PASSWORD_SALT));
-            userData.password = hashedPassword;
-        }
+    // Checking if each field is defined and updating the userData object accordingly
+    if (pseudo !== undefined) {
+      userData.pseudo = pseudo;
+    };
+    if (email !== undefined) {
+      userData.email = email;
+    };
+    if (birthday !== undefined) {
+      userData.birthday = birthday;
+    };
+    if (password !== undefined) {
+      // Hashing the new password using bcrypt with the provided salt value
+      hashedPassword = await bcrypt.hash(password, parseInt(process.env.PASSWORD_SALT));
+      userData.password = hashedPassword;
+    };
         
-        userData.updated_at = updated_at; // Adding the updated_at field to userData
+    userData.updated_at = updated_at; // Adding the updated_at field to userData
         
-        // Updating the user data in the database using the userDataMapper
-        const updatedUser = await userDataMapper.update({ id, pseudo, email, birthday, password: hashedPassword, updated_at });
-        const token = jwt.sign({ user: updatedUser }, process.env.JWT_SECRET);
+    // Updating the user data in the database using the userDataMapper
+    const updatedUser = await userDataMapper.update({ id, pseudo, email, birthday, password: hashedPassword, updated_at });
+    const token = jwt.sign({ user: updatedUser }, process.env.JWT_SECRET);
         
-        res.json({ status: 'success', data: updatedUser, token });
-
-    } catch (error) {
-        debug('Error updating user:', error);
-        errorHandler._500(error, req, res);
-    }
+    res.json({ status: 'success', data: updatedUser, token });
   },
 };
 

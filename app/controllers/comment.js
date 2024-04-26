@@ -12,14 +12,8 @@ const commentController = {
     const userId = req.params.id;
     const { comment } = req.body;
 
-    try {
-      const createComment = await commentDataMapper.insert({ user_id: userId, content: comment });
-      res.json({ status: 'success', data: createComment });
-
-    } catch (error) {
-      debug('Error creating comment :', error);
-      errorHandler._500(error, req, res);
-    };
+    const createComment = await commentDataMapper.insert({ user_id: userId, content: comment });
+    res.json({ status: 'success', data: createComment });
   },
 
   // Allows you to display comments
@@ -46,29 +40,23 @@ const commentController = {
 
     const updated_at = new Date();
 
-    try {
-        // Data verification
-        if (content === undefined) {
-            return errorHandler._400('Incomplete data', req, res);
-        }
+    // Data verification
+    if (content === undefined) {
+      return errorHandler._400('Incomplete data', req, res);
+    }
 
-        // Construction of the object containing the data to update
-        const commentData = {
-            id: commentId,
-            content: content,
-            user_id: userId,
-            updated_at: updated_at
+    // Construction of the object containing the data to update
+    const commentData = {
+        id: commentId,
+        content: content,
+        user_id: userId,
+        updated_at: updated_at
         };
 
-        // Calling the comment update function
-        const updatedComment = await commentDataMapper.update(commentData);
+    // Calling the comment update function
+    const updatedComment = await commentDataMapper.update(commentData);
         
-        res.status(200).json({ status: 'success', message: 'Comment updated successfully' });
-
-    } catch (error) {
-        debug('Error updating comment:', error);
-        return errorHandler._500('Error updating comment', req, res);
-    };
+    res.status(200).json({ status: 'success', message: 'Comment updated successfully' });
   },
 
   // Allows you to delete a comment

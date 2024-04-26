@@ -1,4 +1,5 @@
 const client = require('../data/client.js');
+const errorHandler = require('../service/error.js');
 
 const voteModel = {
 
@@ -8,6 +9,7 @@ const voteModel = {
         text: `SELECT user_id FROM "vote" WHERE user_id = $1`,
         values: [vote.user_id],
       };
+
       const checkResult = await client.query(checkQuery);
 
       if (checkResult.rows.length > 0) {
@@ -23,7 +25,7 @@ const voteModel = {
       return results.rows[0];
 
     } catch (error) {
-      throw error;
+        errorHandler._500(error, null, null);
     };
   },
 
@@ -35,11 +37,12 @@ const voteModel = {
                 WHERE group_id = $1)`,
       values: [id],
     };
+
     const results = await client.query(query);
     return results.rows; 
 
     } catch (error){
-      throw error;
+        errorHandler._500(error, null, null);
     };
   },
 
@@ -51,12 +54,12 @@ const voteModel = {
               WHERE user_id = $1`,
       values: [user.id, movie.id, movie.updated_at]
     };
+    
     const results = await client.query(query);
-
     return results.rows[0];
 
     } catch (error) {
-      throw error;
+      errorHandler._500(error, null, null);
     };
   },
 
@@ -67,12 +70,12 @@ const voteModel = {
               WHERE user_id = $1`,
       values: [id]
     };
-    await client.query(query);
 
+    await client.query(query);
     return { message: 'The vote was deleted'}
 
     } catch (error) {
-      throw error;
+      errorHandler._500(error, null, null);
     };
   },
 
@@ -87,15 +90,16 @@ const voteModel = {
                LIMIT 1`,
         values: [id]
       };
+
       const randomMovieResult = await client.query(randomMovieQuery);
   
       // Return random movie details
       return randomMovieResult.rows[0];
   
     } catch (error) {
-      throw error;
-    }
-  }
+      errorHandler._500(error, null, null);
+    };
+  },
 };
 
 module.exports = voteModel;

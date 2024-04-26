@@ -1,4 +1,5 @@
 const client = require('../data/client.js');
+const errorHandler = require('../service/error.js');
 
 const toReviewMovieModel = {
 
@@ -27,10 +28,9 @@ const toReviewMovieModel = {
       const results = await client.query(insertQuery);
       return results.rows[0];
 
-  } catch (error) {
-      debug('Error when inserting into the list of films to watch again :', error);
-      throw error;
-  }
+    } catch (error) {
+        errorHandler._500(error, null, null);
+    };
   },
 
   async showToReview(id) {
@@ -45,8 +45,7 @@ const toReviewMovieModel = {
       return results.rows;
 
     } catch (error) {
-      debug('Error retrieving favorites list:', error);
-        throw error;
+        errorHandler._500(error, null, null);
     };
   },
 
@@ -59,12 +58,12 @@ const toReviewMovieModel = {
                   ORDER BY created_at DESC`,
         values: [id]
       };
+
       const results = await client.query(query);
       return results.rows;
 
     } catch (error) {
-      debug('Error retrieving list of new movies to rewatch:', error);
-        throw error;
+        errorHandler._500(error, null, null);
     };
   },
 
@@ -77,13 +76,11 @@ const toReviewMovieModel = {
       };
 
       await client.query(query);
-        
       return { message: 'The movie has been removed from the list of films to watch again.' };
       
-  } catch (error) {
-      debug('Error removing movie from list of movies to watch again :', error);
-      throw error;
-  };
+    } catch (error) {
+      errorHandler._500(error, null, null);
+    };
   },
 };
 

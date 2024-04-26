@@ -1,4 +1,5 @@
 const client = require('../data/client.js');
+const errorHandler = require('../service/error.js');
 
 const movieDBModel = {
 
@@ -23,8 +24,7 @@ const movieDBModel = {
       return results.rows[0];      
 
     } catch (error) {
-      debug('Error inserting film:', error);
-        throw error;
+      errorHandler._500(error, null, null);
     };
   },
 
@@ -39,8 +39,7 @@ const movieDBModel = {
     return !!results.rowCount;
 
     } catch (error) {
-      debug('Error deleting movie :', error);
-        throw error;
+      errorHandler._500(error, null, null);
     };
   },
 

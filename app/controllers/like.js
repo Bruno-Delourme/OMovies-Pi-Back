@@ -11,22 +11,16 @@ const likeController = {
 
     const userId = req.params.id;
 
-    try {
-      // Check if the user has already voted
-      const existingLike = await likeDataMapper.findLike(userId)
+    // Check if the user has already voted
+    const existingLike = await likeDataMapper.findLike(userId)
 
-      if (existingLike) {
-        return errorHandler._400('You are already vote', req, res);
-      };
-
-      // Insert a new like into the database
-      const like = await likeDataMapper.insert(userId);
-      res.json({ status: 'success', data: like });
-
-    } catch (error) {
-      debug('Error when liking the site :', error);
-      errorHandler._500(error, req, res);
+    if (existingLike) {
+      return errorHandler._400('You are already vote', req, res);
     };
+
+    // Insert a new like into the database
+    const like = await likeDataMapper.insert(userId);
+    res.json({ status: 'success', data: like });
   },
 
   // Allows you to display the total likes

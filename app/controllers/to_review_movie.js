@@ -24,63 +24,44 @@ const toReviewMovieController = {
 
     const picture = poster_path || 'No poster';
 
-    try {
-        
-        // Insert the movie into the database
-        const insertIntoMovie = await movieDBDataMapper.insertIntoMovie({ id: movieId, title, poster_path: picture, overview });
+    // Insert the movie into the database
+    const insertIntoMovie = await movieDBDataMapper.insertIntoMovie({ id: movieId, title, poster_path: picture, overview });
 
-        // Insert the movie into the user's list of movies to watch again
-        const insertIntoToReview = await toReviewMovieDataMapper.insertIntoToReview({ id: userId }, { id: movieId });
+    // Insert the movie into the user's list of movies to watch again
+    const insertIntoToReview = await toReviewMovieDataMapper.insertIntoToReview({ id: userId }, { id: movieId });
         
-        res.json({ status: 'success', data: { insertIntoMovie, insertIntoToReview } });
-
-    } catch (error) {
-        debug('Error when inserting into the list to review :', error);
-        errorHandler._500('Error when inserting into the list to review', req, res);
-    };
+    res.json({ status: 'success', data: { insertIntoMovie, insertIntoToReview } });
   },
 
   // Allows you to display the list of films to watch again
   async showToReview(req, res) {
     debug('ToReview show controller called');
 
-    try {
-      const id = req.params.id
+    const id = req.params.id
 
-      // Shows the user's list of favorites
-      const toReview = await toReviewMovieDataMapper.showToReview(id);
+    // Shows the user's list of favorites
+    const toReview = await toReviewMovieDataMapper.showToReview(id);
 
-      res.json({ status: 'success', data: toReview });
-
-    } catch (error) {
-      debug('Error displaying the list of movies to watch again:', error);
-      errorHandler._500('Error displaying the list of movies to watch again', req, res);
-    };
+    res.json({ status: 'success', data: toReview });
   },
 
   // Allows you to display the list of latest movies to watch again
   async showNewToReview(req, res) {
     debug('NewToReview show controller called');
 
-    try {
-      const id = req.params.id;
+    const id = req.params.id;
 
-      // Shows the user's list of to review
-      const toReview = await toReviewMovieDataMapper.showNewToReview(id);
+    // Shows the user's list of to review
+    const toReview = await toReviewMovieDataMapper.showNewToReview(id);
 
-      res.json({ status: 'success', data: toReview });
-
-    } catch (error) {
-      debug('Error displaying list of new movies to review:', error);
-      errorHandler._500('Error displaying list of new movies to review', req, res);
-    };
+    res.json({ status: 'success', data: toReview });
   },
 
   // Allows you to delete a film from the list of films to watch again
   async deleteFromToReview(req, res) {
     debug('toReview delete controller called');
 
-  try {
+  
     const userId = req.params.id;
     const movieId = req.body.id;
 
@@ -88,11 +69,6 @@ const toReviewMovieController = {
     const deleteFromToReview = await toReviewMovieDataMapper.deleteFromToReview({id: userId}, {id: movieId});
 
     res.json({ status: 'success' });
-
-    } catch (error) {
-      debug('Error removing movie from list of movies to watch again:', error);
-      errorHandler._500('Error removing movie from list of movies to watch again', req, res);
-    };
   },
 };
 
