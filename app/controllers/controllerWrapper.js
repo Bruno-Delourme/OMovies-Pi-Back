@@ -1,4 +1,3 @@
-const debug = require('debug')('app:controllerWrapper');
 const errorHandler = require('../service/error.js');
 
 function controllerWrapper(controller) {
@@ -8,8 +7,7 @@ function controllerWrapper(controller) {
       await controller(req, res, next);
 
     } catch(error) {
-      debug('An error has occurred in the controller:', error);
-      errorHandler._500(error, req, res);
+      errorHandler._500('An error has occurred in the controller', req, res);
     }
   };
 };

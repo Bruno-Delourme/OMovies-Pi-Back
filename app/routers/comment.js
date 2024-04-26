@@ -7,7 +7,7 @@ const authMiddleware = require('../middlewares/authentication.js');
 
 const router = express.Router();
 
-router.post("/createComment/:id",authMiddleware.authMiddleware, cw(commentController.create));
+router.post("/createComment/:id", authMiddleware.authMiddleware, cw(commentController.create));
 
 router.get("/showComment", cw(commentController.show));
 
