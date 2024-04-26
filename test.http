@@ -200,17 +200,17 @@
 
 
 
-# POST {{endpoint}}/api/createVote/3
-# content-type: application/json
-# Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUZXN0IiwiZW1haWwiOiJ0ZXN0QHRlc3QuZnIiLCJiaXJ0aGRheSI6IjE5OTAtMDUtMTFUMjI6MDA6MDAuMDAwWiIsImdyb3VwX2lkIjpudWxsLCJjcmVhdGVkX2F0IjoiMjAyNC0wNC0yNVQxNToxNjo1MS4xNjlaIiwidXBkYXRlZF9hdCI6bnVsbH0sImlhdCI6MTcxNDA1ODIzNn0.1B6kurkpL1I-t21A4iQNoLRdpXxkeWYh9HTC4dvEdA4
+POST {{endpoint}}/api/createVote/3
+content-type: application/json
+Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyIjp7ImlkIjoxLCJwc2V1ZG8iOiJUZXN0IiwiZW1haWwiOiJ0ZXN0QHRlc3QuZnIiLCJiaXJ0aGRheSI6IjE5OTAtMDUtMTFUMjI6MDA6MDAuMDAwWiIsImdyb3VwX2lkIjpudWxsLCJjcmVhdGVkX2F0IjoiMjAyNC0wNC0yNVQxNToxNjo1MS4xNjlaIiwidXBkYXRlZF9hdCI6bnVsbH0sImlhdCI6MTcxNDA1ODIzNn0.1B6kurkpL1I-t21A4iQNoLRdpXxkeWYh9HTC4dvEdA4
 
-# {
-#   "groupId": 2,
-#   "id": 41,
-#   "title": "truc",
-#   "poster_path": "truc",
-#   "overview": "truc"
-# }
+{
+  "groupId": 2,
+  "id": 41,
+  "title": "truc",
+  "poster_path": "truc",
+  "overview": "truc"
+}
 
 
 

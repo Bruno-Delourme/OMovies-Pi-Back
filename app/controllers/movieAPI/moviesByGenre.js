@@ -25,7 +25,7 @@ async function fetchMoviesByGenre(req, res) {
           console.log(`Data retrieved from cache: ${genre}`);
 
           return res.json({
-              movies: cachedMovies,
+              movie: cachedMovies,
               currentPage: page,
               totalPages: cachedMovies.total_pages
           });
@@ -80,14 +80,14 @@ async function fetchMoviesByGenre(req, res) {
 
       // Cache the movies data for future use
       cache.set(cacheKey, {
-        movies: filteredMovies,
+        movie: filteredMovies,
         currentPage: page,
         totalPages: moviesData.total_pages
     });
 
       // Send the movies data in the response along with current page and total pages
       res.json({
-          movies: filteredMovies,
+          movie: filteredMovies,
           currentPage: page,
           totalPages: moviesData.total_pages
       });

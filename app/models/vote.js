@@ -4,12 +4,23 @@ const voteModel = {
 
   async insert(vote) {
     try {
-      const query = {
-      text: `SELECT * FROM add_vote($1)`,
-      values: [JSON.stringify(vote)],
-    };
-    const results = await client.query(query);
-    return results.rows[0];
+      const checkQuery = {
+        text: `SELECT user_id FROM "vote" WHERE user_id = $1`,
+        values: [vote.user_id],
+      };
+      const checkResult = await client.query(checkQuery);
+
+      if (checkResult.rows.length > 0) {
+        return { message: 'The user has already voted' }
+      };
+
+      const insertQuery = {
+        text: `SELECT * FROM add_vote($1)`,
+        values: [JSON.stringify(vote)],
+      };
+
+      const results = await client.query(insertQuery);
+      return results.rows[0];
 
     } catch (error) {
       throw error;
