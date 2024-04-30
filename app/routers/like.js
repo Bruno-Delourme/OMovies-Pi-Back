@@ -11,7 +11,7 @@ router.post("/like/:id",authMiddleware.authMiddleware, cw(likeController.create)
 
 router.get("/showTotalLikes", cw(likeController.showTotalLikes));
 
-router.get("/dislike/:id", authMiddleware.authMiddleware, cw(likeController.delete));
+router.delete("/dislike/:id", authMiddleware.authMiddleware, cw(likeController.delete));
 
 debug('API like router initialized');
 

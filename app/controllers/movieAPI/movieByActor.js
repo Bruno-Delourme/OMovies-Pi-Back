@@ -49,7 +49,7 @@ async function fetchMoviesByActor(req, res) {
             const credits = await response.json();
 
             // Calculating the start and end index for pagination
-            const startIndex = (page - 1) * pageSize;
+            const startIndex = pageSize;
             const endIndex = startIndex + pageSize;
 
             // Paginating the credits data
@@ -87,7 +87,7 @@ async function fetchMoviesByActor(req, res) {
         currentPage: page,
         totalPages: actorsData.total_pages
     });
-
+console.log(filteredMovies.length);
     // Send the combined movies data in the response
     res.json({
         movies: filteredMovies,
