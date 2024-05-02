@@ -18,6 +18,9 @@ router.get("/showVote/:id", cw(voteController.showVote));
 // id du group en paramètre
 router.get("/movieSelection/:id", cw(voteController.movieSelection));
 
+// id du group en paramètre
+router.get("/showMovieSelection/:id", cw(voteController.showMovieSelection));
+
 // id du user en paramètre
 // Dois recevoir l'id, title, poster_path, overview du nouveau film pour lequel le user vote et le groupId
 router.patch("/changingVote/:id", cw(voteController.updateVote));

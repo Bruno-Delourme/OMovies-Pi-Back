@@ -30,7 +30,7 @@ async function fetchMoviesByGenreRating(req, res) {
 
     // If movies data is not found in the cache, fetch genre data from the TMDB API
     const genreResponse = await fetch(`${process.env.API_TMDB_BASE_URL}/genre/movie/list?api_key=${process.env.API_TMDB_KEY}&language=${language}`);
-
+    
     // If there's an issue with the network or the response is not valid, throw an error
     if (!genreResponse.ok) {
         errorHandler._500('Network error or invalid response while retrieving genres', req, res);
@@ -38,7 +38,7 @@ async function fetchMoviesByGenreRating(req, res) {
 
     // Parse the genre response into JSON format
     const genreData = await genreResponse.json();
-
+    
     // Find the genre corresponding to the provided genre name
     const selectedGenre = genreData.genres.find(g => g.name.toLowerCase() === genre.toLowerCase());
 
@@ -46,7 +46,7 @@ async function fetchMoviesByGenreRating(req, res) {
     if (!selectedGenre) {
         errorHandler._500('Genre not found', req, res);
     };
-
+    
     // Fetch movies data for the specified genre from the TMDB API
     const response = await fetch(`${process.env.API_TMDB_BASE_URL}/discover/movie?api_key=${process.env.API_TMDB_KEY}&with_genres=${selectedGenre.id}&language=${language}&page=${page}&sort_by=vote_average.desc`);
     
@@ -72,16 +72,16 @@ async function fetchMoviesByGenreRating(req, res) {
         // Fetch providers for the movie
         const providers = await fetchProviders(movie.id);
         movie.providers = providers;
-
         return movie;
     });
-
+    
+    
     // Wait for all movies with details to be fetched
     const moviesWithDetails = await Promise.all(moviesWithDetailsPromises);
 
     // Filter adult films
     const filteredMovies = req.filterAdult ? moviesWithDetails.filter(movie => !movie.adult) : moviesWithDetails;
-
+    
     // Cache the movies data for future use
     cache.set(cacheKey, filteredMovies);
 

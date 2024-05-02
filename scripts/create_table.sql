@@ -10,16 +10,26 @@ DROP FUNCTION IF EXISTS add_comment(json) CASCADE;
 DROP FUNCTION IF EXISTS update_user(json) CASCADE;
 DROP FUNCTION IF EXISTS update_comment(json) CASCADE;
 
-DROP TABLE IF EXISTS "group", "user", "movie", "favorite_movie", "to_review_movie", "vote", "like", "comment" CASCADE;
+DROP TABLE IF EXISTS "movie", "group", "user", "favorite_movie", "to_review_movie", "vote", "like", "comment" CASCADE;
 
 DROP DOMAIN  IF EXISTS public.email CASCADE;
 
 CREATE DOMAIN email AS TEXT 
 CHECK(VALUE ~ '^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$');
 
+CREATE TABLE "movie" (
+  "id" INT NOT NULL PRIMARY KEY,
+  "title" TEXT,
+  "poster_path" TEXT,
+  "overview" TEXT,
+  "created_at" TIMESTAMPTZ NOT NULL default(now()),
+  "updated_at" TIMESTAMPTZ
+);
+
 CREATE TABLE "group" (
   "id" INT GENERATED ALWAYS AS IDENTITY PRIMARY KEY,
   "name" TEXT NOT NULL,
+  "selection_id" INT REFERENCES "movie"(id),
   "created_at" TIMESTAMPTZ NOT NULL default(now()),
   "updated_at" TIMESTAMPTZ
 );
@@ -31,15 +41,6 @@ CREATE TABLE "user" (
   "birthday" DATE NOT NULL,
   "password" TEXT NOT NULL,
   "group_id" INT REFERENCES "group"(id),
-  "created_at" TIMESTAMPTZ NOT NULL default(now()),
-  "updated_at" TIMESTAMPTZ
-);
-
-CREATE TABLE "movie" (
-  "id" INT NOT NULL PRIMARY KEY,
-  "title" TEXT,
-  "poster_path" TEXT,
-  "overview" TEXT,
   "created_at" TIMESTAMPTZ NOT NULL default(now()),
   "updated_at" TIMESTAMPTZ
 );

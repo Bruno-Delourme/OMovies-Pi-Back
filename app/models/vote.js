@@ -79,8 +79,20 @@ const voteModel = {
     };
   },
 
-  async movieSelection(id) {
+  async movieSelection(group) {
     try {
+      const checkQuery = {
+        text: `SELECT selection_id FROM "group"
+                WHERE id = $1 AND selection_id IS NOT NULL`,
+        values: [group.id]
+      };
+
+      const checkResult = await client.query(checkQuery);
+
+      if (checkResult.rows.length > 0) {
+        return { message: 'The selection of the film has already been made' };
+      };
+
       // Select random movie ID and details from vote list
       const randomMovieQuery = {
         text: `SELECT * FROM "movie" 
@@ -88,14 +100,42 @@ const voteModel = {
                WHERE "vote".group_id = $1
                ORDER BY RANDOM()
                LIMIT 1`,
-        values: [id]
+        values: [group.id]
       };
 
       const randomMovieResult = await client.query(randomMovieQuery);
+      const movieId = randomMovieResult.rows[0].id;
+
+      const insertQuery = {
+        text: `UPDATE "group"
+                SET selection_id = $2, updated_at = $3
+                WHERE id = $1`,
+        values: [group.id, movieId, group.updated_at]
+      };
+
+      const insertResult = await client.query(insertQuery);
   
       // Return random movie details
       return randomMovieResult.rows[0];
   
+    } catch (error) {
+      errorHandler._500(error, null, null);
+    };
+  },
+
+  async showMovieSelection(group) {
+    try {
+      const query = {
+        text: `SELECT * FROM "movie" WHERE id IN(
+                SELECT selection_id FROM "group"
+                WHERE id = $1)`,
+        values: [group.id]
+      };
+
+      const results = await client.query(query);
+
+      return results.rows;
+
     } catch (error) {
       errorHandler._500(error, null, null);
     };

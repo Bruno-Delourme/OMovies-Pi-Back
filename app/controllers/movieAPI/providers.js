@@ -3,23 +3,24 @@ require('dotenv').config();
 const errorHandler = require('../../service/error.js');
 
 async function fetchProviders(movieId) {
-  const providersResponse = await fetch(`${process.env.API_TMDB_BASE_URL}movie/${movieId}/watch/providers?api_key=${process.env.API_TMDB_KEY}&region=FR`);
+    try {
+        const providersResponse = await fetch(`${process.env.API_TMDB_BASE_URL}movie/${movieId}/watch/providers?api_key=${process.env.API_TMDB_KEY}&region=FR`);
   
-  if (!providersResponse.ok) {
-      throw new Error('Erreur réseau ou réponse invalide lors de la récupération des plateformes de visionnage');
-  }
+        if (!providersResponse.ok) {
+            errorHandler._500('Erreur réseau ou réponse invalide lors de la récupération des plateformes de visionnage', req, res);
+        };
 
-  const providersData = await providersResponse.json();
+        const providersData = await providersResponse.json();
   
-  const movieProviders = [];
+        const movieProviders = [];
   
-  // Check if information is available for France
-  if (providersData.results.FR) {
-      const franceProviders = providersData.results.FR;
+        // Check if information is available for France
+        if (providersData.results.FR) {
+            const franceProviders = providersData.results.FR;
 
-      // Browse the keys of the franceProviders object
-      for (const offerType in franceProviders) {
-          if (Object.hasOwnProperty.call(franceProviders, offerType)) {
+            // Browse the keys of the franceProviders object
+            for (const offerType in franceProviders) {
+            if (Object.hasOwnProperty.call(franceProviders, offerType)) {
               const offers = franceProviders[offerType];
 
               // Check if the offer is an array
@@ -40,7 +41,12 @@ async function fetchProviders(movieId) {
       };
   };
 
-  return movieProviders;
+    return movieProviders;
+
+    } catch {
+        return movieProviders = [];
+    };
+  
 };
 
 module.exports = fetchProviders;

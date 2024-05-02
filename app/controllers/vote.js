@@ -82,9 +82,21 @@ const voteController = {
   async movieSelection(req, res) {
     debug('vote movieSelection controller called');
 
-    const id = req.params.id;
+    const groupId = req.params.id;
 
-    const selection = await voteDataMapper.movieSelection(id);
+    const updated_at = new Date(); // Getting the current date for the updated_at field
+
+    const selection = await voteDataMapper.movieSelection({ id: groupId, updated_at });
+
+    res.json({ status: 'success', data: selection });
+  },
+
+  async showMovieSelection(req, res) {
+    debug('show movieSelection controller called');
+
+    const groupId = req.params.id;
+
+    const selection = await voteDataMapper.showMovieSelection({ id: groupId });
 
     res.json({ status: 'success', data: selection });
   },

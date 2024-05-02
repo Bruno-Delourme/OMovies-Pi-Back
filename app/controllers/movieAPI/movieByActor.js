@@ -87,7 +87,7 @@ async function fetchMoviesByActor(req, res) {
         currentPage: page,
         totalPages: actorsData.total_pages
     });
-console.log(filteredMovies.length);
+
     // Send the combined movies data in the response
     res.json({
         movies: filteredMovies,

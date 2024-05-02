@@ -12,7 +12,7 @@ const movieDBModel = {
       const checkResult = await client.query(checkQuery);
 
       if (checkResult.rows.length > 0) {
-        return { message: 'The movie is already recorded.' }
+        return { message: 'The movie is already recorded.' };
       };
 
       const insertQuery = {

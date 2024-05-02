@@ -12,7 +12,7 @@ const router = express.Router();
 // Dois recevoir aussi le name du groupe
 router.post("/createGroup/:id", cw(groupController.create));
 
-// Affiche le groupe d'une personne. id du user
+// Affiche le groupe name d'un user. id du user
 router.get("/showGroup/:id", cw(groupController.show));
 
 // Dois recevoir le pseudo du user à ajouter au groupe et le groupId
