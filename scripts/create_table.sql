@@ -1,3 +1,4 @@
+-- SQLBook: Code
 BEGIN;
 
 DROP FUNCTION IF EXISTS add_user(json) CASCADE;

@@ -1,3 +1,4 @@
+-- SQLBook: Code
 INSERT INTO "user"
 ("pseudo", "email", "date_of_birth", "hashed_password")
 VALUES

@@ -1,12 +1,16 @@
-const debug = require('debug')('app:db')
-const { Pool } = require('pg');
+require("dotenv").config();
+const { Pool } = require("pg");
 
-const pool = new Pool();
+const conf =
+  process.env.NODE_ENV === "prod"
+    ? {
+        connectionString: process.env.PGHOST,
+        ssl: {
+          rejectUnauthorized: false,
+        },
+      }
+    : {
+        connectionString: process.env.PGHOST,
+      };
 
-module.exports = {
-  originalClient: pool,
-  async query(...params) {
-    debug(...params);
-    return pool.query(...params);
-  },
-};
+module.exports = new Pool(conf);

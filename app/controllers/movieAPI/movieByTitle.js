@@ -1,5 +1,6 @@
 const debug = require('debug')('app:controller');
-require('dotenv').config();
+const { API_TMDB_BASE_URL, API_TMDB_KEY } = require("../../config/config.js");
+
 const errorHandler = require('../../service/error.js');
 
 const fetchProviders = require('./providers.js');
@@ -30,7 +31,7 @@ async function fetchMovieByTitle(req, res) {
     };
 
     // If movies data is not found in the cache, fetch movie data from the TMDB API
-    const response = await fetch(`${process.env.API_TMDB_BASE_URL}search/movie?api_key=${process.env.API_TMDB_KEY}&query=${encodeURIComponent(movieTitle)}&language=${language}&page=${page}`);
+    const response = await fetch(`${API_TMDB_BASE_URL}search/movie?api_key=${API_TMDB_KEY}&query=${encodeURIComponent(movieTitle)}&language=${language}&page=${page}`);
       
     // If there's an issue with the network or the response is not valid, throw an error
     if (!response.ok) {

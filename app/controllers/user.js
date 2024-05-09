@@ -1,45 +1,61 @@
-const debug = require('debug')('app:controller');
-const jwt = require('jsonwebtoken');
-const bcrypt = require('bcrypt');
-const errorHandler = require('../service/error.js');
+const debug = require("debug")("app:controller");
+const jwt = require("jsonwebtoken");
+const bcrypt = require("bcrypt");
+const errorHandler = require("../service/error.js");
+const { PASSWORD_SALT, JWT_SECRET } = require("../config/config.js");
 
-const userDataMapper = require('../models/user.js');
+const userDataMapper = require("../models/user.js");
 
 const userController = {
-
   // Allows you to create a user
   async create(req, res) {
-    debug('user create controller called');
+    debug("user create controller called");
 
     const { pseudo, email, birthday, password } = req.body;
 
     // Check if user with same pseudo or email already exists
-    const existingUser = await userDataMapper.findByPseudoOrEmail( pseudo, email );
+    const existingUser = await userDataMapper.findByPseudoOrEmail(
+      pseudo,
+      email
+    );
 
     if (existingUser) {
-      return errorHandler._400('A user with this nickname or email address already exists.', req, res);
-    };
+      return errorHandler._400(
+        "A user with this nickname or email address already exists.",
+        req,
+        res
+      );
+    }
 
     // Password encoding
-    const hashedPassword = await bcrypt.hash(password, parseInt(process.env.PASSWORD_SALT));
+    const hashedPassword = await bcrypt.hash(password, parseInt(PASSWORD_SALT));
 
     // Insert a new user into the database
-    const createdUser = await userDataMapper.insert({ pseudo, email, birthday, password: hashedPassword });
+    const createdUser = await userDataMapper.insert({
+      pseudo,
+      email,
+      birthday,
+      password: hashedPassword,
+    });
 
-    res.json({ status: 'success', data: createdUser });
+    res.json({ status: "success", data: createdUser });
   },
 
   // Allows you to connect
   async login(req, res) {
-    debug('user login controller called');
+    debug("user login controller called");
 
     // Attempting to find the user based on the provided credentials
     const result = await userDataMapper.findUser(req.body);
 
     // If no user is found, return an unauthorized response
     if (!result) {
-      return errorHandler._401('No users found with specified nickname', req, res);
-    };
+      return errorHandler._401(
+        "No users found with specified nickname",
+        req,
+        res
+      );
+    }
 
     // Comparing the provided password with the hashed password stored in the database
     const isEqual = await bcrypt.compare(req.body.password, result.password);
@@ -51,16 +67,16 @@ const userController = {
       delete result.password;
 
       // Generating a JWT token with user data and the secret key
-      const token = jwt.sign({ user: result }, process.env.JWT_SECRET);
+      const token = jwt.sign({ user: result }, JWT_SECRET);
 
       // Sending a success response with user data and the token
-      res.json({ status: 'success', data: { user: result, token }});
-    };
+      res.json({ status: "success", data: { user: result, token } });
+    }
   },
 
   // Allows you to display a user
   async show(req, res) {
-    debug('user show controller called');
+    debug("user show controller called");
 
     const { pseudo } = req.body;
 
@@ -69,37 +85,39 @@ const userController = {
 
     // If no user is found, return an error
     if (!result) {
-      return errorHandler._401('No users found with specified nickname', req, res);
-
+      return errorHandler._401(
+        "No users found with specified nickname",
+        req,
+        res
+      );
     } else {
       // Sending a success response with user data and the token
-      res.json({ status: 'success', data: result});
-    };
+      res.json({ status: "success", data: result });
+    }
   },
 
   // Allows you to delete a user
   async delete(req, res) {
-    debug('user delete controller called');
+    debug("user delete controller called");
 
     const { id } = req.params;
-    
+
     // Delete a user from the database
     const isRemoved = await userDataMapper.delete(id);
-    
-    if (isRemoved) {
-      res.json({ status: 'success' });
 
+    if (isRemoved) {
+      res.json({ status: "success" });
     } else {
-      res.json({ status: 'fail' });
-    };
+      res.json({ status: "fail" });
+    }
   },
 
   // Allows you to modify a user's information
   async update(req, res) {
-    debug('user update controller called');
-    
+    debug("user update controller called");
+
     const { pseudo, email, birthday, password } = req.body;
-    const { id } = req.params
+    const { id } = req.params;
 
     let userData = {};
     let hashedPassword;
@@ -108,26 +126,33 @@ const userController = {
     // Checking if each field is defined and updating the userData object accordingly
     if (pseudo !== undefined) {
       userData.pseudo = pseudo;
-    };
+    }
     if (email !== undefined) {
       userData.email = email;
-    };
+    }
     if (birthday !== undefined) {
       userData.birthday = birthday;
-    };
+    }
     if (password !== undefined) {
       // Hashing the new password using bcrypt with the provided salt value
-      hashedPassword = await bcrypt.hash(password, parseInt(process.env.PASSWORD_SALT));
+      hashedPassword = await bcrypt.hash(password, parseInt(PASSWORD_SALT));
       userData.password = hashedPassword;
-    };
-        
+    }
+
     userData.updated_at = updated_at; // Adding the updated_at field to userData
-        
+
     // Updating the user data in the database using the userDataMapper
-    const updatedUser = await userDataMapper.update({ id, pseudo, email, birthday, password: hashedPassword, updated_at });
-    const token = jwt.sign({ user: updatedUser }, process.env.JWT_SECRET);
-        
-    res.json({ status: 'success', data: updatedUser, token });
+    const updatedUser = await userDataMapper.update({
+      id,
+      pseudo,
+      email,
+      birthday,
+      password: hashedPassword,
+      updated_at,
+    });
+    const token = jwt.sign({ user: updatedUser }, JWT_SECRET);
+
+    res.json({ status: "success", data: updatedUser, token });
   },
 };
 
